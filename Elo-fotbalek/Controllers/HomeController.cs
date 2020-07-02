@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Elo_fotbalek.Models;
 using Elo_fotbalek.Storage;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Auth;
@@ -30,7 +31,20 @@ namespace Elo_fotbalek.Controllers
             return View(players);
         }
 
-        public IActionResult AddMatch()
+        [HttpGet]
+        public async Task<IActionResult> AddMatch()
+        {
+            var players = await this.blobClient.GetPlayers();
+
+            players.Add(new Player() {Id = Guid.Empty, Name = "---"});
+            var selectedList = new SelectList(players.OrderBy(p => p.Name), "Id", "Name");
+
+            ViewData["Players"] = selectedList;
+            return View("AddMatch");
+        }
+
+        [HttpPost]
+        public IActionResult AddMatch(string winnersAmount, string losersAmount, Team winners, Team loosers)
         {
             return RedirectToAction("Index");
         }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Elo_fotbalek.Configuration;
 using Elo_fotbalek.Storage;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -31,6 +32,8 @@ namespace Elo_fotbalek
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
+
+            services.Configure<BlobStorageOptions>(Configuration.GetSection(BlobStorageOptions.BlobStorage));
 
             services.AddSingleton<IBlobClient, BlobClient>();
 

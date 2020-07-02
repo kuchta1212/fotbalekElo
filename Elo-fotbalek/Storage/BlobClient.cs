@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Elo_fotbalek.Configuration;
 using Elo_fotbalek.Models;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 using Newtonsoft.Json;
@@ -12,13 +14,13 @@ namespace Elo_fotbalek.Storage
 {
     public class BlobClient : IBlobClient
     {
-        private readonly IConfiguration configuration;
+        private readonly IOptions<BlobStorageOptions> options;
         private readonly CloudBlobClient cloudBlobClient;
 
-        public BlobClient(IConfiguration configuration)
+        public BlobClient(IOptions<BlobStorageOptions> options)
         {
-            this.configuration = configuration;
-            var connectionString = this.configuration.GetSection("BlobStorage").GetValue<string>("ConnectionString");
+            this.options = options;
+            var connectionString = this.options.Value.ConnectionString;
 
             var account = CloudStorageAccount.Parse(connectionString);
             this.cloudBlobClient = account.CreateCloudBlobClient();
@@ -28,7 +30,7 @@ namespace Elo_fotbalek.Storage
         {
             var players = await this.GetPlayers();
 
-            var blobName = this.configuration.GetSection("BlobStorage").GetValue<string>("PlayersBlobName");
+            var blobName = this.options.Value.PlayersBlobName;
             var blob = await this.GetBlob(blobName);
 
             players.Add(player);
@@ -40,7 +42,7 @@ namespace Elo_fotbalek.Storage
         {
             var players = await this.GetPlayers();
 
-            var blobName = this.configuration.GetSection("BlobStorage").GetValue<string>("PlayersBlobName");
+            var blobName = this.options.Value.PlayersBlobName;
             var blob = await this.GetBlob(blobName);
 
             players.Remove(player);
@@ -52,7 +54,7 @@ namespace Elo_fotbalek.Storage
         {
             try
             {
-                var blobName = this.configuration.GetSection("BlobStorage").GetValue<string>("PlayersBlobName");
+                var blobName = this.options.Value.PlayersBlobName;
                 var blob = await this.GetBlob(blobName);
 
                 var playersJson = await blob.DownloadTextAsync();
@@ -66,7 +68,7 @@ namespace Elo_fotbalek.Storage
 
         private async Task<CloudBlockBlob> GetBlob(string blobName)
         {
-            var containerName = this.configuration.GetSection("BlobStorage").GetValue<string>("ContainerName");
+            var containerName = this.options.Value.ContainerName;
             var blobContainer = this.cloudBlobClient.GetContainerReference(containerName);
             await blobContainer.CreateIfNotExistsAsync();
 
