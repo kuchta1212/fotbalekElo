@@ -1,7 +1,7 @@
 {
   "runtimeTarget": {
     "name": ".NETCoreApp,Version=v2.1",
-    "signature": "19847a582831598560f1c974ef9e411706f84136"
+    "signature": "c3cbb1297e6a51d90d1327addbe91c081ece4800"
   },
   "compilationOptions": {
     "defines": [
@@ -30,13 +30,20 @@
           "Microsoft.NETCore.App": "2.1.0",
           "Microsoft.VisualStudio.Web.CodeGeneration.Design": "2.1.9",
           "Newtonsoft.Json": "12.0.3",
-          "WindowsAzure.Storage": "9.3.3"
+          "WindowsAzure.Storage": "9.3.3",
+          "bootstrap": "4.5.0"
         },
         "runtime": {
           "Elo-fotbalek.dll": {}
         },
         "compile": {
           "Elo-fotbalek.dll": {}
+        }
+      },
+      "bootstrap/4.5.0": {
+        "dependencies": {
+          "jQuery": "3.0.0",
+          "popper.js": "1.16.0"
         }
       },
       "EloCalculatorNET/1.0.0": {
@@ -50,6 +57,7 @@
           "lib/netstandard2.0/EloCalculator.dll": {}
         }
       },
+      "jQuery/3.0.0": {},
       "Microsoft.AspNetCore.Razor.Design/2.1.2": {},
       "Microsoft.CodeAnalysis.CSharp.Workspaces/2.8.0": {
         "dependencies": {
@@ -402,6 +410,7 @@
           "lib/netstandard1.6/NuGet.Frameworks.dll": {}
         }
       },
+      "popper.js/1.16.0": {},
       "System.Composition/1.0.31": {
         "dependencies": {
           "System.Composition.AttributedModel": "1.0.31",
@@ -3496,12 +3505,26 @@
       "serviceable": false,
       "sha512": ""
     },
+    "bootstrap/4.5.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-k0Z6NMeEg8dvQD3IprG8V0Q/szV3OBgfGT2EyKUG0Ae6U6GrYaKvQacLJMCfI/0m5DRX6JfZG6aFNz8mFrY/tw==",
+      "path": "bootstrap/4.5.0",
+      "hashPath": "bootstrap.4.5.0.nupkg.sha512"
+    },
     "EloCalculatorNET/1.0.0": {
       "type": "package",
       "serviceable": true,
       "sha512": "sha512-4I+Hf8xgQurzkzqVz/SKh62iUs2rTVaE+IOK16fkLKbsmNQ7oK+DxbcY+b5s7uzmFbiNiQA9xvFyQjLu1Z24yg==",
       "path": "elocalculatornet/1.0.0",
       "hashPath": "elocalculatornet.1.0.0.nupkg.sha512"
+    },
+    "jQuery/3.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-xFfntV19HzCtKdJWOp/XT9PUY3SslokTDDLFJZdBug36j1XVhw1+vPQ/n7Gd5y+jdpesn5B1m1yn1qIUq57jlA==",
+      "path": "jquery/3.0.0",
+      "hashPath": "jquery.3.0.0.nupkg.sha512"
     },
     "Microsoft.AspNetCore.Razor.Design/2.1.2": {
       "type": "package",
@@ -3642,6 +3665,13 @@
       "sha512": "sha512-qbXaB76XYUVLocLBs8Z9TS/ERGK2wm797feO+0JEPFvT7o7MRadOR77mqaSD4J1k8G+DlZQyq+MlkCuxrkr3ag==",
       "path": "nuget.frameworks/4.7.0",
       "hashPath": "nuget.frameworks.4.7.0.nupkg.sha512"
+    },
+    "popper.js/1.16.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-ZJhaIouJ7dztoRoqj+KA1ADGpEIr+MzCWOkKm/Q6tu3CAauSsc+ZzXsxsD6RClRwieacqE3QNYNpaLU/mkVnWg==",
+      "path": "popper.js/1.16.0",
+      "hashPath": "popper.js.1.16.0.nupkg.sha512"
     },
     "System.Composition/1.0.31": {
       "type": "package",
