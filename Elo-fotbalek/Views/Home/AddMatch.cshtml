@@ -8,75 +8,85 @@
 
 <h4>Zápas</h4>
 <hr />
-<form asp-action="AddMatch">
+<form asp-action="AddMatchAndCalculateElo">
     <div class="row">
-        <div class="form-group col-md-1">
-            <label for="winnersAmount" class="control-label">Vítěz</label>
-            <input for="winnersAmount" class="form-control" />
+        <div class="form-group col-md-4">
+            <label asp-for="WinnerAmount" class="control-label">Vítěz</label>
+            <input asp-for="WinnerAmount" class="form-control" />
         </div>
-        <div class="form-group col-md-1">
-            <label for="loosersAmount" class="control-label">Poražený</label>
-            <input for="loosersAmount" class="form-control" />
+        <div class="form-group col-md-4">
+            <label asp-for="LooserAmount" class="control-label">Poražený</label>
+            <input asp-for="LooserAmount" class="form-control" />
         </div>
     </div>
     <div class="row">
-        <div class="col-md-10">
-            <div class="form-group form-inline">
-                <label for="winnerOne" class="control-label">Hráč</label>
-                <select name="winnerOne" asp-items=@(ViewData["Players"] as SelectList)></select>
-            </div>
-            <div class="form-group form-inline">
-                <label for="winnerTwo" class="control-label">Hráč</label>
-                <select name="winnerTwo" asp-items=@(ViewData["Players"] as SelectList)></select>
-            </div>
-            <div class="form-group form-inline">
-                <label for="winnterThree" class="control-label">Hráč</label>
-                <select name="winnerThree" asp-items=@(ViewData["Players"] as SelectList)></select>
-            </div>
-            <div class="form-group form-inline">
-                <label for="winnerFour" class="control-label">Hráč</label>
-                <select name="winnerFour" asp-items=@(ViewData["Players"] as SelectList)></select>
-            </div>
-            <div class="form-group form-inline">
-                <label for="winnerFive" class="control-label">Hráč</label>
-                <select name="winnerFive" asp-items=@(ViewData["Players"] as SelectList)></select>
-            </div>
-            <div class="form-group form-inline">
-                <label for="winnerSix" class="control-label">Hráč</label>
-                <select name="winnerSix" asp-items=@(ViewData["Players"] as SelectList)></select>
-            </div>
-            <dis class="form-group form-inline">
-                <label for="winnerSeven" class="control-label">Hráč</label>
-                <select name="winnerSeven" asp-items=@(ViewData["Players"] as SelectList)></select>
-            </dis>
+        <div class="form-group col-md-4">
+            <label for="winnersAmount" class="control-label">Vítěz</label>
+            <select name="winner" asp-items=@(ViewData["Players"] as SelectList)></select>
         </div>
-        <div class="form-group form-inline">
-            <label for="looserOne" class="control-label">Hráč</label>
-            <select name="looserOne" asp-items=@(ViewData["Players"] as SelectList)></select>
+        <div class="form-group col-md-4">
+            <label for="loosersAmount" class="control-label">Poražený</label>
+            <select name="looser" asp-items=@(ViewData["Players"] as SelectList)></select>
         </div>
-        <div class="form-group form-inline">
-            <label for="looserTwo" class="control-label">Hráč</label>
-            <select name="looserTwo" asp-items=@(ViewData["Players"] as SelectList)></select>
+    </div>
+    <div class="row">
+        <div class="form-group col-md-4">
+            <label for="winnersAmount" class="control-label">Vítěz</label>
+            <select name="winner" asp-items=@(ViewData["Players"] as SelectList)></select>
         </div>
-        <div class="form-group form-inline">
-            <label for="looserThree" class="control-label">Hráč</label>
-            <select name="looserThree" asp-items=@(ViewData["Players"] as SelectList)></select>
+        <div class="form-group col-md-4">
+            <label for="loosersAmount" class="control-label">Poražený</label>
+            <select name="looser" asp-items=@(ViewData["Players"] as SelectList)></select>
         </div>
-        <div class="form-group form-inline">
-            <label for="looserFour" class="control-label">Hráč</label>
-            <select name="looserFour" asp-items=@(ViewData["Players"] as SelectList)></select>
+    </div>
+    <div class="row">
+        <div class="form-group col-md-4">
+            <label for="winnersAmount" class="control-label">Vítěz</label>
+            <select name="winner" asp-items=@(ViewData["Players"] as SelectList)></select>
         </div>
-        <div class="form-group form-inline">
-            <label for="looserFive" class="control-label">Hráč</label>
-            <select name="looserFive" asp-items=@(ViewData["Players"] as SelectList)></select>
+        <div class="form-group col-md-4">
+            <label for="loosersAmount" class="control-label">Poražený</label>
+            <select name="looser" asp-items=@(ViewData["Players"] as SelectList)></select>
         </div>
-        <div class="form-group form-inline">
-            <label for="looserSix" class="control-label">Hráč</label>
-            <select name="looserSix" asp-items=@(ViewData["Players"] as SelectList)></select>
+    </div>
+    <div class="row">
+        <div class="form-group col-md-4">
+            <label for="winnersAmount" class="control-label">Vítěz</label>
+            <select name="winner" asp-items=@(ViewData["Players"] as SelectList)></select>
         </div>
-        <div class="form-group form-inline">
-            <label for="looserSeven" class="control-label">Hráč</label>
-            <select name="looserSeven" asp-items=@(ViewData["Players"] as SelectList)></select>
+        <div class="form-group col-md-4">
+            <label for="loosersAmount" class="control-label">Poražený</label>
+            <select name="looser" asp-items=@(ViewData["Players"] as SelectList)></select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-md-4">
+            <label for="winnersAmount" class="control-label">Vítěz</label>
+            <select name="winner" asp-items=@(ViewData["Players"] as SelectList)></select>
+        </div>
+        <div class="form-group col-md-4">
+            <label for="loosersAmount" class="control-label">Poražený</label>
+            <select name="looser" asp-items=@(ViewData["Players"] as SelectList)></select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-md-4">
+            <label for="winnersAmount" class="control-label">Vítěz</label>
+            <select name="winner" asp-items=@(ViewData["Players"] as SelectList)></select>
+        </div>
+        <div class="form-group col-md-4">
+            <label for="loosersAmount" class="control-label">Poražený</label>
+            <select name="looser" asp-items=@(ViewData["Players"] as SelectList)></select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-md-4">
+            <label for="winnersAmount" class="control-label">Vítěz</label>
+            <select name="winner" asp-items=@(ViewData["Players"] as SelectList)></select>
+        </div>
+        <div class="form-group col-md-4">
+            <label for="loosersAmount" class="control-label">Poražený</label>
+            <select name="looser" asp-items=@(ViewData["Players"] as SelectList)></select>
         </div>
     </div>
     <div class="form-group">

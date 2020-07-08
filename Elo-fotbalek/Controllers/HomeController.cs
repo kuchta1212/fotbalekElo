@@ -44,8 +44,10 @@ namespace Elo_fotbalek.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddMatch(string winnersAmount, string losersAmount, Team winners, Team loosers)
+        public IActionResult AddMatchAndCalculateElo(string WinnerAmount, string LooserAmount)
         {
+            Request.Form.TryGetValue("winner", out var winners);
+            Request.Form.TryGetValue("looser", out var loosers);
             return RedirectToAction("Index");
         }
 

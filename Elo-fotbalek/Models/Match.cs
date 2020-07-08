@@ -11,6 +11,10 @@ namespace Elo_fotbalek.Models
 
         public Team Looser { get; set; }
 
-        public string Score { get; set; } = "{0}:{1}";
+        public int WinnerAmount { get; set; }
+
+        public int LooserAmount { get; set; }
+
+        public string Score => this.WinnerAmount+":"+this.LooserAmount;
     }
 }
