@@ -9,7 +9,6 @@ C:\Users\jakuchar\source\repos\fotbalekElo\Elo-fotbalek\obj\Debug\netcoreapp2.1\
 C:\Users\jakuchar\source\repos\fotbalekElo\Elo-fotbalek\obj\Debug\netcoreapp2.1\Elo-fotbalek.csproj.CoreCompileInputs.cache
 C:\Users\jakuchar\source\repos\fotbalekElo\Elo-fotbalek\obj\Debug\netcoreapp2.1\Elo-fotbalek.RazorAssemblyInfo.cache
 C:\Users\jakuchar\source\repos\fotbalekElo\Elo-fotbalek\obj\Debug\netcoreapp2.1\Elo-fotbalek.RazorAssemblyInfo.cs
-C:\Users\jakuchar\source\repos\fotbalekElo\Elo-fotbalek\obj\Debug\netcoreapp2.1\UserSecretsAssemblyInfo.cs
 C:\Users\jakuchar\source\repos\fotbalekElo\Elo-fotbalek\obj\Debug\netcoreapp2.1\Elo-fotbalek.AssemblyInfoInputs.cache
 C:\Users\jakuchar\source\repos\fotbalekElo\Elo-fotbalek\obj\Debug\netcoreapp2.1\Elo-fotbalek.AssemblyInfo.cs
 C:\Users\jakuchar\source\repos\fotbalekElo\Elo-fotbalek\obj\Debug\netcoreapp2.1\Elo-fotbalek.TagHelpers.input.cache
@@ -29,3 +28,4 @@ C:\Users\jakuchar\source\repos\fotbalekElo\Elo-fotbalek\obj\Debug\netcoreapp2.1\
 C:\Users\jakuchar\source\repos\fotbalekElo\Elo-fotbalek\obj\Debug\netcoreapp2.1\Elo-fotbalek.pdb
 C:\Users\jakuchar\source\repos\fotbalekElo\Elo-fotbalek\obj\Debug\netcoreapp2.1\Elo-fotbalek.csproj.CopyComplete
 C:\Users\jakuchar\source\repos\fotbalekElo\Elo-fotbalek\obj\Debug\netcoreapp2.1\Razor\Views\Home\AddMatch.g.cshtml.cs
+C:\Users\jakuchar\source\repos\fotbalekElo\Elo-fotbalek\obj\Debug\netcoreapp2.1\UserSecretsAssemblyInfo.cs

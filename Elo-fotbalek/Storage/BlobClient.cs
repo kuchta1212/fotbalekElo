@@ -38,6 +38,14 @@ namespace Elo_fotbalek.Storage
             await blob.UploadTextAsync(JsonConvert.SerializeObject(players));
         }
 
+        public async Task UpdatePlayers(List<Player> players)
+        {
+            var blobName = this.options.Value.PlayersBlobName;
+            var blob = await this.GetBlob(blobName);
+
+            await blob.UploadTextAsync(JsonConvert.SerializeObject(players));
+        }
+
         public async Task RemovePlayer(Player player)
         {
             var players = await this.GetPlayers();
@@ -63,6 +71,46 @@ namespace Elo_fotbalek.Storage
             catch (Exception)
             {
                 return new List<Player>();
+            }
+        }
+
+        public async Task AddMatch(Match match)
+        {
+            var matches = await this.GetMatches();
+
+            var blobName = this.options.Value.MatchesBlobName;
+            var blob = await this.GetBlob(blobName);
+
+            matches.Add(match);
+
+            await blob.UploadTextAsync(JsonConvert.SerializeObject(matches));
+        }
+
+        public async Task RemoveMatch(Match match)
+        {
+            var matches = await this.GetMatches();
+
+            var blobName = this.options.Value.MatchesBlobName;
+            var blob = await this.GetBlob(blobName);
+
+            matches.Remove(match);
+
+            await blob.UploadTextAsync(JsonConvert.SerializeObject(matches));
+        }
+
+        public async Task<List<Match>> GetMatches()
+        {
+            try
+            {
+                var blobName = this.options.Value.MatchesBlobName;
+                var blob = await this.GetBlob(blobName);
+
+                var matchesJson = await blob.DownloadTextAsync();
+                return JsonConvert.DeserializeObject<List<Match>>(matchesJson);
+            }
+            catch (Exception)
+            {
+                return new List<Match>();
             }
         }
 

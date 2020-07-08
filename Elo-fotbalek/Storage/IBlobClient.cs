@@ -10,8 +10,16 @@ namespace Elo_fotbalek.Storage
     {
         Task AddPlayer(Player player);
 
+        Task UpdatePlayers(List<Player> players);
+
         Task RemovePlayer(Player player);
 
         Task<List<Player>> GetPlayers();
+
+        Task AddMatch(Match match);
+
+        Task RemoveMatch(Match match);
+
+        Task<List<Match>> GetMatches();
     }
 }

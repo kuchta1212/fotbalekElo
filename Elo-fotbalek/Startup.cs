@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Elo_fotbalek.Configuration;
+using Elo_fotbalek.EloCounter;
+using Elo_fotbalek.Models;
 using Elo_fotbalek.Storage;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -36,6 +38,8 @@ namespace Elo_fotbalek
             services.Configure<BlobStorageOptions>(Configuration.GetSection(BlobStorageOptions.BlobStorage));
 
             services.AddSingleton<IBlobClient, BlobClient>();
+            services.AddTransient<IModelCreator, ModelCreator>();
+            services.AddTransient<IEloCalulator, EloCounter.EloCalculator>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }

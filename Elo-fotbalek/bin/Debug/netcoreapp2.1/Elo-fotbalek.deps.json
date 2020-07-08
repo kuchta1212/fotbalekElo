@@ -1,7 +1,7 @@
 {
   "runtimeTarget": {
     "name": ".NETCoreApp,Version=v2.1",
-    "signature": "9395b3be8c6ac8a96004e2e7b62dc7df7d29b246"
+    "signature": "19847a582831598560f1c974ef9e411706f84136"
   },
   "compilationOptions": {
     "defines": [
@@ -24,6 +24,7 @@
     ".NETCoreApp,Version=v2.1": {
       "Elo-fotbalek/1.0.0": {
         "dependencies": {
+          "EloCalculatorNET": "1.0.0",
           "Microsoft.AspNetCore.App": "2.1.1",
           "Microsoft.AspNetCore.Razor.Design": "2.1.2",
           "Microsoft.NETCore.App": "2.1.0",
@@ -36,6 +37,17 @@
         },
         "compile": {
           "Elo-fotbalek.dll": {}
+        }
+      },
+      "EloCalculatorNET/1.0.0": {
+        "runtime": {
+          "lib/netstandard2.0/EloCalculator.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        },
+        "compile": {
+          "lib/netstandard2.0/EloCalculator.dll": {}
         }
       },
       "Microsoft.AspNetCore.Razor.Design/2.1.2": {},
@@ -3483,6 +3495,13 @@
       "type": "project",
       "serviceable": false,
       "sha512": ""
+    },
+    "EloCalculatorNET/1.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-4I+Hf8xgQurzkzqVz/SKh62iUs2rTVaE+IOK16fkLKbsmNQ7oK+DxbcY+b5s7uzmFbiNiQA9xvFyQjLu1Z24yg==",
+      "path": "elocalculatornet/1.0.0",
+      "hashPath": "elocalculatornet.1.0.0.nupkg.sha512"
     },
     "Microsoft.AspNetCore.Razor.Design/2.1.2": {
       "type": "package",

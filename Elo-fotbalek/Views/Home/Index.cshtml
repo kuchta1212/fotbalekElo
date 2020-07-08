@@ -1,33 +1,62 @@
 ﻿@{
     ViewData["Title"] = "Elo - Fotbálek";
 }
-@model IEnumerable<Player>
+@model HomeScreenModel
 
-<table class="table">
-    <thead>
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Name)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Elo)
-        </th>
-        <th></th>
-    </tr>
-    </thead>
-    <tbody>
-    @foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Elo)
-            </td>
-            <td>
-                @Html.ActionLink("Details", "Details", new {  id=item.Id })
-            </td>
-        </tr>
-    }
-    </tbody>
-</table>
+
+
+<div class="row">
+    <div class="col-md-4">
+        <h2>Pořadí</h2>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Jméno</th>
+                <th>Elo</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var player in Model.Players) {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => player.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => player.Elo)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Details", "Details", new {  id= player.Id })
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+    <div class="col-md-8">
+        <h2>Seznam zápasů</h2>
+        @foreach (var match in Model.Matches)
+        {
+            <div class="card" style="width: 20rem;">
+                <div class="card-body">
+                    <h5 class="card-title">@match.Score</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">Vítězové - Team Elo: @match.Winner.TeamElo</h6>
+                    @foreach (var p in match.Winner.Players)
+                    {
+                        <p class="card-text">@p.Name</p>
+                    }
+                    <br />
+                    <br />
+
+                    <h6 class="card-subtitle mb-2 text-muted">Poražení - Team Elo: @match.Looser.TeamElo</h6>
+                    @foreach (var p in match.Looser.Players)
+                    {
+                        <p class="card-text">@p.Name</p>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+

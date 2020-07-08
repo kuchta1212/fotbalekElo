@@ -2,6 +2,15 @@
   "version": 3,
   "targets": {
     ".NETCoreApp,Version=v2.1": {
+      "EloCalculatorNET/1.0.0": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/EloCalculator.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/EloCalculator.dll": {}
+        }
+      },
       "Microsoft.AspNet.WebApi.Client/5.2.6": {
         "type": "package",
         "dependencies": {
@@ -4632,6 +4641,18 @@
     }
   },
   "libraries": {
+    "EloCalculatorNET/1.0.0": {
+      "sha512": "4I+Hf8xgQurzkzqVz/SKh62iUs2rTVaE+IOK16fkLKbsmNQ7oK+DxbcY+b5s7uzmFbiNiQA9xvFyQjLu1Z24yg==",
+      "type": "package",
+      "path": "elocalculatornet/1.0.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "elocalculatornet.1.0.0.nupkg.sha512",
+        "elocalculatornet.nuspec",
+        "lib/netstandard2.0/EloCalculator.dll"
+      ]
+    },
     "Microsoft.AspNet.WebApi.Client/5.2.6": {
       "sha512": "owAlEIUZXWSnkK8Z1c+zR47A0X6ykF4XjbPok4lQKNuciUfHLGPd6QnI+rt/8KlQ17PmF+I4S3f+m+Qe4IvViw==",
       "type": "package",
@@ -12583,6 +12604,7 @@
   },
   "projectFileDependencyGroups": {
     ".NETCoreApp,Version=v2.1": [
+      "EloCalculatorNET >= 1.0.0",
       "Microsoft.AspNetCore.App >= 2.1.1",
       "Microsoft.AspNetCore.Razor.Design >= 2.1.2",
       "Microsoft.NETCore.App >= 2.1.0",
@@ -12632,6 +12654,10 @@
     "frameworks": {
       "netcoreapp2.1": {
         "dependencies": {
+          "EloCalculatorNET": {
+            "target": "Package",
+            "version": "[1.0.0, )"
+          },
           "Microsoft.AspNetCore.App": {
             "suppressParent": "All",
             "target": "Package",

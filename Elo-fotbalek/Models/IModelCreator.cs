@@ -6,10 +6,8 @@ using Microsoft.Extensions.Primitives;
 
 namespace Elo_fotbalek.Models
 {
-    public class Team
+    public interface IModelCreator
     {
-        public List<Player> Players { get; set; }
-
-        public int TeamElo { get; set; }
+        Task<Team> CreateTeam(StringValues values);
     }
 }
