@@ -10,5 +10,7 @@ namespace Elo_fotbalek.EloCounter
     public interface IEloCalulator
     {
         EloResult CalculateElo(Match match);
+
+        FifaEloResult CalculateFifaElo(Match match);
     }
 }

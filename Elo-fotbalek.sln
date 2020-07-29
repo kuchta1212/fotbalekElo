@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.1169
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elo-fotbalek", "Elo-fotbalek\Elo-fotbalek.csproj", "{41573515-15FF-40A2-9B4E-DA3932C87278}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Elo-fotbalek", "Elo-fotbalek\Elo-fotbalek.csproj", "{41573515-15FF-40A2-9B4E-DA3932C87278}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elo-Fotbalek-Test", "Elo-Fotbalek-Test\Elo-Fotbalek-Test.csproj", "{D9271600-8075-47E4-8ECA-D782E38A1DCA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{41573515-15FF-40A2-9B4E-DA3932C87278}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{41573515-15FF-40A2-9B4E-DA3932C87278}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{41573515-15FF-40A2-9B4E-DA3932C87278}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D9271600-8075-47E4-8ECA-D782E38A1DCA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D9271600-8075-47E4-8ECA-D782E38A1DCA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D9271600-8075-47E4-8ECA-D782E38A1DCA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D9271600-8075-47E4-8ECA-D782E38A1DCA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

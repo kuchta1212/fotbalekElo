@@ -18,5 +18,7 @@ namespace Elo_fotbalek.Models
         public string Score => this.WinnerAmount+":"+this.LooserAmount;
 
         public DateTime Date { get; set; }
+
+        public int Weight { get; set; }
     }
 }

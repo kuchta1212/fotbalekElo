@@ -27,5 +27,10 @@ namespace Elo_fotbalek.EloCounter
 
             return eloMatch.Calculate();
         }
+
+        public FifaEloResult CalculateFifaElo(Match match)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
