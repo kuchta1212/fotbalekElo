@@ -11,7 +11,6 @@ html {
 }
 body {
   margin: 0;
-    padding-top: 50px;
 }
 article,
 aside,
@@ -2039,7 +2038,7 @@ pre code {
   .col-md-8 {
     width: 66.66666667%;
   }
-  .col-md-7 {
+  control-label.col-md-7 {
     width: 58.33333333%;
   }
   .col-md-6 {

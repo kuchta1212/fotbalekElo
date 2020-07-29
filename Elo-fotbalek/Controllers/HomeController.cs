@@ -37,7 +37,7 @@ namespace Elo_fotbalek.Controllers
 
             var screen = new HomeScreenModel()
             {
-                Matches = matches.OrderBy(m => m.Date),
+                Matches = matches.OrderByDescending(m => m.Date),
                 Players = players.OrderByDescending(p => p.Elo)
             };
 

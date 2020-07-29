@@ -27,3 +27,5 @@ C:\Users\jakuchar\source\repos\fotbalekElo\Elo-fotbalek\obj\Release\netcoreapp2.
 C:\Users\jakuchar\source\repos\fotbalekElo\Elo-fotbalek\obj\Release\netcoreapp2.1\Elo-fotbalek.dll
 C:\Users\jakuchar\source\repos\fotbalekElo\Elo-fotbalek\obj\Release\netcoreapp2.1\Elo-fotbalek.pdb
 C:\Users\jakuchar\source\repos\fotbalekElo\Elo-fotbalek\obj\Release\netcoreapp2.1\Elo-fotbalek.csproj.CopyComplete
+C:\Users\jakuchar\source\repos\fotbalekElo\Elo-fotbalek\obj\Release\netcoreapp2.1\UserSecretsAssemblyInfo.cs
+C:\Users\jakuchar\source\repos\fotbalekElo\Elo-fotbalek\obj\Release\netcoreapp2.1\Razor\Views\Home\AddMatch.g.cshtml.cs
