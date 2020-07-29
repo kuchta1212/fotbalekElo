@@ -93,7 +93,7 @@ namespace Elo_fotbalek.Storage
             var blobName = this.options.Value.MatchesBlobName;
             var blob = await this.GetBlob(blobName);
 
-            matches.Remove(match);
+            matches.RemoveAll(m => m.Date == match.Date && m.Score == match.Score);
 
             await blob.UploadTextAsync(JsonConvert.SerializeObject(matches));
         }

@@ -57,7 +57,7 @@ namespace Elo_fotbalek.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddMatchAndCalculateElo(string WinnerAmount, string LooserAmount)
+        public async Task<IActionResult> AddMatchAndCalculateElo(string WinnerAmount, string LooserAmount, string Weight)
         {
             Request.Form.TryGetValue("winner", out var winners);
             Request.Form.TryGetValue("looser", out var loosers);
@@ -71,14 +71,15 @@ namespace Elo_fotbalek.Controllers
                 WinnerAmount = int.Parse(WinnerAmount),
                 LooserAmount = int.Parse(LooserAmount),
                 Winner = winnTeam,
-                Looser = loosTeam
+                Looser = loosTeam,
+                Weight = Weight == "BigMatch" ? 30 : 10
             };
 
             await this.blobClient.AddMatch(match);
 
-            var eloResult = this.eloCalulator.CalculateElo(match);
+            var eloResult = this.eloCalulator.CalculateFifaElo(match);
 
-            await this.UpdatePlayersElo(eloResult);
+            await this.UpdatePlayersElo(eloResult, match);
 
 
             return RedirectToAction("Index");
@@ -127,6 +128,88 @@ namespace Elo_fotbalek.Controllers
             }
 
             await this.blobClient.UpdatePlayers(players);
+        }
+
+        private async Task UpdatePlayersElo(FifaEloResult eloResult, Match match)
+        {
+            var players = await this.blobClient.GetPlayers();
+
+            foreach (var player in match.Winner.Players)
+            {
+                var newPlayerWinner = players.First(np => np.Id == player.Id);
+                newPlayerWinner.Elo += (int)eloResult.WinnerPointChange;
+            }
+
+            foreach (var player in match.Looser.Players)
+            {
+                var newPlayerLooser = players.First(np => np.Id == player.Id);
+                newPlayerLooser.Elo += (int)eloResult.LooserPointChange;
+            }
+
+            await this.blobClient.UpdatePlayers(players);
+        }
+
+        public async Task<IActionResult> RecalculateToNewElo()
+        {
+            //reset to default value
+            var players = await this.blobClient.GetPlayers();
+
+            foreach (var player in players)
+            {
+                player.Elo = 1000;
+            }
+
+            await this.blobClient.UpdatePlayers(players);
+
+            var matches = await this.blobClient.GetMatches();
+
+            foreach (var match in matches.OrderBy(m => m.Date))
+            {
+                await this.blobClient.RemoveMatch(match);
+
+                var newPlayers = await this.blobClient.GetPlayers();
+
+                var teamElo = 0;
+                foreach (var player in match.Winner.Players)
+                {
+                    player.Elo = newPlayers.First(p => p.Id == player.Id).Elo;
+                    teamElo += player.Elo;
+                }
+
+                match.Winner.TeamElo = teamElo / match.Winner.Players.Count;
+
+                teamElo = 0;
+                foreach (var player in match.Looser.Players)
+                {
+                    player.Elo = newPlayers.First(p => p.Id == player.Id).Elo;
+                    teamElo += player.Elo;
+                }
+
+                match.Looser.TeamElo = teamElo / match.Looser.Players.Count;
+
+                await this.blobClient.AddMatch(match);
+
+                var eloResult = this.eloCalulator.CalculateFifaElo(match);
+
+                foreach (var player in match.Winner.Players)
+                {
+                    var newPlayerWinner = newPlayers.First(np => np.Id == player.Id);
+                    newPlayerWinner.Elo += (int) eloResult.WinnerPointChange;
+                }
+
+                foreach (var player in match.Looser.Players)
+                {
+                    var newPlayerLooser = newPlayers.First(np => np.Id == player.Id);
+                    newPlayerLooser.Elo += (int)eloResult.LooserPointChange;
+                }
+
+                await this.blobClient.UpdatePlayers(newPlayers);
+            }
+
+            
+
+
+            return RedirectToAction("Index");
         }
     }
 }

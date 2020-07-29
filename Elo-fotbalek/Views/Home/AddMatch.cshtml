@@ -18,6 +18,13 @@
             <label asp-for="LooserAmount" class="control-label">Poražený</label>
             <input asp-for="LooserAmount" class="form-control" />
         </div>
+        <div class="form-group col-md-4">
+            <label asp-for="Weight" class="control-label">Váha zápasu</label>
+            <select asp-for="Weight" class="form-control">
+                <option value="BigMatch">Velký zápas</option>
+                <option value="SmallMatch">Malý zápas</option>
+            </select>
+        </div>
     </div>
     <div class="row">
         <div class="form-group col-md-4">

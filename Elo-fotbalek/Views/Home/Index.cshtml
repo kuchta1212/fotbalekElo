@@ -37,14 +37,15 @@
             <div class="card" style="width: 40rem;">
                 <div class="card-body">
                     <h5 class="card-title">@match.Date.ToShortDateString()  @match.Score</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">Typ zápasu(Váha): @match.WeighInStr</h6>
                     <h6 class="card-subtitle mb-2 text-muted">Vítězové - Team Elo: @match.Winner.TeamElo</h6>
                     @{ var sb = new StringBuilder();}
                     @foreach (var p in match.Winner.Players)
                     {
                         sb.Append(p.Name + "(" + p.Elo + ")");
                     }
-                    <p class="card-text">@string.Join(",",match.Winner.Players)</p>
- 
+                    <p class="card-text">@string.Join(",", match.Winner.Players)</p>
+
                     <h6 class="card-subtitle mb-2 text-muted">Poražení - Team Elo: @match.Looser.TeamElo</h6>
                     @{ var sb1 = new StringBuilder();}
                     @foreach (var p in match.Looser.Players)

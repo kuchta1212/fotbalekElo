@@ -20,5 +20,7 @@ namespace Elo_fotbalek.Models
         public DateTime Date { get; set; }
 
         public int Weight { get; set; }
+
+        public string WeighInStr => this.Weight == 30 ? "Velký zápas" : "Malý zápas";
     }
 }
