@@ -1,0 +1,59 @@
+﻿@using Elo_fotbalek.TeamGenerator
+
+@{
+    ViewData["Title"] = "Doporučené týmy";
+}
+
+@foreach (var generatedResult in (ViewData["GeneratedResults"] as List<GeneratorResult>))
+{
+<div class="row">
+    <div class="col-md-4">
+        <h2>Tým 1 - Elo: @generatedResult.TeamOne.TeamElo</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Jméno</th>
+                    <th>Elo</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var player in generatedResult.TeamOne.Players)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => player.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => player.Elo)
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="col-md-4">
+        <h2>Tým 2 - Elo: @generatedResult.TeamTwo.TeamElo</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Jméno</th>
+                    <th>Elo</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var player in generatedResult.TeamTwo.Players)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => player.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => player.Elo)
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+}

@@ -6,10 +6,51 @@ using Microsoft.Extensions.Primitives;
 
 namespace Elo_fotbalek.Models
 {
-    public class Team
+    public class Team : IEquatable<Team>
     {
         public List<Player> Players { get; set; }
 
         public int TeamElo { get; set; }
+
+        public bool Equals(Team other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return TeamElo == other.TeamElo && this.ArePlayersEqual(other.Players);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((Team) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return ((Players != null ? Players.GetHashCode() : 0) * 397) ^ TeamElo;
+            }
+        }
+
+        private bool ArePlayersEqual(List<Player> otherPlayers)
+        {
+            if (otherPlayers.Count != this.Players.Count)
+            {
+                return false;
+            }
+
+            foreach (var player in otherPlayers)
+            {
+                if (!this.Players.Contains(player))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
     }
 }

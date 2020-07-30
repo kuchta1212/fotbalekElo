@@ -8,6 +8,7 @@ using Elo_fotbalek.EloCounter;
 using Microsoft.AspNetCore.Mvc;
 using Elo_fotbalek.Models;
 using Elo_fotbalek.Storage;
+using Elo_fotbalek.TeamGenerator;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Microsoft.WindowsAzure.Storage;
@@ -22,12 +23,14 @@ namespace Elo_fotbalek.Controllers
         private readonly IBlobClient blobClient;
         private readonly IModelCreator modelCreator;
         private readonly IEloCalulator eloCalulator;
+        private readonly ITeamGenerator teamGenerator;
 
-        public HomeController(IBlobClient blobClient, IModelCreator modelCreator, IEloCalulator eloCalulator)
+        public HomeController(IBlobClient blobClient, IModelCreator modelCreator, IEloCalulator eloCalulator, ITeamGenerator teamGenerator)
         {
             this.blobClient = blobClient;
             this.modelCreator = modelCreator;
             this.eloCalulator = eloCalulator;
+            this.teamGenerator = teamGenerator;
         }
 
         public async Task<IActionResult> Index()
@@ -148,6 +151,30 @@ namespace Elo_fotbalek.Controllers
 
             await this.blobClient.UpdatePlayers(players);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GenerateTeams()
+        {
+            var players = await this.blobClient.GetPlayers();
+
+            players.Add(new Player() { Id = Guid.Empty, Name = "---" });
+            var selectedList = new SelectList(players.OrderBy(p => p.Name), "Id", "Name");
+
+            ViewData["Players"] = selectedList;
+            return View("ShowTeams");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GenerateTeamsResult()
+        {
+            Request.Form.TryGetValue("player", out var players);
+            var dummyTeam = await this.modelCreator.CreateTeam(players);
+            var generatorResults = this.teamGenerator.GenerateTeams(dummyTeam.Players);
+
+            ViewData["GeneratedResults"] = generatorResults;
+            return View("ShowTeamsResult");
+        }
+
 
         public async Task<IActionResult> RecalculateToNewElo()
         {

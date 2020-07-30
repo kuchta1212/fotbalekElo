@@ -1,0 +1,81 @@
+﻿@{
+    ViewData["Title"] = "GenerateTeams";
+}
+
+<h2>Zadej účastníky</h2>
+
+<h4>Účastníci</h4>
+<hr />
+<form asp-action="GenerateTeamsResult">
+    <div class="form-group col-md-4">
+        <label for="player" class="control-label">Hráč</label>
+        <select name="player" asp-items=@(ViewData["Players"] as SelectList)></select>
+    </div>
+    <div class="form-group col-md-4">
+        <label for="player" class="control-label">Hráč</label>
+        <select name="player" asp-items=@(ViewData["Players"] as SelectList)></select>
+    </div>
+    <div class="form-group col-md-4">
+        <label for="player" class="control-label">Hráč</label>
+        <select name="player" asp-items=@(ViewData["Players"] as SelectList)></select>
+    </div>
+    <div class="form-group col-md-4">
+        <label for="player" class="control-label">Hráč</label>
+        <select name="player" asp-items=@(ViewData["Players"] as SelectList)></select>
+    </div>
+    <div class="form-group col-md-4">
+        <label for="player" class="control-label">Hráč</label>
+        <select name="player" asp-items=@(ViewData["Players"] as SelectList)></select>
+    </div>
+    <div class="form-group col-md-4">
+        <label for="player" class="control-label">Hráč</label>
+        <select name="player" asp-items=@(ViewData["Players"] as SelectList)></select>
+    </div>
+    <div class="form-group col-md-4">
+        <label for="player" class="control-label">Hráč</label>
+        <select name="player" asp-items=@(ViewData["Players"] as SelectList)></select>
+    </div>
+    <div class="form-group col-md-4">
+        <label for="player" class="control-label">Hráč</label>
+        <select name="player" asp-items=@(ViewData["Players"] as SelectList)></select>
+    </div>
+    <div class="form-group col-md-4">
+        <label for="player" class="control-label">Hráč</label>
+        <select name="player" asp-items=@(ViewData["Players"] as SelectList)></select>
+    </div>
+    <div class="form-group col-md-4">
+        <label for="player" class="control-label">Hráč</label>
+        <select name="player" asp-items=@(ViewData["Players"] as SelectList)></select>
+    </div>
+    <div class="form-group col-md-4">
+        <label for="player" class="control-label">Hráč</label>
+        <select name="player" asp-items=@(ViewData["Players"] as SelectList)></select>
+    </div>
+    <div class="form-group col-md-4">
+        <label for="player" class="control-label">Hráč</label>
+        <select name="player" asp-items=@(ViewData["Players"] as SelectList)></select>
+    </div>
+    <div class="form-group col-md-4">
+        <label for="player" class="control-label">Hráč</label>
+        <select name="player" asp-items=@(ViewData["Players"] as SelectList)></select>
+    </div>
+    <div class="form-group col-md-4">
+        <label for="player" class="control-label">Hráč</label>
+        <select name="player" asp-items=@(ViewData["Players"] as SelectList)></select>
+    </div>
+    <div class="form-group col-md-4">
+        <label for="player" class="control-label">Hráč</label>
+        <select name="player" asp-items=@(ViewData["Players"] as SelectList)></select>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Doporuč sestavy" class="btn btn-default" />
+    </div>
+</form>
+
+<div>
+    <a asp-action="Index">Zpět</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

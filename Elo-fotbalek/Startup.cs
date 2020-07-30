@@ -6,6 +6,7 @@ using Elo_fotbalek.Configuration;
 using Elo_fotbalek.EloCounter;
 using Elo_fotbalek.Models;
 using Elo_fotbalek.Storage;
+using Elo_fotbalek.TeamGenerator;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -40,6 +41,7 @@ namespace Elo_fotbalek
             services.AddSingleton<IBlobClient, BlobClient>();
             services.AddTransient<IModelCreator, ModelCreator>();
             services.AddTransient<IEloCalulator, EloCounter.EloCalculator>();
+            services.AddTransient<ITeamGenerator, TeamGenerator.TeamGenerator>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
