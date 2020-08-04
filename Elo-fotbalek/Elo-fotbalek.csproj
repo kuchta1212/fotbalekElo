@@ -3,7 +3,24 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <UserSecretsId>3cb53075-8c37-4427-b8e7-873e9feab3ad</UserSecretsId>
+    <RootNamespace>Elo_fotbalek</RootNamespace>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="wwwroot\images\icons\down.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="wwwroot\images\icons\down.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\images\icons\up.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="bootstrap" Version="4.5.0" />

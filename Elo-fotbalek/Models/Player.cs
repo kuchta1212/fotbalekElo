@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace Elo_fotbalek.Models
 {
@@ -14,11 +15,18 @@ namespace Elo_fotbalek.Models
 
         public int Elo { get; set; }
 
+        public MatchCounter AmountOfWins { get; set; }
+
+        public MatchCounter AmountOfLooses { get; set; }
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public TrendData Trend { get; set; }
+
         public override string ToString()
         {
             return this.Name + "(" + this.Elo +")";
         }
-
+        
         public bool Equals(Player other)
         {
             if (ReferenceEquals(null, other)) return false;

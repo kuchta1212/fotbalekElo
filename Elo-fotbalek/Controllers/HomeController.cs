@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Elo_fotbalek.Models;
 using Elo_fotbalek.Storage;
 using Elo_fotbalek.TeamGenerator;
+using Elo_fotbalek.TrendCalculator;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Microsoft.WindowsAzure.Storage;
@@ -24,13 +25,15 @@ namespace Elo_fotbalek.Controllers
         private readonly IModelCreator modelCreator;
         private readonly IEloCalulator eloCalulator;
         private readonly ITeamGenerator teamGenerator;
+        private readonly ITrendCalculator trendCalculator;
 
-        public HomeController(IBlobClient blobClient, IModelCreator modelCreator, IEloCalulator eloCalulator, ITeamGenerator teamGenerator)
+        public HomeController(IBlobClient blobClient, IModelCreator modelCreator, IEloCalulator eloCalulator, ITeamGenerator teamGenerator, ITrendCalculator trendCalculator)
         {
             this.blobClient = blobClient;
             this.modelCreator = modelCreator;
             this.eloCalulator = eloCalulator;
             this.teamGenerator = teamGenerator;
+            this.trendCalculator = trendCalculator;
         }
 
         public async Task<IActionResult> Index()
@@ -141,12 +144,43 @@ namespace Elo_fotbalek.Controllers
             {
                 var newPlayerWinner = players.First(np => np.Id == player.Id);
                 newPlayerWinner.Elo += (int)eloResult.WinnerPointChange;
+                newPlayerWinner.Trend = this.trendCalculator.CalculateTrend(player.Trend, match.Date, true);
+
+                if (newPlayerWinner.AmountOfWins == null)
+                {
+                    newPlayerWinner.AmountOfWins = new MatchCounter();
+                }
+
+                if (match.Weight == 30)
+                {
+                    newPlayerWinner.AmountOfWins.BigMatches++;
+                }
+                else
+                {
+                    newPlayerWinner.AmountOfWins.SmallMatches++;
+                }
             }
 
             foreach (var player in match.Looser.Players)
             {
                 var newPlayerLooser = players.First(np => np.Id == player.Id);
                 newPlayerLooser.Elo += (int)eloResult.LooserPointChange;
+                newPlayerLooser.Trend = this.trendCalculator.CalculateTrend(player.Trend, match.Date, false);
+
+
+                if (newPlayerLooser.AmountOfLooses == null)
+                {
+                    newPlayerLooser.AmountOfLooses = new MatchCounter();
+                }
+
+                if (match.Weight == 30)
+                {
+                    newPlayerLooser.AmountOfLooses.BigMatches++;
+                }
+                else
+                {
+                    newPlayerLooser.AmountOfLooses.SmallMatches++;
+                }
             }
 
             await this.blobClient.UpdatePlayers(players);
@@ -232,9 +266,6 @@ namespace Elo_fotbalek.Controllers
 
                 await this.blobClient.UpdatePlayers(newPlayers);
             }
-
-            
-
 
             return RedirectToAction("Index");
         }
