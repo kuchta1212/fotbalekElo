@@ -104,7 +104,12 @@ namespace Elo_fotbalek.Controllers
             {
                 Id = Guid.NewGuid(),
                 Name = Name,
-                Elo = 1000
+                Elo = 1000,
+                Trend = new TrendData()
+                {
+                    Data = new Dictionary<DateTime, int>(),
+                    Trend = Trend.STAY
+                }
             };
 
             await this.blobClient.AddPlayer(player);
