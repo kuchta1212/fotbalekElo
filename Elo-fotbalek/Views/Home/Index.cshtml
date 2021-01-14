@@ -108,7 +108,7 @@
         {
             <div class="card" style="width: 40rem;">
                 <div class="card-body">
-                    <h5 class="card-title">@match.Date.ToShortDateString()  @match.Score</h5>
+                    <h5 class="card-title">@match.Date.ToString("dd.MM yyyy")  @match.Score</h5>
                     <h6 class="card-subtitle mb-2 text-muted">Typ zápasu(Váha): @match.WeighInStr</h6>
                     <h6 class="card-subtitle mb-2 text-muted">Sezóna: @match.Season.ToFriendlyString() </h6>
                     <h6 class="card-subtitle mb-2 text-muted">Vítězové - Team Elo: @match.Winner.TeamElo</h6>
