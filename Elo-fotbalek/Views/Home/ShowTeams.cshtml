@@ -1,4 +1,6 @@
-﻿@{
+﻿@model Elo_fotbalek.Models.Match
+
+@{
     ViewData["Title"] = "GenerateTeams";
 }
 
@@ -7,6 +9,13 @@
 <h4>Účastníci</h4>
 <hr />
 <form asp-action="GenerateTeamsResult">
+    <div class="form-group col-md-3">
+        <label asp-for="Season" class="control-label">Sezóna</label>
+        <select asp-for="Season" class="form-control">
+            <option value="Summer">Léto</option>
+            <option value="Winter">Zima</option>
+        </select>
+    </div>
     <div class="form-group col-md-4">
         <label for="player" class="control-label">Hráč</label>
         <select name="player" asp-items=@(ViewData["Players"] as SelectList)></select>

@@ -10,19 +10,26 @@
 <hr />
 <form asp-action="AddMatchAndCalculateElo">
     <div class="row">
-        <div class="form-group col-md-4">
+        <div class="form-group col-md-3">
             <label asp-for="WinnerAmount" class="control-label">Vítěz</label>
             <input asp-for="WinnerAmount" class="form-control" />
         </div>
-        <div class="form-group col-md-4">
+        <div class="form-group col-md-3">
             <label asp-for="LooserAmount" class="control-label">Poražený</label>
             <input asp-for="LooserAmount" class="form-control" />
         </div>
-        <div class="form-group col-md-4">
+        <div class="form-group col-md-3">
             <label asp-for="Weight" class="control-label">Váha zápasu</label>
             <select asp-for="Weight" class="form-control">
                 <option value="BigMatch">Velký zápas</option>
                 <option value="SmallMatch">Malý zápas</option>
+            </select>
+        </div>
+        <div class="form-group col-md-3">
+            <label asp-for="Season" class="control-label">Sezóna</label>
+            <select asp-for="Season" class="form-control">
+                <option value="Summer">Léto</option>
+                <option value="Winter">Zima</option>
             </select>
         </div>
     </div>

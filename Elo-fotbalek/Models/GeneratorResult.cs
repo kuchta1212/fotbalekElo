@@ -13,5 +13,7 @@ namespace Elo_fotbalek.TeamGenerator
         public Team TeamTwo { get; set; }
 
         public int EloDiff { get; set; }
+
+        public Season Season { get; set; }
     }
 }

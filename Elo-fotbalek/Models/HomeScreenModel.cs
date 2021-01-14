@@ -9,6 +9,8 @@ namespace Elo_fotbalek.Models
     {
         public IOrderedEnumerable<Player> Players { get; set; }
 
+        public IOrderedEnumerable<Player> NonRegulars { get; set; }
+
         public IOrderedEnumerable<Match> Matches { get; set; }
     }
 }

@@ -10,6 +10,7 @@ using Elo_fotbalek.Models;
 using Elo_fotbalek.Storage;
 using Elo_fotbalek.TeamGenerator;
 using Elo_fotbalek.TrendCalculator;
+using Elo_fotbalek.Utils;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Microsoft.WindowsAzure.Storage;
@@ -36,15 +37,33 @@ namespace Elo_fotbalek.Controllers
             this.trendCalculator = trendCalculator;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string sortOrder)
         {
             var players = await this.blobClient.GetPlayers();
             var matches = await this.blobClient.GetMatches();
 
+            var regulars = players.Where(x => x.AmountOfMissedGames < 5).ToList();
+            var nonRegulars = players.Where(x => x.AmountOfMissedGames >= 5).ToList();
+
+            IOrderedEnumerable<Player> sortedPlayers;
+            switch (sortOrder)
+            {
+                case "summer":
+                    sortedPlayers = regulars.OrderByDescending(p => p.Elos.SummerElo);
+                    break;
+                case "winter":
+                    sortedPlayers = regulars.OrderByDescending(p => p.Elos.WinterElo);
+                    break;
+                default:
+                    sortedPlayers = regulars.OrderByDescending(p => p.Elo);
+                    break;
+            }
+            
             var screen = new HomeScreenModel()
             {
                 Matches = matches.OrderByDescending(m => m.Date),
-                Players = players.OrderByDescending(p => p.Elo)
+                Players = sortedPlayers,
+                NonRegulars = nonRegulars.OrderByDescending(p => p.AmountOfMissedGames)
             };
 
             return View(screen);
@@ -63,13 +82,15 @@ namespace Elo_fotbalek.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddMatchAndCalculateElo(string WinnerAmount, string LooserAmount, string Weight)
+        public async Task<IActionResult> AddMatchAndCalculateElo(string WinnerAmount, string LooserAmount, string Weight, string season)
         {
+            var enumSeason = Enum.Parse<Season>(season);
+
             Request.Form.TryGetValue("winner", out var winners);
             Request.Form.TryGetValue("looser", out var loosers);
 
-            var winnTeam = await this.modelCreator.CreateTeam(winners);
-            var loosTeam = await this.modelCreator.CreateTeam(loosers);
+            var winnTeam = await this.modelCreator.CreateTeam(winners, enumSeason);
+            var loosTeam = await this.modelCreator.CreateTeam(loosers, enumSeason);
 
             var match = new Match()
             {
@@ -78,7 +99,8 @@ namespace Elo_fotbalek.Controllers
                 LooserAmount = int.Parse(LooserAmount),
                 Winner = winnTeam,
                 Looser = loosTeam,
-                Weight = Weight == "BigMatch" ? 30 : 10
+                Weight = Weight == "BigMatch" ? 30 : 10,
+                Season = enumSeason
             };
 
             await this.blobClient.AddMatch(match);
@@ -86,7 +108,6 @@ namespace Elo_fotbalek.Controllers
             var eloResult = this.eloCalulator.CalculateFifaElo(match);
 
             await this.UpdatePlayersElo(eloResult, match);
-
 
             return RedirectToAction("Index");
         }
@@ -105,11 +126,17 @@ namespace Elo_fotbalek.Controllers
                 Id = Guid.NewGuid(),
                 Name = Name,
                 Elo = 1000,
+                Elos = new SeasonalElos()
+                {
+                    SummerElo = 1000,
+                    WinterElo = 1000
+                },
                 Trend = new TrendData()
                 {
                     Data = new Dictionary<DateTime, int>(),
                     Trend = Trend.STAY
-                }
+                },
+               AmountOfMissedGames = 0
             };
 
             await this.blobClient.AddPlayer(player);
@@ -128,19 +155,6 @@ namespace Elo_fotbalek.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        private async Task UpdatePlayersElo(EloResult eloResult)
-        {
-            var players = await this.blobClient.GetPlayers();
-
-            foreach (var individualResult in eloResult.GetResults())
-            {
-                var player = players.First(p => p.Id == individualResult.PlayerIdentifier.Value);
-                player.Elo = individualResult.RatingAfter;
-            }
-
-            await this.blobClient.UpdatePlayers(players);
-        }
-
         private async Task UpdatePlayersElo(FifaEloResult eloResult, Match match)
         {
             var players = await this.blobClient.GetPlayers();
@@ -148,7 +162,8 @@ namespace Elo_fotbalek.Controllers
             foreach (var player in match.Winner.Players)
             {
                 var newPlayerWinner = players.First(np => np.Id == player.Id);
-                newPlayerWinner.Elo += (int)eloResult.WinnerPointChange;
+                newPlayerWinner.UpdateElo((int)eloResult.WinnerPointChange, match.Season);
+                newPlayerWinner.Elo = Utils.Util.CountGeneralElo(newPlayerWinner.Elos);
                 newPlayerWinner.Trend = this.trendCalculator.CalculateTrend(player.Trend, match.Date, true);
 
                 if (newPlayerWinner.AmountOfWins == null)
@@ -164,12 +179,15 @@ namespace Elo_fotbalek.Controllers
                 {
                     newPlayerWinner.AmountOfWins.SmallMatches++;
                 }
+
+                newPlayerWinner.AmountOfMissedGames = 0;
             }
 
             foreach (var player in match.Looser.Players)
             {
                 var newPlayerLooser = players.First(np => np.Id == player.Id);
-                newPlayerLooser.Elo += (int)eloResult.LooserPointChange;
+                newPlayerLooser.UpdateElo((int)eloResult.LooserPointChange, match.Season);
+                newPlayerLooser.Elo = Utils.Util.CountGeneralElo(newPlayerLooser.Elos);
                 newPlayerLooser.Trend = this.trendCalculator.CalculateTrend(player.Trend, match.Date, false);
 
 
@@ -185,6 +203,18 @@ namespace Elo_fotbalek.Controllers
                 else
                 {
                     newPlayerLooser.AmountOfLooses.SmallMatches++;
+                }
+
+                newPlayerLooser.AmountOfMissedGames = 0;
+            }
+
+            var nonCommers = players.Where(x => x.AmountOfMissedGames != 0).ToList();
+            foreach (var nonCommer in nonCommers)
+            {
+                nonCommer.AmountOfMissedGames++;
+                if (nonCommer.AmountOfMissedGames >= 5)
+                {
+                    nonCommer.Trend.Trend = Trend.STAY;
                 }
             }
 
@@ -204,75 +234,15 @@ namespace Elo_fotbalek.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> GenerateTeamsResult()
+        public async Task<IActionResult> GenerateTeamsResult(string Season)
         {
+            var enumSeason = Enum.Parse<Season>(Season);
             Request.Form.TryGetValue("player", out var players);
-            var dummyTeam = await this.modelCreator.CreateTeam(players);
-            var generatorResults = this.teamGenerator.GenerateTeams(dummyTeam.Players);
+            var dummyTeam = await this.modelCreator.CreateTeam(players, enumSeason);
+            var generatorResults = this.teamGenerator.GenerateTeams(dummyTeam.Players, enumSeason);
 
             ViewData["GeneratedResults"] = generatorResults;
             return View("ShowTeamsResult");
-        }
-
-
-        public async Task<IActionResult> RecalculateToNewElo()
-        {
-            //reset to default value
-            var players = await this.blobClient.GetPlayers();
-
-            foreach (var player in players)
-            {
-                player.Elo = 1000;
-            }
-
-            await this.blobClient.UpdatePlayers(players);
-
-            var matches = await this.blobClient.GetMatches();
-
-            foreach (var match in matches.OrderBy(m => m.Date))
-            {
-                await this.blobClient.RemoveMatch(match);
-
-                var newPlayers = await this.blobClient.GetPlayers();
-
-                var teamElo = 0;
-                foreach (var player in match.Winner.Players)
-                {
-                    player.Elo = newPlayers.First(p => p.Id == player.Id).Elo;
-                    teamElo += player.Elo;
-                }
-
-                match.Winner.TeamElo = teamElo / match.Winner.Players.Count;
-
-                teamElo = 0;
-                foreach (var player in match.Looser.Players)
-                {
-                    player.Elo = newPlayers.First(p => p.Id == player.Id).Elo;
-                    teamElo += player.Elo;
-                }
-
-                match.Looser.TeamElo = teamElo / match.Looser.Players.Count;
-
-                await this.blobClient.AddMatch(match);
-
-                var eloResult = this.eloCalulator.CalculateFifaElo(match);
-
-                foreach (var player in match.Winner.Players)
-                {
-                    var newPlayerWinner = newPlayers.First(np => np.Id == player.Id);
-                    newPlayerWinner.Elo += (int) eloResult.WinnerPointChange;
-                }
-
-                foreach (var player in match.Looser.Players)
-                {
-                    var newPlayerLooser = newPlayers.First(np => np.Id == player.Id);
-                    newPlayerLooser.Elo += (int)eloResult.LooserPointChange;
-                }
-
-                await this.blobClient.UpdatePlayers(newPlayers);
-            }
-
-            return RedirectToAction("Index");
         }
     }
 }

@@ -8,6 +8,6 @@ namespace Elo_fotbalek.TeamGenerator
 {
     public interface ITeamGenerator
     {
-        List<GeneratorResult> GenerateTeams(List<Player> players);
+        List<GeneratorResult> GenerateTeams(List<Player> players, Season season);
     }
 }

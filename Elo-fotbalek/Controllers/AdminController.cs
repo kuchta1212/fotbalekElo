@@ -174,5 +174,66 @@ namespace Elo_fotbalek.Controllers
 
             return RedirectToAction("Index", "Home");
         }
+
+        public async Task<IActionResult> IntroduceSeasonalElo()
+        {
+            var players = await this.blobClient.GetPlayers();
+
+            foreach (var player in players)
+            {
+                player.Elos = new SeasonalElos
+                {
+                    SummerElo = player.Elo,
+                    WinterElo = 1000
+                };
+            }
+
+            await this.blobClient.UpdatePlayers(players);
+
+            return RedirectToAction("Index", "Home");
+        }
+
+        public async Task<IActionResult> CalculateMissingMatches()
+        {
+            var players = await this.blobClient.GetPlayers();
+            var matches = await this.blobClient.GetMatches();
+
+            var sortedMatches = matches.OrderBy(x => x.Date);
+            foreach (var match in sortedMatches)
+            {
+                foreach (var player in players)
+                {
+                    if (!match.Winner.Players.Contains(player) && !match.Looser.Players.Contains(player))
+                    {
+                        player.AmountOfMissedGames++;
+                    }
+                    else
+                    {
+                        player.AmountOfMissedGames = 0;
+                    }
+                }    
+            }
+
+            await this.blobClient.UpdatePlayers(players);
+
+            return RedirectToAction("Index", "Home");
+        }
+
+        public async Task<IActionResult> ReCalculateTrend()
+        {
+            var players = await this.blobClient.GetPlayers();
+
+            foreach (var player in players)
+            {
+                if (player.AmountOfMissedGames >= 5)
+                {
+                    player.Trend.Trend = Trend.STAY;
+                }
+            }
+
+            await this.blobClient.UpdatePlayers(players);
+
+            return RedirectToAction("Index", "Home");
+        }
     }
 }

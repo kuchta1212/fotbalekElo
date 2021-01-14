@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Primitives;
 
 namespace Elo_fotbalek.Models
 {
-    public interface IModelCreator
+    public enum Season
     {
-        Task<Team> CreateTeam(StringValues values, Season season);
+        [Description("Léto")]
+        Summer,
+
+        [Description("Zima")]
+        Winter
     }
 }

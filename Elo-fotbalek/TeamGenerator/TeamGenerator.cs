@@ -12,12 +12,14 @@ namespace Elo_fotbalek.TeamGenerator
         private List<Player> allPlayers;
         private int amountOfPlayers;
         private int totalAmountOfPlayers;
+        private Season season;
 
-        public List<GeneratorResult> GenerateTeams(List<Player> players)
+        public List<GeneratorResult> GenerateTeams(List<Player> players, Season season)
         {
             this.allPlayers = players;
             this.totalAmountOfPlayers = this.allPlayers.Count;
             this.amountOfPlayers = this.allPlayers.Count / 2;
+            this.season = season;
 
             this.Generate(0, 0, new List<Player>());
 
@@ -35,13 +37,13 @@ namespace Elo_fotbalek.TeamGenerator
                 if (orderedResultList.ContainsKey(eloDiff))
                 {
                     orderedResultList.TryGetValue(eloDiff, out var value);
-                    value.Add(new GeneratorResult() {TeamOne = firstTeam, TeamTwo = secondTeam, EloDiff = eloDiff});
+                    value.Add(new GeneratorResult() {TeamOne = firstTeam, TeamTwo = secondTeam, EloDiff = eloDiff, Season = this.season});
                 }
                 else
                 {
                     var list = new List<GeneratorResult>
                     {
-                        new GeneratorResult() {TeamOne = firstTeam, TeamTwo = secondTeam, EloDiff = eloDiff}
+                        new GeneratorResult() {TeamOne = firstTeam, TeamTwo = secondTeam, EloDiff = eloDiff, Season = this.season}
                     };
                     orderedResultList.Add(eloDiff, list);
                 }
@@ -56,7 +58,7 @@ namespace Elo_fotbalek.TeamGenerator
             return new Team()
             {
                 Players = players,
-                TeamElo = players.ToList().Sum(x => x.Elo) / players.ToList().Count
+                TeamElo = players.ToList().Sum(x => x.GetSeasonalElo(this.season)) / players.ToList().Count
             };
         }
 
@@ -80,7 +82,7 @@ namespace Elo_fotbalek.TeamGenerator
                         this.result.Add(new Team()
                         {
                             Players = tmp.ToList(),
-                            TeamElo = tmp.ToList().Sum(x => x.Elo) / tmp.ToList().Count
+                            TeamElo = tmp.ToList().Sum(x => x.GetSeasonalElo(this.season)) / tmp.ToList().Count
                         });
                     }
 

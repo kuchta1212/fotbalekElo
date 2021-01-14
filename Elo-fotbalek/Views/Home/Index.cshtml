@@ -2,6 +2,7 @@
     ViewData["Title"] = "Elo - Fotbálek";
 }
 @using System.Text
+@using Elo_fotbalek.Utils
 @model HomeScreenModel
 
 
@@ -11,13 +12,15 @@
         <h2>Pořadí</h2>
         <table class="table">
             <thead>
-                <tr>
-                    <th>Jméno</th>
-                    <th/>
-                    <th/>
-                    <th/>
-                    <th>Elo</th>
-                </tr>
+            <tr>
+                <th>Jméno</th>
+                <th />
+                <th />
+                <th />
+                <th><a asp-action="Index" asp-route-sortOrder="default">Elo</a></th>
+                <th><a asp-action="Index" asp-route-sortOrder="summer">Letní Elo</a></th>
+                <th><a asp-action="Index" asp-route-sortOrder="winter">Zimní Elo</a></th>
+            </tr>
             </thead>
             <tbody>
             @foreach (var player in Model.Players) {
@@ -44,6 +47,56 @@
                     <td>
                         <h5>@Html.DisplayFor(modelItem => player.Elo)</h5>
                     </td>
+                    <td>
+                        <h7>@Html.DisplayFor(modelItem => player.Elos.SummerElo)</h7>
+                    </td>
+                    <td>
+                        <h7>@Html.DisplayFor(modelItem => player.Elos.WinterElo)</h7>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+        <h2>Lemry líný</h2>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Jméno</th>
+                <th />
+                <th />
+                <th />
+                <th>Elo</th>
+                <th>Kolik zápasů se fláká</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var player in Model.NonRegulars) {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => player.Name)
+                    </td>
+                    <td>
+                        @if (player.Trend.Trend == Trend.UP)
+                        {
+                            <img src="images/icons/up.png" />
+                        }
+                        else if (player.Trend.Trend == Trend.DOWN)
+                        {
+                            <img src="images/icons/down.png" />
+                        }
+                    </td>
+                    <td class="text-success">
+                        @Html.Raw(player.AmountOfWins)
+                    </td>
+                    <td class="text-danger">
+                        @Html.Raw(player.AmountOfLooses)
+                    </td>
+                    <td>
+                        <h7>@Html.DisplayFor(modelItem => player.Elo)</h7>
+                    </td>
+                    <td>
+                        <h5>@Html.DisplayFor(modelItem => player.AmountOfMissedGames)</h5>
+                    </td>
                 </tr>
             }
             </tbody>
@@ -57,6 +110,7 @@
                 <div class="card-body">
                     <h5 class="card-title">@match.Date.ToShortDateString()  @match.Score</h5>
                     <h6 class="card-subtitle mb-2 text-muted">Typ zápasu(Váha): @match.WeighInStr</h6>
+                    <h6 class="card-subtitle mb-2 text-muted">Sezóna: @match.Season.ToFriendlyString() </h6>
                     <h6 class="card-subtitle mb-2 text-muted">Vítězové - Team Elo: @match.Winner.TeamElo</h6>
                     @{ var sb = new StringBuilder();}
                     @foreach (var p in match.Winner.Players)

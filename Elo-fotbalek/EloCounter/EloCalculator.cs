@@ -16,13 +16,13 @@ namespace Elo_fotbalek.EloCounter
             var winners = eloMatch.AddTeam(new EloTeam(true));
             foreach (var winnerPlayer in match.Winner.Players)
             {
-                eloMatch.AddPlayerToTeam(winners, new EloPlayer(new EloPlayerIdentifier(winnerPlayer.Id), winnerPlayer.Elo));
+                eloMatch.AddPlayerToTeam(winners, new EloPlayer(new EloPlayerIdentifier(winnerPlayer.Id), winnerPlayer.GetSeasonalElo(match.Season)));
             }
 
             var loosers = eloMatch.AddTeam(new EloTeam(false));
             foreach (var looserPlayer in match.Looser.Players)
             {
-                eloMatch.AddPlayerToTeam(loosers, new EloPlayer(new EloPlayerIdentifier(looserPlayer.Id), looserPlayer.Elo));
+                eloMatch.AddPlayerToTeam(loosers, new EloPlayer(new EloPlayerIdentifier(looserPlayer.Id), looserPlayer.GetSeasonalElo(match.Season)));
             }
 
             return eloMatch.Calculate();

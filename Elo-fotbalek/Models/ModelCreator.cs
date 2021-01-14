@@ -16,7 +16,7 @@ namespace Elo_fotbalek.Models
             this.blobClient = blobClient;
         }
 
-        public async Task<Team> CreateTeam(StringValues values)
+        public async Task<Team> CreateTeam(StringValues values, Season season)
         {
             var teamElo = 0;
             var players = await this.blobClient.GetPlayers();
@@ -32,7 +32,7 @@ namespace Elo_fotbalek.Models
                 if (player != null)
                 {
                     team.Players.Add(player);
-                    teamElo += player.Elo;
+                    teamElo += player.GetSeasonalElo(season);
                 }
             }
 

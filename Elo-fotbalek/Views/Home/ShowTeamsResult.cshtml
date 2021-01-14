@@ -24,7 +24,7 @@
                             @Html.DisplayFor(modelItem => player.Name)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => player.Elo)
+                            @player.GetSeasonalElo(generatedResult.Season)
                         </td>
                     </tr>
                 }
@@ -48,7 +48,7 @@
                             @Html.DisplayFor(modelItem => player.Name)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => player.Elo)
+                            @player.GetSeasonalElo(generatedResult.Season)
                         </td>
                     </tr>
                 }

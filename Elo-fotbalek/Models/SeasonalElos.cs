@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Primitives;
 
 namespace Elo_fotbalek.Models
 {
-    public interface IModelCreator
+    public class SeasonalElos
     {
-        Task<Team> CreateTeam(StringValues values, Season season);
+        public int SummerElo { get; set; }
+
+        public int WinterElo { get; set; }
     }
 }

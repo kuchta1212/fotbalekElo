@@ -15,12 +15,17 @@ namespace Elo_fotbalek.Models
 
         public int Elo { get; set; }
 
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public SeasonalElos Elos { get; set; }
+
         public MatchCounter AmountOfWins { get; set; }
 
         public MatchCounter AmountOfLooses { get; set; }
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public TrendData Trend { get; set; }
+
+        public int AmountOfMissedGames { get; set; }
 
         public override string ToString()
         {
@@ -46,5 +51,20 @@ namespace Elo_fotbalek.Models
         {
             return Id.GetHashCode();
         }
+
+        public void UpdateElo(int change, Season matchSeason)
+        {
+            if (matchSeason == Season.Summer)
+            {
+                this.Elos.SummerElo += change;
+            }
+            else
+            {
+                this.Elos.WinterElo += change;
+            }
+        }
+
+        public int GetSeasonalElo(Season season) => season == Season.Summer ? this.Elos.SummerElo : this.Elos.WinterElo;
+       
     }
 }
