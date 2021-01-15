@@ -245,7 +245,10 @@ namespace Elo_fotbalek.Controllers
             foreach (var nonCommer in nonCommers)
             {
                 nonCommer.AmountOfMissedGames++;
+                nonCommer.Trend = this.trendCalculator.RemoveLatestAndCalculate(nonCommer.Trend);
             }
+
+            await this.blobClient.UpdatePlayers(players);
         }
 
 

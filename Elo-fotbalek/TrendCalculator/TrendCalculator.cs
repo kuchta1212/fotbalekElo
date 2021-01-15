@@ -27,6 +27,15 @@ namespace Elo_fotbalek.TrendCalculator
             return trendData;
         }
 
+        public TrendData RemoveLatestAndCalculate(TrendData trendData)
+        {
+            var min = trendData.Data.Min(d => d.Key);
+            trendData.Data.Remove(min);
+            trendData.Trend = this.ReCalculate(trendData.Data);
+
+            return trendData;
+        }
+
         private Trend ReCalculate(Dictionary<DateTime, int> data)
         {
             var score = data.Sum(x => x.Value);
