@@ -106,8 +106,9 @@ namespace Elo_fotbalek.Controllers
             await this.blobClient.AddMatch(match);
 
             var eloResult = this.eloCalulator.CalculateFifaElo(match);
-
+            
             await this.UpdatePlayersElo(eloResult, match);
+            await this.PunishNonCommers(match);
 
             return RedirectToAction("Index");
         }
@@ -153,6 +154,30 @@ namespace Elo_fotbalek.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GenerateTeams()
+        {
+            var players = await this.blobClient.GetPlayers();
+
+            players.Add(new Player() { Id = Guid.Empty, Name = "---" });
+            var selectedList = new SelectList(players.OrderBy(p => p.Name), "Id", "Name");
+
+            ViewData["Players"] = selectedList;
+            return View("ShowTeams");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GenerateTeamsResult(string Season)
+        {
+            var enumSeason = Enum.Parse<Season>(Season);
+            Request.Form.TryGetValue("player", out var players);
+            var dummyTeam = await this.modelCreator.CreateTeam(players, enumSeason);
+            var generatorResults = this.teamGenerator.GenerateTeams(dummyTeam.Players, enumSeason);
+
+            ViewData["GeneratedResults"] = generatorResults;
+            return View("ShowTeamsResult");
         }
 
         private async Task UpdatePlayersElo(FifaEloResult eloResult, Match match)
@@ -208,41 +233,21 @@ namespace Elo_fotbalek.Controllers
                 newPlayerLooser.AmountOfMissedGames = 0;
             }
 
-            var nonCommers = players.Where(x => x.AmountOfMissedGames != 0).ToList();
-            foreach (var nonCommer in nonCommers)
-            {
-                nonCommer.AmountOfMissedGames++;
-                if (nonCommer.AmountOfMissedGames >= 5)
-                {
-                    nonCommer.Trend.Trend = Trend.STAY;
-                }
-            }
-
             await this.blobClient.UpdatePlayers(players);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GenerateTeams()
+        private async Task PunishNonCommers(Match match)
         {
             var players = await this.blobClient.GetPlayers();
+            var todaysPlayers = match.Looser.Players.Union(match.Winner.Players);
 
-            players.Add(new Player() { Id = Guid.Empty, Name = "---" });
-            var selectedList = new SelectList(players.OrderBy(p => p.Name), "Id", "Name");
-
-            ViewData["Players"] = selectedList;
-            return View("ShowTeams");
+            var nonCommers = players.Except(todaysPlayers);
+            foreach (var nonCommer in nonCommers)
+            {
+                nonCommer.AmountOfMissedGames++;
+            }
         }
 
-        [HttpPost]
-        public async Task<IActionResult> GenerateTeamsResult(string Season)
-        {
-            var enumSeason = Enum.Parse<Season>(Season);
-            Request.Form.TryGetValue("player", out var players);
-            var dummyTeam = await this.modelCreator.CreateTeam(players, enumSeason);
-            var generatorResults = this.teamGenerator.GenerateTeams(dummyTeam.Players, enumSeason);
 
-            ViewData["GeneratedResults"] = generatorResults;
-            return View("ShowTeamsResult");
-        }
     }
 }
