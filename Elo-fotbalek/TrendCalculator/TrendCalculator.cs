@@ -27,11 +27,15 @@ namespace Elo_fotbalek.TrendCalculator
             return trendData;
         }
 
-        public TrendData RemoveLatestAndCalculate(TrendData trendData)
+        public TrendData RemoveLatest(TrendData trendData)
         {
-            var min = trendData.Data.Min(d => d.Key);
-            trendData.Data.Remove(min);
-            trendData.Trend = this.ReCalculate(trendData.Data);
+            if (trendData.Data.Any())
+            {
+                var min = trendData.Data.Min(d => d.Key);
+                trendData.Data.Remove(min);
+            }
+            
+            trendData.Trend = Trend.STAY;
 
             return trendData;
         }

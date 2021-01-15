@@ -10,6 +10,6 @@ namespace Elo_fotbalek.TrendCalculator
     {
         TrendData CalculateTrend(TrendData data, DateTime matchDate, bool isWinner);
 
-        TrendData RemoveLatestAndCalculate(TrendData data);
+        TrendData RemoveLatest(TrendData data);
     }
 }

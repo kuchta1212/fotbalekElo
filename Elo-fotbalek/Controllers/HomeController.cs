@@ -94,7 +94,7 @@ namespace Elo_fotbalek.Controllers
 
             var match = new Match()
             {
-                Date = DateTime.Today,
+                Date = DateTime.Now,
                 WinnerAmount = int.Parse(WinnerAmount),
                 LooserAmount = int.Parse(LooserAmount),
                 Winner = winnTeam,
@@ -245,7 +245,7 @@ namespace Elo_fotbalek.Controllers
             foreach (var nonCommer in nonCommers)
             {
                 nonCommer.AmountOfMissedGames++;
-                nonCommer.Trend = this.trendCalculator.RemoveLatestAndCalculate(nonCommer.Trend);
+                nonCommer.Trend = this.trendCalculator.RemoveLatest(nonCommer.Trend);
             }
 
             await this.blobClient.UpdatePlayers(players);
