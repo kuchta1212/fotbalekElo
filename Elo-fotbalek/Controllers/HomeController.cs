@@ -11,6 +11,7 @@ using Elo_fotbalek.Storage;
 using Elo_fotbalek.TeamGenerator;
 using Elo_fotbalek.TrendCalculator;
 using Elo_fotbalek.Utils;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Microsoft.WindowsAzure.Storage;
@@ -36,6 +37,7 @@ namespace Elo_fotbalek.Controllers
             this.teamGenerator = teamGenerator;
             this.trendCalculator = trendCalculator;
         }
+
 
         public async Task<IActionResult> Index(string sortOrder)
         {
@@ -70,6 +72,7 @@ namespace Elo_fotbalek.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> AddMatch()
         {
             var players = await this.blobClient.GetPlayers();
@@ -114,6 +117,7 @@ namespace Elo_fotbalek.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public IActionResult AddPlayer()
         {
             return View("AddPlayer");

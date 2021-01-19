@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Elo_fotbalek.EloCounter;
 using Elo_fotbalek.Models;
 using Elo_fotbalek.Storage;
 using Elo_fotbalek.TrendCalculator;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Elo_fotbalek.Controllers
@@ -24,25 +27,79 @@ namespace Elo_fotbalek.Controllers
             this.trendCalculator = trendCalculator;
         }
 
+        [HttpGet]
+        public IActionResult Login()
+        {
+            return View(new LoginModel());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Login(LoginModel user)
+        {
+            var passwd = (await this.blobClient.GetUsers()).FirstOrDefault(u => u.Name == "Admin")?.Password;
+
+            if (!(passwd is null) && user.Password == passwd)
+            {
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, "Admin"),
+                    new Claim("FullName", "Admin"),
+                    new Claim(ClaimTypes.Role, "Administrator")
+                };
+
+                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+                var authProperties = new AuthenticationProperties
+                {
+
+                    RedirectUri = "/Home/Index"
+
+                };
+
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(claimsIdentity),
+                    authProperties);
+
+
+                return RedirectToAction("Index", "Home");
+            }
+
+            return Redirect("/Accout/Error");
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> LogOut()
+        {
+            await HttpContext.SignOutAsync();
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        public bool IsLogedIn()
+        {
+           return HttpContext.User?.Identity?.Name != null;
+        }
+
         public async Task<IActionResult> RecalculateToNewElo()
         {
             //reset to default value
-            var players = await this.blobClient.GetPlayers();
+            var players = await blobClient.GetPlayers();
 
             foreach (var player in players)
             {
                 player.Elo = 1000;
             }
 
-            await this.blobClient.UpdatePlayers(players);
+            await blobClient.UpdatePlayers(players);
 
-            var matches = await this.blobClient.GetMatches();
+            var matches = await blobClient.GetMatches();
 
             foreach (var match in matches.OrderBy(m => m.Date))
             {
-                await this.blobClient.RemoveMatch(match);
+                await blobClient.RemoveMatch(match);
 
-                var newPlayers = await this.blobClient.GetPlayers();
+                var newPlayers = await blobClient.GetPlayers();
 
                 var teamElo = 0;
                 foreach (var player in match.Winner.Players)
@@ -62,9 +119,9 @@ namespace Elo_fotbalek.Controllers
 
                 match.Looser.TeamElo = teamElo / match.Looser.Players.Count;
 
-                await this.blobClient.AddMatch(match);
+                await blobClient.AddMatch(match);
 
-                var eloResult = this.eloCalulator.CalculateFifaElo(match);
+                var eloResult = eloCalulator.CalculateFifaElo(match);
 
                 foreach (var player in match.Winner.Players)
                 {
@@ -78,7 +135,7 @@ namespace Elo_fotbalek.Controllers
                     newPlayerLooser.Elo += (int)eloResult.LooserPointChange;
                 }
 
-                await this.blobClient.UpdatePlayers(newPlayers);
+                await blobClient.UpdatePlayers(newPlayers);
             }
 
             return RedirectToAction("Index", "Home");
@@ -86,9 +143,9 @@ namespace Elo_fotbalek.Controllers
 
         public async Task<IActionResult> CountWictoriesAndLooses()
         {
-            var players = await this.blobClient.GetPlayers();
+            var players = await blobClient.GetPlayers();
 
-            var matches = await this.blobClient.GetMatches();
+            var matches = await blobClient.GetMatches();
 
             foreach (var match in matches)
             {
@@ -130,21 +187,21 @@ namespace Elo_fotbalek.Controllers
                 
             }
 
-            await this.blobClient.UpdatePlayers(players);
+            await blobClient.UpdatePlayers(players);
 
             return RedirectToAction("Index", "Home");
         }
 
         public async Task<IActionResult> AddTrendData()
         {
-            var matches = await this.blobClient.GetMatches();
+            var matches = await blobClient.GetMatches();
             var matchesOrdered = matches.OrderByDescending(m => m.Date);
 
-            var players = await this.blobClient.GetPlayers();
+            var players = await blobClient.GetPlayers();
 
             foreach (var player in players)
             {
-                player.Trend = new TrendData()
+                player.Trend = new TrendData
                 {
                     Data = new Dictionary<DateTime, int>(),
                     Trend = Trend.STAY
@@ -158,26 +215,26 @@ namespace Elo_fotbalek.Controllers
                     {
                         if (match.Winner.Players.Contains(player))
                         {
-                            player.Trend = this.trendCalculator.CalculateTrend(player.Trend, match.Date, true);
+                            player.Trend = trendCalculator.CalculateTrend(player.Trend, match.Date, true);
                             matchCount++;
                         }
                         else if (match.Looser.Players.Contains(player))
                         {
-                            player.Trend = this.trendCalculator.CalculateTrend(player.Trend, match.Date, false);
+                            player.Trend = trendCalculator.CalculateTrend(player.Trend, match.Date, false);
                             matchCount++;
                         }
                     }                   
                 }
             }
 
-            await this.blobClient.UpdatePlayers(players);
+            await blobClient.UpdatePlayers(players);
 
             return RedirectToAction("Index", "Home");
         }
 
         public async Task<IActionResult> IntroduceSeasonalElo()
         {
-            var players = await this.blobClient.GetPlayers();
+            var players = await blobClient.GetPlayers();
 
             foreach (var player in players)
             {
@@ -188,15 +245,15 @@ namespace Elo_fotbalek.Controllers
                 };
             }
 
-            await this.blobClient.UpdatePlayers(players);
+            await blobClient.UpdatePlayers(players);
 
             return RedirectToAction("Index", "Home");
         }
 
         public async Task<IActionResult> CalculateMissingMatches()
         {
-            var players = await this.blobClient.GetPlayers();
-            var matches = await this.blobClient.GetMatches();
+            var players = await blobClient.GetPlayers();
+            var matches = await blobClient.GetMatches();
 
             var sortedMatches = matches.OrderBy(x => x.Date);
             foreach (var match in sortedMatches)
@@ -214,14 +271,14 @@ namespace Elo_fotbalek.Controllers
                 }    
             }
 
-            await this.blobClient.UpdatePlayers(players);
+            await blobClient.UpdatePlayers(players);
 
             return RedirectToAction("Index", "Home");
         }
 
         public async Task<IActionResult> ReCalculateTrend()
         {
-            var players = await this.blobClient.GetPlayers();
+            var players = await blobClient.GetPlayers();
 
             foreach (var player in players)
             {
@@ -231,7 +288,7 @@ namespace Elo_fotbalek.Controllers
                 }
             }
 
-            await this.blobClient.UpdatePlayers(players);
+            await blobClient.UpdatePlayers(players);
 
             return RedirectToAction("Index", "Home");
         }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Elo_fotbalek.Account;
 using Elo_fotbalek.Configuration;
 using Elo_fotbalek.Models;
 using Microsoft.Extensions.Configuration;
@@ -111,6 +112,22 @@ namespace Elo_fotbalek.Storage
             catch (Exception)
             {
                 return new List<Match>();
+            }
+        }
+
+        public async Task<List<MyUser>> GetUsers()
+        {
+            try
+            {
+                var blobName = this.options.Value.UsersBlobName;
+                var blob = await this.GetBlob(blobName);
+
+                var usersJson = await blob.DownloadTextAsync();
+                return JsonConvert.DeserializeObject<List<MyUser>>(usersJson);
+            }
+            catch (Exception)
+            {
+                return new List<MyUser>();
             }
         }
 

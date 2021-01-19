@@ -16,5 +16,7 @@ namespace Elo_fotbalek.Configuration
         public string PlayersBlobName { get; set; }
 
         public string MatchesBlobName { get; set; }
+
+        public string UsersBlobName { get; set; }
     }
 }

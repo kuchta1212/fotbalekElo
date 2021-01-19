@@ -26,6 +26,14 @@
                 </li>
             </ul>
         </div>
+        
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                </li>
+            </ul>
+            <partial name="_LoginPartial" />
+        </div>
     </nav>
 
     <div class="container body-content">
@@ -44,3 +52,29 @@
     @RenderSection("Scripts", required: false)
 </body>
 </html>
+
+<script type="text/javascript">
+    $(function () {
+        var success = function (data) {
+            if (!data) {
+                document.getElementById('LogOut').style.visibility = "hidden";
+                document.getElementById('LogIn').style.visibility = "visible";
+            } else {
+                document.getElementById('LogOut').style.visibility = "visible";
+                document.getElementById('LogIn').style.visibility = "hidden";
+            }
+
+        };
+        var error = function (error) {
+            console.log(error);
+        };
+        $.ajax({
+            url: "Admin/IsLogedIn",
+            type: "GET",
+            success: success,
+            error: error
+        });
+    });
+
+
+</script>

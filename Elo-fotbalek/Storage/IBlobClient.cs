@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Elo_fotbalek.Account;
 using Elo_fotbalek.Models;
 
 namespace Elo_fotbalek.Storage
@@ -21,5 +22,7 @@ namespace Elo_fotbalek.Storage
         Task RemoveMatch(Match match);
 
         Task<List<Match>> GetMatches();
+
+        Task<List<MyUser>> GetUsers();
     }
 }
