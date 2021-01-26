@@ -16,7 +16,7 @@ namespace Elo_fotbalek.Models
             this.blobClient = blobClient;
         }
 
-        public async Task<Team> CreateTeam(StringValues values, Season season)
+        public async Task<Team> CreateTeam(IEnumerable<string> playerIds, Season season)
         {
             var teamElo = 0;
             var players = await this.blobClient.GetPlayers();
@@ -25,8 +25,8 @@ namespace Elo_fotbalek.Models
                 Players = new List<Player>()
             };
 
-            var ids = values.Where(v => Guid.Parse(v) != Guid.Empty);
-            foreach (var id in ids)
+
+            foreach (var id in playerIds)
             {
                 var player = players.FirstOrDefault(x => x.Id == Guid.Parse(id));
                 if (player != null)

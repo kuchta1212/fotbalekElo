@@ -9,72 +9,96 @@
 <h4>Účastníci</h4>
 <hr />
 <form asp-action="GenerateTeamsResult">
-    <div class="form-group col-md-3">
+    <div class="form-group col-md-5">
         <label asp-for="Season" class="control-label">Sezóna</label>
         <select asp-for="Season" class="form-control">
             <option value="Summer">Léto</option>
             <option value="Winter">Zima</option>
         </select>
     </div>
-    <div class="form-group col-md-4">
+    <div class="form-group col-md-5">
         <label for="player" class="control-label">Hráč</label>
-        <select name="player" asp-items=@(ViewData["Players"] as SelectList)></select>
+        <select id="player-one" onchange="playerSelected(this)" name="player" asp-items=@(ViewData["Players"] as SelectList)></select>
+        <label id="substituted-label-one" for="substituted-one" style="visibility: hidden" class="control-label">Náhradník</label>
+        <select id="substituted-one" style="visibility: hidden" name="substitude" asp-items=@(ViewData["Substitutes"] as SelectList)></select>
     </div>
-    <div class="form-group col-md-4">
+    <div class="form-group col-md-5">
         <label for="player" class="control-label">Hráč</label>
-        <select name="player" asp-items=@(ViewData["Players"] as SelectList)></select>
+        <select id="player-two" onchange="playerSelected(this)" name="player" asp-items=@(ViewData["Players"] as SelectList)></select>
+        <label id="substituted-label-two" for="substituted-one" style="visibility: hidden" class="control-label">Náhradník</label>
+        <select id="substituted-two" style="visibility: hidden" name="substitude" asp-items=@(ViewData["Substitutes"] as SelectList)></select>
     </div>
-    <div class="form-group col-md-4">
+    <div class="form-group col-md-5">
         <label for="player" class="control-label">Hráč</label>
-        <select name="player" asp-items=@(ViewData["Players"] as SelectList)></select>
+        <select id="player-three" onchange="playerSelected(this)" name="player" asp-items=@(ViewData["Players"] as SelectList)></select>
+        <label id="substituted-label-three" for="substituted-one" style="visibility: hidden" class="control-label">Náhradník</label>
+        <select id="substituted-three" style="visibility: hidden" name="substitude" asp-items=@(ViewData["Substitutes"] as SelectList)></select>
     </div>
-    <div class="form-group col-md-4">
+    <div class="form-group col-md-5">
         <label for="player" class="control-label">Hráč</label>
-        <select name="player" asp-items=@(ViewData["Players"] as SelectList)></select>
+        <select id="player-four" onchange="playerSelected(this)" name="player" asp-items=@(ViewData["Players"] as SelectList)></select>
+        <label id="substituted-label-four" for="substituted-one" style="visibility: hidden" class="control-label">Náhradník</label>
+        <select id="substituted-four" style="visibility: hidden" name="substitude" asp-items=@(ViewData["Substitutes"] as SelectList)></select>
     </div>
-    <div class="form-group col-md-4">
+    <div class="form-group col-md-5">
         <label for="player" class="control-label">Hráč</label>
-        <select name="player" asp-items=@(ViewData["Players"] as SelectList)></select>
+        <select id="player-five" onchange="playerSelected(this)" name="player" asp-items=@(ViewData["Players"] as SelectList)></select>
+        <label id="substituted-label-five" for="substituted-one" style="visibility: hidden" class="control-label">Náhradník</label>
+        <select id="substituted-five" style="visibility: hidden" name="substitude" asp-items=@(ViewData["Substitutes"] as SelectList)></select>
     </div>
-    <div class="form-group col-md-4">
+    <div class="form-group col-md-5">
         <label for="player" class="control-label">Hráč</label>
-        <select name="player" asp-items=@(ViewData["Players"] as SelectList)></select>
+        <select id="player-six" onchange="playerSelected(this)" name="player" asp-items=@(ViewData["Players"] as SelectList)></select>
+        <label id="substituted-label-six" for="substituted-one" style="visibility: hidden" class="control-label">Náhradník</label>
+        <select id="substituted-six" style="visibility: hidden" name="substitude" asp-items=@(ViewData["Substitutes"] as SelectList)></select>
     </div>
-    <div class="form-group col-md-4">
+    <div class="form-group col-md-5">
         <label for="player" class="control-label">Hráč</label>
-        <select name="player" asp-items=@(ViewData["Players"] as SelectList)></select>
+        <select id="player-seven" onchange="playerSelected(this)" name="player" asp-items=@(ViewData["Players"] as SelectList)></select>
+        <label id="substituted-label-seven" for="substituted-one" style="visibility: hidden" class="control-label">Náhradník</label>
+        <select id="substituted-seven" style="visibility: hidden" name="substitude" asp-items=@(ViewData["Substitutes"] as SelectList)></select>
     </div>
-    <div class="form-group col-md-4">
+    <div class="form-group col-md-5">
         <label for="player" class="control-label">Hráč</label>
-        <select name="player" asp-items=@(ViewData["Players"] as SelectList)></select>
+        <select id="player-eight" onchange="playerSelected(this)" name="player" asp-items=@(ViewData["Players"] as SelectList)></select>
+        <label id="substituted-label-eight" for="substituted-one" style="visibility: hidden" class="control-label">Náhradník</label>
+        <select id="substituted-eight" style="visibility: hidden" name="substitude" asp-items=@(ViewData["Substitutes"] as SelectList)></select>
     </div>
-    <div class="form-group col-md-4">
+    <div class="form-group col-md-5">
         <label for="player" class="control-label">Hráč</label>
-        <select name="player" asp-items=@(ViewData["Players"] as SelectList)></select>
+        <select id="player-nine" onchange="playerSelected(this)" name="player" asp-items=@(ViewData["Players"] as SelectList)></select>
+        <label id="substituted-label-nine" for="substituted-one" style="visibility: hidden" class="control-label">Náhradník</label>
+        <select id="substituted-nine" style="visibility: hidden" name="substitude" asp-items=@(ViewData["Substitutes"] as SelectList)></select>
     </div>
-    <div class="form-group col-md-4">
+    <div class="form-group col-md-5">
         <label for="player" class="control-label">Hráč</label>
-        <select name="player" asp-items=@(ViewData["Players"] as SelectList)></select>
+        <select id="player-ten" onchange="playerSelected(this)" name="player" asp-items=@(ViewData["Players"] as SelectList)></select>
+        <label id="substituted-label-ten" for="substituted-one" style="visibility: hidden" class="control-label">Náhradník</label>
+        <select id="substituted-ten" style="visibility: hidden" name="substitude" asp-items=@(ViewData["Substitutes"] as SelectList)></select>
     </div>
-    <div class="form-group col-md-4">
+    <div class="form-group col-md-5">
         <label for="player" class="control-label">Hráč</label>
-        <select name="player" asp-items=@(ViewData["Players"] as SelectList)></select>
+        <select id="player-eleven" onchange="playerSelected(this)" name="player" asp-items=@(ViewData["Players"] as SelectList)></select>
+        <label id="substituted-label-eleven" for="substituted-one" style="visibility: hidden" class="control-label">Náhradník</label>
+        <select id="substituted-eleven" style="visibility: hidden" name="substitude" asp-items=@(ViewData["Substitutes"] as SelectList)></select>
     </div>
-    <div class="form-group col-md-4">
+    <div class="form-group col-md-5">
         <label for="player" class="control-label">Hráč</label>
-        <select name="player" asp-items=@(ViewData["Players"] as SelectList)></select>
+        <select id="player-twelve" onchange="playerSelected(this)" name="player" asp-items=@(ViewData["Players"] as SelectList)></select>
+        <label id="substituted-label-twelve" for="substituted-one" style="visibility: hidden" class="control-label">Náhradník</label>
+        <select id="substituted-twelve" style="visibility: hidden" name="substitude" asp-items=@(ViewData["Substitutes"] as SelectList)></select>
     </div>
-    <div class="form-group col-md-4">
+    <div class="form-group col-md-5">
         <label for="player" class="control-label">Hráč</label>
-        <select name="player" asp-items=@(ViewData["Players"] as SelectList)></select>
+        <select id="player-thirteen" onchange="playerSelected(this)" name="player" asp-items=@(ViewData["Players"] as SelectList)></select>
+        <label id="substituted-label-thirteen" for="substituted-one" style="visibility: hidden" class="control-label">Náhradník</label>
+        <select id="substituted-thirteen" style="visibility: hidden" name="substitude" asp-items=@(ViewData["Substitutes"] as SelectList)></select>
     </div>
-    <div class="form-group col-md-4">
+    <div class="form-group col-md-5">
         <label for="player" class="control-label">Hráč</label>
-        <select name="player" asp-items=@(ViewData["Players"] as SelectList)></select>
-    </div>
-    <div class="form-group col-md-4">
-        <label for="player" class="control-label">Hráč</label>
-        <select name="player" asp-items=@(ViewData["Players"] as SelectList)></select>
+        <select id="player-fourteen" onchange="playerSelected(this)" name="player" asp-items=@(ViewData["Players"] as SelectList)></select>
+        <label id="substituted-label-fourteen" for="substituted-one" style="visibility: hidden" class="control-label">Náhradník</label>
+        <select id="substituted-fourteen" style="visibility: hidden" name="substitude" asp-items=@(ViewData["Substitutes"] as SelectList)></select>
     </div>
     <div class="form-group">
         <input type="submit" value="Doporuč sestavy" class="btn btn-default" />

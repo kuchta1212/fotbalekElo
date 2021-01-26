@@ -92,8 +92,8 @@ namespace Elo_fotbalek.Controllers
             Request.Form.TryGetValue("winner", out var winners);
             Request.Form.TryGetValue("looser", out var loosers);
 
-            var winnTeam = await this.modelCreator.CreateTeam(winners, enumSeason);
-            var loosTeam = await this.modelCreator.CreateTeam(loosers, enumSeason);
+            var winnTeam = await this.modelCreator.CreateTeam(winners.Where(v => Guid.Parse(v) != Guid.Empty), enumSeason);
+            var loosTeam = await this.modelCreator.CreateTeam(loosers.Where(v => Guid.Parse(v) != Guid.Empty), enumSeason);
 
             var match = new Match()
             {
@@ -165,20 +165,34 @@ namespace Elo_fotbalek.Controllers
         {
             var players = await this.blobClient.GetPlayers();
 
+            var substitudeList = new SelectList(players.OrderBy(p => p.Name), "Id", "Name");
             players.Add(new Player() { Id = Guid.Empty, Name = "---" });
-            var selectedList = new SelectList(players.OrderBy(p => p.Name), "Id", "Name");
+            players.Add(new Player() {Id = Guid.Empty, Name = "Náhradník"});
+            var playersList = new SelectList(players.OrderBy(p => p.Name), "Id", "Name");
 
-            ViewData["Players"] = selectedList;
+            ViewData["Players"] = playersList;
+            ViewData["Substitutes"] = substitudeList;
             return View("ShowTeams");
         }
 
         [HttpPost]
         public async Task<IActionResult> GenerateTeamsResult(string Season)
         {
-            var enumSeason = Enum.Parse<Season>(Season);
             Request.Form.TryGetValue("player", out var players);
-            var dummyTeam = await this.modelCreator.CreateTeam(players, enumSeason);
-            var generatorResults = this.teamGenerator.GenerateTeams(dummyTeam.Players, enumSeason);
+            Request.Form.TryGetValue("substitude", out var substitues);
+            
+            var playerIds = players.Where(v => Guid.Parse(v) != Guid.Empty);
+            var subsitudeIds = substitues.Where(v => Guid.Parse(v) != Guid.Empty);
+
+            var enumSeason = Enum.Parse<Season>(Season);
+
+            var dummyTeamPlayers = await this.modelCreator.CreateTeam(playerIds, enumSeason);
+            var dummyTeamSubstitudes = await this.modelCreator.CreateTeam(subsitudeIds, enumSeason);
+
+            dummyTeamSubstitudes.Players.ForEach(s => s.Name += "-Náhradník");
+            dummyTeamPlayers.Players.AddRange(dummyTeamSubstitudes.Players);
+
+            var generatorResults = this.teamGenerator.GenerateTeams(dummyTeamPlayers.Players, enumSeason);
 
             ViewData["GeneratedResults"] = generatorResults;
             return View("ShowTeamsResult");

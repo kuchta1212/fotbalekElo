@@ -8,6 +8,6 @@ namespace Elo_fotbalek.Models
 {
     public interface IModelCreator
     {
-        Task<Team> CreateTeam(StringValues values, Season season);
+        Task<Team> CreateTeam(IEnumerable<string> playerIds, Season season);
     }
 }
