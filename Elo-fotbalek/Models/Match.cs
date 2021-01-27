@@ -24,5 +24,7 @@ namespace Elo_fotbalek.Models
         public string WeighInStr => this.Weight == 30 ? "Velký zápas" : "Malý zápas";
 
         public Season Season { get; set; }
+
+        public string Hero { get; set; }
     }
 }

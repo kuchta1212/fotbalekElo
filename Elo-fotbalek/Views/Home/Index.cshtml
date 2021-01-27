@@ -126,6 +126,12 @@
                         sb1.Append(p.Name + "(" + p.Elo + ")");
                     }
                     <p class="card-text">@sb1.ToString()</p>
+
+                    @if (!string.IsNullOrEmpty(match.Hero))
+                    {
+                        <h6 class="card-subtitle mb-2 text-muted">Kapitán a trenér Jirka Luňák</h6>
+                        <p class="card-text">@match.Hero</p>
+                    }
                 </div>
             </div>
         }

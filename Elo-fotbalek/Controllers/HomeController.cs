@@ -85,7 +85,7 @@ namespace Elo_fotbalek.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddMatchAndCalculateElo(string WinnerAmount, string LooserAmount, string Weight, string season)
+        public async Task<IActionResult> AddMatchAndCalculateElo(string WinnerAmount, string LooserAmount, string Weight, string season, string hero)
         {
             var enumSeason = Enum.Parse<Season>(season);
 
@@ -95,6 +95,8 @@ namespace Elo_fotbalek.Controllers
             var winnTeam = await this.modelCreator.CreateTeam(winners.Where(v => Guid.Parse(v) != Guid.Empty), enumSeason);
             var loosTeam = await this.modelCreator.CreateTeam(loosers.Where(v => Guid.Parse(v) != Guid.Empty), enumSeason);
 
+            var heroName = (await this.blobClient.GetPlayers()).First(p => p.Id.Equals(Guid.Parse(hero))).Name;
+
             var match = new Match()
             {
                 Date = DateTime.Now,
@@ -103,7 +105,8 @@ namespace Elo_fotbalek.Controllers
                 Winner = winnTeam,
                 Looser = loosTeam,
                 Weight = Weight == "BigMatch" ? 30 : 10,
-                Season = enumSeason
+                Season = enumSeason,
+                Hero = heroName
             };
 
             await this.blobClient.AddMatch(match);

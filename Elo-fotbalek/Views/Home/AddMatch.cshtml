@@ -18,6 +18,8 @@
             <label asp-for="LooserAmount" class="control-label">Poražený</label>
             <input asp-for="LooserAmount" class="form-control" />
         </div>
+    </div>
+    <div class="row">
         <div class="form-group col-md-3">
             <label asp-for="Weight" class="control-label">Váha zápasu</label>
             <select asp-for="Weight" class="form-control">
@@ -31,6 +33,10 @@
                 <option value="Summer">Léto</option>
                 <option value="Winter">Zima</option>
             </select>
+        </div>
+        <div class="form-group col-md-3">
+            <label asp-for="Hero" class="control-label">Jirka Luňák, kapitán a trenér:</label>
+            <select asp-for="Hero" class="form-control" asp-items=@(ViewData["Players"] as SelectList)></select>
         </div>
     </div>
     <div class="row">
