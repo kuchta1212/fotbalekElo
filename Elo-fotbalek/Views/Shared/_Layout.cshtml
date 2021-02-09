@@ -6,6 +6,7 @@
     <title>@ViewData["Title"] - EloFotbálek</title>
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -80,13 +81,38 @@
     function playerSelected(select) {
         var id = select.getAttribute('id');
         var substitudeId = 'substituted-' + id.split('-')[1];
-        var substitudeLabelId = 'substituted-label-' + id.split('-')[1]; 
+        var substitudeLabelId = 'substituted-label-' + id.split('-')[1];
         document.getElementById(substitudeId).style.visibility = "hidden";
         document.getElementById(substitudeLabelId).style.visibility = "hidden";
         if (select.selectedOptions[0].text === "Náhradník") {
-            
+
             document.getElementById(substitudeId).style.visibility = "visible";
             document.getElementById(substitudeLabelId).style.visibility = "visible";
         }
     }
+
+    google.charts.load('current', { 'packages': ['corechart', 'line'] });
+    google.charts.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('date', 'X');
+        data.addColumn('number', 'Elo');
+
+        data.addRows(elos);
+
+        var options = {
+            hAxis: {
+                title: 'Čas'
+            },
+            vAxis: {
+                title: 'Elo'
+            },
+        };
+
+        var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+
+        chart.draw(data, options);
+    }
+
 </script>

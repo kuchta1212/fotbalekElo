@@ -18,6 +18,8 @@ using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Auth;
 using Microsoft.WindowsAzure.Storage.Blob;
 using Newtonsoft.Json;
+using Remotion.Linq.Parsing.Structure.IntermediateModel;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Elo_fotbalek.Controllers
 {
@@ -152,11 +154,6 @@ namespace Elo_fotbalek.Controllers
             return RedirectToAction("Index");
         }
 
-        public IActionResult Details(Guid id)
-        {
-            return RedirectToAction("Index");
-        }
-
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
@@ -201,6 +198,51 @@ namespace Elo_fotbalek.Controllers
             return View("ShowTeamsResult");
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetPlayerStats(Guid playerId)
+        {
+            var player = (await this.blobClient.GetPlayers()).First(p => p.Id == playerId);
+            var matches = await this.blobClient.GetMatches();
+
+            var elos = new List<ChartModel>();
+            int matchCount = 0, minElo = int.MaxValue, maxElo = int.MinValue;
+            foreach(var match in matches)
+            {
+                var old = match.Winner.Players.FirstOrDefault(p => p.Equals(player));
+                old = old ?? match.Looser.Players.FirstOrDefault(p => p.Equals(player));
+                
+                if(old != null)
+                {
+                    if(old.Elo < minElo)
+                    {
+                        minElo = old.Elo;
+                    }
+
+                    if(old.Elo > maxElo)
+                    {
+                        maxElo = old.Elo;
+                    }
+
+                    var key = match.Date;
+
+                    elos.Add(new ChartModel() { DateTime = key, Elo = old.Elo});
+                    matchCount++;
+                }
+            }
+
+            var stats = new PlayerStats()
+            {
+                Player = player,
+                Elos = elos,
+                MaxElo = maxElo,
+                MinElo = minElo,
+                PlayedMatches = matchCount,
+                Attandance = Math.Ceiling((Convert.ToDouble(matchCount) / Convert.ToDouble(matches.Count)) * 100)
+            };
+
+            return View("PlayerStats", stats);
+        }
+
         private async Task UpdatePlayersElo(FifaEloResult eloResult, Match match)
         {
             var players = await this.blobClient.GetPlayers();
@@ -209,7 +251,7 @@ namespace Elo_fotbalek.Controllers
             {
                 var newPlayerWinner = players.First(np => np.Id == player.Id);
                 newPlayerWinner.UpdateElo((int)eloResult.WinnerPointChange, match.Season);
-                newPlayerWinner.Elo = Utils.Util.CountGeneralElo(newPlayerWinner.Elos);
+                newPlayerWinner.Elo = Util.CountGeneralElo(newPlayerWinner.Elos);
                 newPlayerWinner.Trend = this.trendCalculator.CalculateTrend(player.Trend, match.Date, true);
 
                 if (newPlayerWinner.AmountOfWins == null)

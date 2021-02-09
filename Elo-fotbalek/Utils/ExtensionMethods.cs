@@ -12,5 +12,18 @@ namespace Elo_fotbalek.Utils
         {
             return season == Season.Summer ? "Léto" : "Zima";
         }
+
+        public static List<List<object>> ToChartArray(this Dictionary<DateTime, int> data)
+        {
+            var result = new List<List<object>>();
+            foreach(var item in data)
+            {
+                var partialData = new List<object>();
+                partialData.Add(item.Key.ToString("MMM dd, yyyy"));
+                partialData.Add(item.Value);
+                result.Add(partialData);
+            }
+            return result;
+        }
     }
 }
