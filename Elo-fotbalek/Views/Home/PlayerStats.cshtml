@@ -46,19 +46,19 @@
     <div class="card" style="width: 13rem;">
         <div class="card-header">Počet výher</div>
         <div class="card-body text-success">
-            <h5 class="card-title">@(Model.Player.AmountOfWins.BigMatches + Model.Player.AmountOfWins.SmallMatches)</h5>
-            <h7 class="card-title">Velké zápasy: @Model.Player.AmountOfWins.BigMatches</h7>
+            <h5 class="card-title">@(Model.Player.AmountOfWins?.BigMatches ?? 0 + Model.Player.AmountOfWins?.SmallMatches ?? 0)</h5>
+            <h7 class="card-title">Velké zápasy: @(Model.Player.AmountOfWins?.BigMatches ?? 0)</h7>
             <br />
-            <h7 class="card-title">Malé zápasy: @Model.Player.AmountOfWins.SmallMatches</h7>
+            <h7 class="card-title">Malé zápasy: @(Model.Player.AmountOfWins?.SmallMatches ?? 0)</h7>
         </div>
     </div>
     <div class="card" style="width: 13rem;">
         <div class="card-header">Počet proher</div>
         <div class="card-body text-danger">
-            <h5 class="card-title">@(Model.Player.AmountOfLooses.BigMatches + Model.Player.AmountOfLooses.SmallMatches)</h5>
-            <h7 class="card-title">Velké zápasy: @Model.Player.AmountOfLooses.BigMatches</h7>
+            <h5 class="card-title">@(Model.Player.AmountOfLooses?.BigMatches ?? 0 + Model.Player.AmountOfLooses?.SmallMatches ?? 0)</h5>
+            <h7 class="card-title">Velké zápasy: @(Model.Player.AmountOfLooses?.BigMatches ?? 0)</h7>
             <br />
-            <h7 class="card-title">Malé zápasy: @Model.Player.AmountOfLooses.SmallMatches</h7>
+            <h7 class="card-title">Malé zápasy: @(Model.Player.AmountOfLooses?.SmallMatches ?? 0)</h7>
 
         </div>
     </div>

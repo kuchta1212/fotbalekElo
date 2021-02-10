@@ -206,29 +206,22 @@ namespace Elo_fotbalek.Controllers
 
             var elos = new List<ChartModel>();
             int matchCount = 0, minElo = int.MaxValue, maxElo = int.MinValue;
-            foreach(var match in matches)
+
+            var dateTimeValue = matches.First().Date.AddDays(-1);
+            foreach (var match in matches)
             {
                 var old = match.Winner.Players.FirstOrDefault(p => p.Equals(player));
                 old = old ?? match.Looser.Players.FirstOrDefault(p => p.Equals(player));
                 
                 if(old != null)
                 {
-                    if(old.Elo < minElo)
-                    {
-                        minElo = old.Elo;
-                    }
-
-                    if(old.Elo > maxElo)
-                    {
-                        maxElo = old.Elo;
-                    }
-
-                    var key = match.Date;
-
-                    elos.Add(new ChartModel() { DateTime = key, Elo = old.Elo});
+                    this.AddEloStat(elos, dateTimeValue, old.Elo, ref minElo, ref maxElo);
                     matchCount++;
+                    dateTimeValue = match.Date;
                 }
             }
+
+            this.AddEloStat(elos, dateTimeValue, player.Elo, ref minElo, ref maxElo);
 
             var stats = new PlayerStats()
             {
@@ -241,6 +234,21 @@ namespace Elo_fotbalek.Controllers
             };
 
             return View("PlayerStats", stats);
+        }
+
+        private void AddEloStat(List<ChartModel> elos, DateTime dateTime, int elo, ref int minElo, ref int maxElo)
+        {
+            if (elo < minElo)
+            {   
+                minElo = elo;
+            }
+
+            if (elo > maxElo)
+            {
+                maxElo = elo;
+            }
+
+            elos.Add(new ChartModel() { DateTime = dateTime, Elo = elo });
         }
 
         private async Task UpdatePlayersElo(FifaEloResult eloResult, Match match)
