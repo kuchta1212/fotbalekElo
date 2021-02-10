@@ -73,7 +73,7 @@
             @foreach (var player in Model.NonRegulars) {
                 <tr>
                     <td>
-                        @Html.DisplayFor(modelItem => player.Name)
+                        @Html.ActionLink(player.Name, "GetPlayerStats", "Home", new { playerId = player.Id })
                     </td>
                     <td>
                         @if (player.Trend.Trend == Trend.UP)
