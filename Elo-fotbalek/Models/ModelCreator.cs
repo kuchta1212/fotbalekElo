@@ -36,7 +36,10 @@ namespace Elo_fotbalek.Models
                 }
             }
 
-            team.TeamElo = teamElo / team.Players.Count;
+            if(team.Players.Count > 0)
+            {
+                team.TeamElo = teamElo / team.Players.Count;
+            }
 
             return team;
         }
