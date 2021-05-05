@@ -8,97 +8,99 @@
 
 
 <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-6 opacity-table">
         <h2>Pořadí</h2>
         <table class="table">
             <thead>
-            <tr>
-                <th>Jméno</th>
-                <th />
-                <th />
-                <th />
-                <th><a asp-action="Index" asp-route-sortOrder="default">Elo</a></th>
-                <th><a asp-action="Index" asp-route-sortOrder="summer">Letní Elo</a></th>
-                <th><a asp-action="Index" asp-route-sortOrder="winter">Zimní Elo</a></th>
-            </tr>
+                <tr>
+                    <th>Jméno</th>
+                    <th />
+                    <th />
+                    <th />
+                    <th><a asp-action="Index" asp-route-sortOrder="default">Elo</a></th>
+                    <th><a asp-action="Index" asp-route-sortOrder="summer">Letní Elo</a></th>
+                    <th><a asp-action="Index" asp-route-sortOrder="winter">Zimní Elo</a></th>
+                </tr>
             </thead>
             <tbody>
-            @foreach (var player in Model.Players) {
-                <tr>
-                    <td>
-                        @Html.ActionLink(player.Name, "GetPlayerStats", "Home", new { playerId = player.Id })
-                    </td>
-                    <td>
-                        @if (player.Trend.Trend == Trend.UP)
-                        {
-                            <img src="images/icons/up.png" />
-                        }
-                        else if (player.Trend.Trend == Trend.DOWN)
-                        {
-                            <img src="images/icons/down.png" />
-                        }
-                    </td>
-                    <td class="text-success">
-                        @Html.Raw(player.AmountOfWins)
-                    </td>
-                    <td class="text-danger">
-                        @Html.Raw(player.AmountOfLooses)
-                    </td>
-                    <td>
-                        <h5>@Html.DisplayFor(modelItem => player.Elo)</h5>
-                    </td>
-                    <td>
-                        <h7>@Html.DisplayFor(modelItem => player.Elos.SummerElo)</h7>
-                    </td>
-                    <td>
-                        <h7>@Html.DisplayFor(modelItem => player.Elos.WinterElo)</h7>
-                    </td>
-                </tr>
-            }
+                @foreach (var player in Model.Players)
+                {
+                    <tr>
+                        <td>
+                            @Html.ActionLink(player.Name, "GetPlayerStats", "Home", new { playerId = player.Id })
+                        </td>
+                        <td>
+                            @if (player.Trend.Trend == Trend.UP)
+                            {
+                                <img src="images/icons/up.png" />
+                            }
+                            else if (player.Trend.Trend == Trend.DOWN)
+                            {
+                                <img src="images/icons/down.png" />
+                            }
+                        </td>
+                        <td class="text-success">
+                            @Html.Raw(player.AmountOfWins)
+                        </td>
+                        <td class="text-danger">
+                            @Html.Raw(player.AmountOfLooses)
+                        </td>
+                        <td>
+                            <h5>@Html.DisplayFor(modelItem => player.Elo)</h5>
+                        </td>
+                        <td>
+                            <h7>@Html.DisplayFor(modelItem => player.Elos.SummerElo)</h7>
+                        </td>
+                        <td>
+                            <h7>@Html.DisplayFor(modelItem => player.Elos.WinterElo)</h7>
+                        </td>
+                    </tr>
+                }
             </tbody>
         </table>
-        <h2>Lemry líný</h2>
+        <h2 class="opacity-table-header">Lemry líný</h2>
         <table class="table">
             <thead>
-            <tr>
-                <th>Jméno</th>
-                <th />
-                <th />
-                <th />
-                <th>Elo</th>
-                <th>Kolik zápasů se fláká</th>
-            </tr>
+                <tr>
+                    <th>Jméno</th>
+                    <th />
+                    <th />
+                    <th />
+                    <th>Elo</th>
+                    <th>Kolik zápasů se fláká</th>
+                </tr>
             </thead>
             <tbody>
-            @foreach (var player in Model.NonRegulars) {
-                <tr>
-                    <td>
-                        @Html.ActionLink(player.Name, "GetPlayerStats", "Home", new { playerId = player.Id })
-                    </td>
-                    <td>
-                        @if (player.Trend.Trend == Trend.UP)
-                        {
-                            <img src="images/icons/up.png" />
-                        }
-                        else if (player.Trend.Trend == Trend.DOWN)
-                        {
-                            <img src="images/icons/down.png" />
-                        }
-                    </td>
-                    <td class="text-success">
-                        @Html.Raw(player.AmountOfWins)
-                    </td>
-                    <td class="text-danger">
-                        @Html.Raw(player.AmountOfLooses)
-                    </td>
-                    <td>
-                        <h7>@Html.DisplayFor(modelItem => player.Elo)</h7>
-                    </td>
-                    <td>
-                        <h5>@Html.DisplayFor(modelItem => player.AmountOfMissedGames)</h5>
-                    </td>
-                </tr>
-            }
+                @foreach (var player in Model.NonRegulars)
+                {
+                    <tr>
+                        <td>
+                            @Html.ActionLink(player.Name, "GetPlayerStats", "Home", new { playerId = player.Id })
+                        </td>
+                        <td>
+                            @if (player.Trend.Trend == Trend.UP)
+                            {
+                                <img src="images/icons/up.png" />
+                            }
+                            else if (player.Trend.Trend == Trend.DOWN)
+                            {
+                                <img src="images/icons/down.png" />
+                            }
+                        </td>
+                        <td class="text-success">
+                            @Html.Raw(player.AmountOfWins)
+                        </td>
+                        <td class="text-danger">
+                            @Html.Raw(player.AmountOfLooses)
+                        </td>
+                        <td>
+                            <h7>@Html.DisplayFor(modelItem => player.Elo)</h7>
+                        </td>
+                        <td>
+                            <h5>@Html.DisplayFor(modelItem => player.AmountOfMissedGames)</h5>
+                        </td>
+                    </tr>
+                }
             </tbody>
         </table>
     </div>
@@ -106,7 +108,7 @@
         <h2>Seznam zápasů</h2>
         @foreach (var match in Model.Matches)
         {
-            <div class="card" style="width: 40rem;">
+            <div class="card opacity-card" style="width: 40rem;">
                 <div class="card-body">
                     <h5 class="card-title">@match.Date.ToString("dd.MM yyyy")  @match.Score</h5>
                     <h6 class="card-subtitle mb-2 text-muted">Typ zápasu(Váha): @match.WeighInStr</h6>
@@ -132,6 +134,9 @@
                         <h6 class="card-subtitle mb-2 text-muted">Kapitán a trenér Jirka Luňák</h6>
                         <p class="card-text">@match.Hero</p>
                     }
+                    <div class="text-right">
+                        <a href="Home/DeleteMatch?date=@match.Date.ToString()&score=@match.Score" class="card-link"><small class="text-muted">Smazat</small></a>
+                    </div>
                 </div>
             </div>
         }

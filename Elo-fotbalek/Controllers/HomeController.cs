@@ -97,7 +97,9 @@ namespace Elo_fotbalek.Controllers
             var winnTeam = await this.modelCreator.CreateTeam(winners.Where(v => Guid.Parse(v) != Guid.Empty), enumSeason);
             var loosTeam = await this.modelCreator.CreateTeam(loosers.Where(v => Guid.Parse(v) != Guid.Empty), enumSeason);
 
-            var heroName = (await this.blobClient.GetPlayers()).First(p => p.Id.Equals(Guid.Parse(hero))).Name;
+            var heroName = Guid.Empty.ToString() != hero
+                ? (await this.blobClient.GetPlayers()).First(p => p.Id.Equals(Guid.Parse(hero))).Name
+                : string.Empty;
 
             var match = new Match()
             {
@@ -234,6 +236,33 @@ namespace Elo_fotbalek.Controllers
             };
 
             return View("PlayerStats", stats);
+        }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> DeleteMatch(string date, string score)
+        {
+            var matches = await this.blobClient.GetMatches();
+            var players = await this.blobClient.GetPlayers();
+
+            var match = matches.First(m => m.Date.ToString() == date && m.Score == score);
+
+            foreach (var matchPlayer in match.Winner.Players)
+            {
+                players.Remove(players.First(x => x.Id == matchPlayer.Id));
+                players.Add(matchPlayer);
+            }
+
+            foreach (var matchPlayer in match.Looser.Players)
+            {
+                players.Remove(players.First(x => x.Id == matchPlayer.Id));
+                players.Add(matchPlayer);
+            }
+
+            await this.blobClient.UpdatePlayers(players);
+            await this.blobClient.RemoveMatch(match);
+
+            return RedirectToAction("Index");
         }
 
         private void AddEloStat(List<ChartModel> elos, DateTime dateTime, int elo, ref int minElo, ref int maxElo)

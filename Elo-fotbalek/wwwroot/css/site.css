@@ -2,6 +2,29 @@
 for details on configuring this project to bundle and minify static web assets. */
 body {
     padding-bottom: 20px;
+    background-image: url('../images/fotbalek.jpg');
+}
+
+.opacity-card {
+    background-color: rgba(245, 245, 245, 1);
+    opacity: .8;
+}
+
+.opacity-card:hover {
+    opacity: 1.0;
+}
+
+.opacity-table {
+    background-color: rgba(245, 245, 245, 1);
+    opacity: .8;
+}
+
+.opacity-table:hover {
+    opacity: 1.0;
+}
+
+.opacity-table-header {
+    background-color: transparent
 }
 
 /* Wrapping element */
