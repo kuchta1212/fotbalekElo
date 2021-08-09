@@ -19,5 +19,10 @@ namespace Elo_fotbalek.Models
         {
             return BigMatches+SmallMatches + " (v:" + BigMatches + ", m:" + SmallMatches + ")";
         }
+
+        public int TotalAmount()
+        {
+            return BigMatches + SmallMatches;
+        }
     }
 }

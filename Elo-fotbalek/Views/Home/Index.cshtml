@@ -58,7 +58,7 @@
                 }
             </tbody>
         </table>
-        <h2 class="opacity-table-header">Lemry líný</h2>
+        <h2 class="opacity-table-header">Lemry líný (méně než 30% zápasů)</h2>
         <table class="table">
             <thead>
                 <tr>
@@ -66,8 +66,9 @@
                     <th />
                     <th />
                     <th />
-                    <th>Elo</th>
-                    <th>Kolik zápasů se fláká</th>
+                    <th><a asp-action="Index" asp-route-sortOrder="default">Elo</a></th>
+                    <th><a asp-action="Index" asp-route-sortOrder="summer">Letní Elo</a></th>
+                    <th><a asp-action="Index" asp-route-sortOrder="winter">Zimní Elo</a></th>
                 </tr>
             </thead>
             <tbody>
@@ -94,10 +95,13 @@
                             @Html.Raw(player.AmountOfLooses)
                         </td>
                         <td>
-                            <h7>@Html.DisplayFor(modelItem => player.Elo)</h7>
+                            <h5>@Html.DisplayFor(modelItem => player.Elo)</h5>
                         </td>
                         <td>
-                            <h5>@Html.DisplayFor(modelItem => player.AmountOfMissedGames)</h5>
+                            <h7>@Html.DisplayFor(modelItem => player.Elos.SummerElo)</h7>
+                        </td>
+                        <td>
+                            <h7>@Html.DisplayFor(modelItem => player.Elos.WinterElo)</h7>
                         </td>
                     </tr>
                 }

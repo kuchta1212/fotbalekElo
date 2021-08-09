@@ -18,13 +18,11 @@ namespace Elo_fotbalek.Models
 
         public async Task<Team> CreateTeam(IEnumerable<string> playerIds, Season season)
         {
-            var teamElo = 0;
             var players = await this.blobClient.GetPlayers();
             var team = new Team()
             {
                 Players = new List<Player>()
             };
-
 
             foreach (var id in playerIds)
             {
@@ -32,13 +30,12 @@ namespace Elo_fotbalek.Models
                 if (player != null)
                 {
                     team.Players.Add(player);
-                    teamElo += player.GetSeasonalElo(season);
                 }
             }
 
             if(team.Players.Count > 0)
             {
-                team.TeamElo = teamElo / team.Players.Count;
+                team.ReCalculateTeamElo(season);
             }
 
             return team;

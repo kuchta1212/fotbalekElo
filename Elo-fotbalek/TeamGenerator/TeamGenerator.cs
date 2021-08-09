@@ -58,7 +58,7 @@ namespace Elo_fotbalek.TeamGenerator
             return new Team()
             {
                 Players = players,
-                TeamElo = players.ToList().Sum(x => x.GetSeasonalElo(this.season)) / players.ToList().Count
+                TeamElo = Team.CalculateTeamElo(players, this.season)
             };
         }
 
@@ -82,10 +82,9 @@ namespace Elo_fotbalek.TeamGenerator
                         this.result.Add(new Team()
                         {
                             Players = tmp.ToList(),
-                            TeamElo = tmp.ToList().Sum(x => x.GetSeasonalElo(this.season)) / tmp.ToList().Count
+                            TeamElo = Team.CalculateTeamElo(tmp.ToList(), this.season)
                         });
                     }
-
                 }
 
                 temp.RemoveAt(depth);
@@ -112,6 +111,5 @@ namespace Elo_fotbalek.TeamGenerator
 
             return !this.result.Contains(firstTeam);
         }
-    
-}
+    }
 }

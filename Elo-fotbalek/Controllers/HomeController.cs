@@ -46,28 +46,44 @@ namespace Elo_fotbalek.Controllers
             var players = await this.blobClient.GetPlayers();
             var matches = await this.blobClient.GetMatches();
 
-            var regulars = players.Where(x => x.AmountOfMissedGames < 5).ToList();
-            var nonRegulars = players.Where(x => x.AmountOfMissedGames >= 5).ToList();
+            var regulars = new List<Player>();
+            var nonRegulars = new List<Player>();
+
+            foreach (var player in players)
+            { 
+                if(player.Percentage >= 30)
+                {
+                    regulars.Add(player);
+                }
+                else
+                {
+                    nonRegulars.Add(player);
+                }
+            }
 
             IOrderedEnumerable<Player> sortedPlayers;
+            IOrderedEnumerable<Player> sortedNonRegularPlayers;
             switch (sortOrder)
             {
                 case "summer":
                     sortedPlayers = regulars.OrderByDescending(p => p.Elos.SummerElo);
+                    sortedNonRegularPlayers = nonRegulars.OrderByDescending(p => p.Elos.SummerElo);
                     break;
                 case "winter":
                     sortedPlayers = regulars.OrderByDescending(p => p.Elos.WinterElo);
+                    sortedNonRegularPlayers = nonRegulars.OrderByDescending(p => p.Elos.WinterElo);
                     break;
                 default:
                     sortedPlayers = regulars.OrderByDescending(p => p.Elo);
+                    sortedNonRegularPlayers = nonRegulars.OrderByDescending(p => p.Elo);
                     break;
             }
-            
+
             var screen = new HomeScreenModel()
             {
                 Matches = matches.OrderByDescending(m => m.Date),
                 Players = sortedPlayers,
-                NonRegulars = nonRegulars.OrderByDescending(p => p.AmountOfMissedGames)
+                NonRegulars = sortedNonRegularPlayers
             };
 
             return View(screen);
@@ -148,7 +164,8 @@ namespace Elo_fotbalek.Controllers
                     Data = new Dictionary<DateTime, int>(),
                     Trend = Trend.STAY
                 },
-               AmountOfMissedGames = 0
+                AmountOfMissedGames = 0,
+                Percentage = 0
             };
 
             await this.blobClient.AddPlayer(player);
@@ -306,6 +323,7 @@ namespace Elo_fotbalek.Controllers
                 }
 
                 newPlayerWinner.AmountOfMissedGames = 0;
+
             }
 
             foreach (var player in match.Looser.Players)

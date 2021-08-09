@@ -292,5 +292,22 @@ namespace Elo_fotbalek.Controllers
 
             return RedirectToAction("Index", "Home");
         }
+
+
+        public async Task<IActionResult> IntroducePercentage()
+        { 
+            var players = await this.blobClient.GetPlayers();
+            var matches = await this.blobClient.GetMatches();
+
+            foreach (var player in players)
+            {
+                var totalAmountOfPlayedMatches = (player.AmountOfLooses?.TotalAmount() ?? 0) + (player.AmountOfWins?.TotalAmount() ?? 0);
+                player.Percentage = (int)(((double)totalAmountOfPlayedMatches / (double)matches.Count) * 100);
+            }
+
+            await this.blobClient.UpdatePlayers(players);
+
+            return RedirectToAction("Index", "Home");
+        }
     }
 }

@@ -28,6 +28,8 @@ namespace Elo_fotbalek.Models
 
         public int AmountOfMissedGames { get; set; }
 
+        public int Percentage { get; set; }
+
         public override string ToString()
         {
             return this.Name + "(" + this.Elo +")";
@@ -66,6 +68,5 @@ namespace Elo_fotbalek.Models
         }
 
         public int GetSeasonalElo(Season season) => season == Season.Summer ? this.Elos.SummerElo : this.Elos.WinterElo;
-       
     }
 }

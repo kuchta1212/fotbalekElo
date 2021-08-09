@@ -52,5 +52,33 @@ namespace Elo_fotbalek.Models
 
             return true;
         }
+
+        public void ReCalculateTeamElo(Season season)
+        {
+            this.TeamElo = Team.CalculateTeamElo(this.Players, season);
+        }
+
+        public static int CalculateTeamElo(List<Player> players, Season season)
+        {
+            var weightElo = players.ToList().Sum(x => x.Percentage < 30
+                                            ? 1000
+                                            : x.Percentage < 50
+                                                ? AdjustElo(x.GetSeasonalElo(season))
+                                                : x.GetSeasonalElo(season));
+
+            return (int)(weightElo / players.Count);
+        }
+
+        private static int AdjustElo(int elo)
+        {
+            var change = Math.Abs(elo - 1000);
+            var newChange = (int)(0.7 * change);
+
+            return elo > 1000
+                ? 1000 + newChange
+                : 1000 - newChange;
+        }
+
+
     }
 }

@@ -7,7 +7,7 @@
 @foreach (var generatedResult in (ViewData["GeneratedResults"] as List<GeneratorResult>))
 {
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-4 opacity-table" >
         <h2>Tým 1 - Elo: @generatedResult.TeamOne.TeamElo</h2>
         <table class="table">
             <thead>
@@ -31,7 +31,7 @@
             </tbody>
         </table>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-4 opacity-table">
         <h2>Tým 2 - Elo: @generatedResult.TeamTwo.TeamElo</h2>
         <table class="table">
             <thead>
