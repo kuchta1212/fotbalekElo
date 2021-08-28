@@ -135,6 +135,7 @@ namespace Elo_fotbalek.Controllers
             
             await this.UpdatePlayersElo(eloResult, match);
             await this.PunishNonCommers(match);
+            await this.RecalculatePercentage();
 
             return RedirectToAction("Index");
         }
@@ -249,7 +250,7 @@ namespace Elo_fotbalek.Controllers
                 MaxElo = maxElo,
                 MinElo = minElo,
                 PlayedMatches = matchCount,
-                Attandance = Math.Ceiling((Convert.ToDouble(matchCount) / Convert.ToDouble(matches.Count)) * 100)
+                Attandance = player.Percentage
             };
 
             return View("PlayerStats", stats);
@@ -323,7 +324,6 @@ namespace Elo_fotbalek.Controllers
                 }
 
                 newPlayerWinner.AmountOfMissedGames = 0;
-
             }
 
             foreach (var player in match.Looser.Players)
@@ -368,6 +368,21 @@ namespace Elo_fotbalek.Controllers
 
             await this.blobClient.UpdatePlayers(players);
         }
+
+        private async Task RecalculatePercentage()
+        {
+            var players = await this.blobClient.GetPlayers();
+            var matches = await this.blobClient.GetMatches();
+
+            foreach (var player in players)
+            {
+                var totalAmountOfPlayedMatches = (player.AmountOfLooses?.TotalAmount() ?? 0) + (player.AmountOfWins?.TotalAmount() ?? 0);
+                player.Percentage = (int)(((double)totalAmountOfPlayedMatches / (double)matches.Count) * 100);
+            }
+
+            await this.blobClient.UpdatePlayers(players);
+        }
+
 
 
     }
