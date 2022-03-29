@@ -17,18 +17,19 @@ namespace Elo_fotbalek.EloCounter
         public FifaEloResult CalculateFifaElo(Match match)
         {
             var goalDifferenceIndex = this.GoalDifferenceIndex(match.WinnerAmount - match.LooserAmount);
+            var isTie = match.WinnerAmount - match.LooserAmount == 0;
             var expectedResultIndex = this.ExpectedResult(match);
 
             var eloResult = new FifaEloResult()
             {
-                WinnerPointChange = this.CalculatePointChange(1, goalDifferenceIndex, 1 - expectedResultIndex, match.Weight),
-                LooserPointChange = this.CalculatePointChange(0, goalDifferenceIndex, expectedResultIndex, match.Weight)
+                WinnerPointChange = this.CalculatePointChange(isTie ? 0.5 : 1, goalDifferenceIndex, expectedResultIndex, match.Weight),
+                LooserPointChange = this.CalculatePointChange(isTie ? 0.5: 0, goalDifferenceIndex, 1 - expectedResultIndex, match.Weight)
             };
 
             return eloResult;
         }
 
-        private double CalculatePointChange(int matchResult, double goalDiffIndex, double expectedMatchResult, int matchWeight)
+        private double CalculatePointChange(double matchResult, double goalDiffIndex, double expectedMatchResult, int matchWeight)
         {
             return matchWeight * goalDiffIndex * (matchResult - expectedMatchResult);
         }
@@ -49,8 +50,8 @@ namespace Elo_fotbalek.EloCounter
 
         private double ExpectedResult(Match match)
         {
-            var dr = Math.Abs(match.Winner.TeamElo - match.Looser.TeamElo);
-            var koeficient = dr / 400.0;
+            var dr = match.Winner.TeamElo - match.Looser.TeamElo;
+            var koeficient = ((-1)*dr) / 400.0;
             var x = Math.Pow(10, koeficient);
             return 1.0 / (x + 1.0);
         }

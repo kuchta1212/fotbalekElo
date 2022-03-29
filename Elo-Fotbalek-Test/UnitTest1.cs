@@ -271,6 +271,81 @@ namespace Tests
                             Elo = 970
                         },
                     },
+                    TeamElo = 1052
+                },
+                Looser = new Team()
+                {
+                    Players = new List<Player>()
+                    {
+                        new Player()
+                        {
+                            Name = "A",
+                            Elo = 1234
+                        },
+
+                        new Player()
+                        {
+                            Name = "B",
+                            Elo = 1120
+                        },
+
+                        new Player()
+                        {
+                            Name = "C",
+                            Elo = 980
+                        },
+
+                        new Player()
+                        {
+                            Name = "C",
+                            Elo = 970
+                        },
+                    },
+                    TeamElo = 1011
+                },
+                Date = DateTime.Now,
+                WinnerAmount = 12,
+                LooserAmount = 7,
+                Weight = 30
+            };
+
+            var eloCalultor = new FifaEloCounter();
+            var fifaEloResult = eloCalultor.CalculateFifaElo(match);
+        }
+
+        [Test]
+        public void TestCalculateElo_NotEqualTeam_BiggerWin_WorseWins_BigWieght()
+        {
+            var match = new Match()
+            {
+                Winner = new Team()
+                {
+                    Players = new List<Player>()
+                    {
+                        new Player()
+                        {
+                            Name = "A",
+                            Elo = 1234
+                        },
+
+                        new Player()
+                        {
+                            Name = "B",
+                            Elo = 1120
+                        },
+
+                        new Player()
+                        {
+                            Name = "C",
+                            Elo = 980
+                        },
+
+                        new Player()
+                        {
+                            Name = "C",
+                            Elo = 970
+                        },
+                    },
                     TeamElo = 1002
                 },
                 Looser = new Team()
@@ -305,6 +380,231 @@ namespace Tests
                 },
                 Date = DateTime.Now,
                 WinnerAmount = 12,
+                LooserAmount = 7,
+                Weight = 30
+            };
+
+            var eloCalultor = new FifaEloCounter();
+            var fifaEloResult = eloCalultor.CalculateFifaElo(match);
+        }
+
+        [Test]
+        public void TestCalculateElo_EqualTeam_Tie_BigWieght()
+        {
+            var match = new Match()
+            {
+                Winner = new Team()
+                {
+                    Players = new List<Player>()
+                    {
+                        new Player()
+                        {
+                            Name = "A",
+                            Elo = 1234
+                        },
+
+                        new Player()
+                        {
+                            Name = "B",
+                            Elo = 1120
+                        },
+
+                        new Player()
+                        {
+                            Name = "C",
+                            Elo = 980
+                        },
+
+                        new Player()
+                        {
+                            Name = "C",
+                            Elo = 970
+                        },
+                    },
+                    TeamElo = 1052
+                },
+                Looser = new Team()
+                {
+                    Players = new List<Player>()
+                    {
+                        new Player()
+                        {
+                            Name = "A",
+                            Elo = 1234
+                        },
+
+                        new Player()
+                        {
+                            Name = "B",
+                            Elo = 1120
+                        },
+
+                        new Player()
+                        {
+                            Name = "C",
+                            Elo = 980
+                        },
+
+                        new Player()
+                        {
+                            Name = "C",
+                            Elo = 970
+                        },
+                    },
+                    TeamElo = 1052
+                },
+                Date = DateTime.Now,
+                WinnerAmount = 7,
+                LooserAmount = 7,
+                Weight = 30
+            };
+
+            var eloCalultor = new FifaEloCounter();
+            var fifaEloResult = eloCalultor.CalculateFifaElo(match);
+        }
+
+        [Test]
+        public void TestCalculateElo_NotEqualTeam_Tie_BigWieght()
+        {
+            var match = new Match()
+            {
+                Winner = new Team()
+                {
+                    Players = new List<Player>()
+                    {
+                        new Player()
+                        {
+                            Name = "A",
+                            Elo = 1234
+                        },
+
+                        new Player()
+                        {
+                            Name = "B",
+                            Elo = 1120
+                        },
+
+                        new Player()
+                        {
+                            Name = "C",
+                            Elo = 980
+                        },
+
+                        new Player()
+                        {
+                            Name = "C",
+                            Elo = 970
+                        },
+                    },
+                    TeamElo = 1052
+                },
+                Looser = new Team()
+                {
+                    Players = new List<Player>()
+                    {
+                        new Player()
+                        {
+                            Name = "A",
+                            Elo = 1234
+                        },
+
+                        new Player()
+                        {
+                            Name = "B",
+                            Elo = 1120
+                        },
+
+                        new Player()
+                        {
+                            Name = "C",
+                            Elo = 980
+                        },
+
+                        new Player()
+                        {
+                            Name = "C",
+                            Elo = 970
+                        },
+                    },
+                    TeamElo = 1011
+                },
+                Date = DateTime.Now,
+                WinnerAmount = 7,
+                LooserAmount = 7,
+                Weight = 30
+            };
+
+            var eloCalultor = new FifaEloCounter();
+            var fifaEloResult = eloCalultor.CalculateFifaElo(match);
+        }
+
+        [Test]
+        public void TestCalculateElo_NotEqualTeam_WorseSetAsWinner_Tie_BigWieght()
+        {
+            var match = new Match()
+            {
+                Winner = new Team()
+                {
+                    Players = new List<Player>()
+                    {
+                        new Player()
+                        {
+                            Name = "A",
+                            Elo = 1234
+                        },
+
+                        new Player()
+                        {
+                            Name = "B",
+                            Elo = 1120
+                        },
+
+                        new Player()
+                        {
+                            Name = "C",
+                            Elo = 980
+                        },
+
+                        new Player()
+                        {
+                            Name = "C",
+                            Elo = 970
+                        },
+                    },
+                    TeamElo = 1011
+                },
+                Looser = new Team()
+                {
+                    Players = new List<Player>()
+                    {
+                        new Player()
+                        {
+                            Name = "A",
+                            Elo = 1234
+                        },
+
+                        new Player()
+                        {
+                            Name = "B",
+                            Elo = 1120
+                        },
+
+                        new Player()
+                        {
+                            Name = "C",
+                            Elo = 980
+                        },
+
+                        new Player()
+                        {
+                            Name = "C",
+                            Elo = 970
+                        },
+                    },
+                    TeamElo = 1052
+                },
+                Date = DateTime.Now,
+                WinnerAmount = 7,
                 LooserAmount = 7,
                 Weight = 30
             };
