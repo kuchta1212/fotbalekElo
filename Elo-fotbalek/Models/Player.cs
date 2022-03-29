@@ -23,6 +23,8 @@ namespace Elo_fotbalek.Models
 
         public MatchCounter AmountOfLooses { get; set; }
 
+        public MatchCounter AmountOfTies { get; set; }
+
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public TrendData Trend { get; set; }
 

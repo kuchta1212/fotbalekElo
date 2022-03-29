@@ -307,22 +307,43 @@ namespace Elo_fotbalek.Controllers
                 var newPlayerWinner = players.First(np => np.Id == player.Id);
                 newPlayerWinner.UpdateElo((int)eloResult.WinnerPointChange, match.Season);
                 newPlayerWinner.Elo = Util.CountGeneralElo(newPlayerWinner.Elos);
-                newPlayerWinner.Trend = this.trendCalculator.CalculateTrend(player.Trend, match.Date, true);
-
-                if (newPlayerWinner.AmountOfWins == null)
+                
+                if (match.WinnerAmount == match.LooserAmount)
                 {
-                    newPlayerWinner.AmountOfWins = new MatchCounter();
-                }
+                    newPlayerWinner.Trend = this.trendCalculator.CalculateTrend(player.Trend, match.Date, 0);
 
-                if (match.Weight == 30)
-                {
-                    newPlayerWinner.AmountOfWins.BigMatches++;
+                    if(newPlayerWinner.AmountOfTies == null)
+                    {
+                        newPlayerWinner.AmountOfTies = new MatchCounter();
+                    }
+
+                    if (match.Weight == 30)
+                    {
+                        newPlayerWinner.AmountOfTies.BigMatches++;
+                    }
+                    else
+                    {
+                        newPlayerWinner.AmountOfTies.SmallMatches++;
+                    }
                 }
                 else
                 {
-                    newPlayerWinner.AmountOfWins.SmallMatches++;
-                }
+                    newPlayerWinner.Trend = this.trendCalculator.CalculateTrend(player.Trend, match.Date, 1);
 
+                    if (newPlayerWinner.AmountOfWins == null)
+                    {
+                        newPlayerWinner.AmountOfWins = new MatchCounter();
+                    }
+
+                    if (match.Weight == 30)
+                    {
+                        newPlayerWinner.AmountOfWins.BigMatches++;
+                    }
+                    else
+                    {
+                        newPlayerWinner.AmountOfWins.SmallMatches++;
+                    }
+                }
                 newPlayerWinner.AmountOfMissedGames = 0;
             }
 
@@ -331,21 +352,42 @@ namespace Elo_fotbalek.Controllers
                 var newPlayerLooser = players.First(np => np.Id == player.Id);
                 newPlayerLooser.UpdateElo((int)eloResult.LooserPointChange, match.Season);
                 newPlayerLooser.Elo = Utils.Util.CountGeneralElo(newPlayerLooser.Elos);
-                newPlayerLooser.Trend = this.trendCalculator.CalculateTrend(player.Trend, match.Date, false);
 
-
-                if (newPlayerLooser.AmountOfLooses == null)
+                if(match.WinnerAmount == match.LooserAmount)
                 {
-                    newPlayerLooser.AmountOfLooses = new MatchCounter();
-                }
+                    newPlayerLooser.Trend = this.trendCalculator.CalculateTrend(player.Trend, match.Date, 0);
 
-                if (match.Weight == 30)
-                {
-                    newPlayerLooser.AmountOfLooses.BigMatches++;
+                    if (newPlayerLooser.AmountOfTies == null)
+                    {
+                        newPlayerLooser.AmountOfTies = new MatchCounter();
+                    }
+
+                    if (match.Weight == 30)
+                    {
+                        newPlayerLooser.AmountOfTies.BigMatches++;
+                    }
+                    else
+                    {
+                        newPlayerLooser.AmountOfTies.SmallMatches++;
+                    }
                 }
                 else
                 {
-                    newPlayerLooser.AmountOfLooses.SmallMatches++;
+                    newPlayerLooser.Trend = this.trendCalculator.CalculateTrend(player.Trend, match.Date, -1);
+
+                    if (newPlayerLooser.AmountOfLooses == null)
+                    {
+                        newPlayerLooser.AmountOfLooses = new MatchCounter();
+                    }
+
+                    if (match.Weight == 30)
+                    {
+                        newPlayerLooser.AmountOfLooses.BigMatches++;
+                    }
+                    else
+                    {
+                        newPlayerLooser.AmountOfLooses.SmallMatches++;
+                    }
                 }
 
                 newPlayerLooser.AmountOfMissedGames = 0;

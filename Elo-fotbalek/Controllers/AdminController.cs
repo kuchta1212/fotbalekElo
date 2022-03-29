@@ -215,12 +215,12 @@ namespace Elo_fotbalek.Controllers
                     {
                         if (match.Winner.Players.Contains(player))
                         {
-                            player.Trend = trendCalculator.CalculateTrend(player.Trend, match.Date, true);
+                            player.Trend = trendCalculator.CalculateTrend(player.Trend, match.Date, 1);
                             matchCount++;
                         }
                         else if (match.Looser.Players.Contains(player))
                         {
-                            player.Trend = trendCalculator.CalculateTrend(player.Trend, match.Date, false);
+                            player.Trend = trendCalculator.CalculateTrend(player.Trend, match.Date, 0);
                             matchCount++;
                         }
                     }                   

@@ -8,7 +8,7 @@ namespace Elo_fotbalek.TrendCalculator
 {
     public interface ITrendCalculator
     {
-        TrendData CalculateTrend(TrendData data, DateTime matchDate, bool isWinner);
+        TrendData CalculateTrend(TrendData data, DateTime matchDate, int value);
 
         TrendData RemoveLatest(TrendData data);
     }

@@ -7,6 +7,7 @@ using Elo_fotbalek.Models;
 
 namespace Elo_fotbalek.EloCounter
 {
+    /*Deprecated*/
     public class FifaEloCounter : IEloCalulator
     {
         public EloResult CalculateElo(Match match)

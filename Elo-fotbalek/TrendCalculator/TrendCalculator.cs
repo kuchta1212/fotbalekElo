@@ -8,7 +8,7 @@ namespace Elo_fotbalek.TrendCalculator
 {
     public class TrendCalculator : ITrendCalculator
     {
-        public TrendData CalculateTrend(TrendData trendData, DateTime matchDate, bool isWinner)
+        public TrendData CalculateTrend(TrendData trendData, DateTime matchDate, int value)
         {
             if (trendData.Data.Count >= 5)
             {
@@ -21,7 +21,7 @@ namespace Elo_fotbalek.TrendCalculator
                 matchDate = matchDate.AddMinutes(1);
             }
 
-            trendData.Data.Add(matchDate, isWinner ? 1 : -1);
+            trendData.Data.Add(matchDate, value);
             trendData.Trend = this.ReCalculate(trendData.Data);
 
             return trendData;
