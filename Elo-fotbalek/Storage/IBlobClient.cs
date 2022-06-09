@@ -24,5 +24,9 @@ namespace Elo_fotbalek.Storage
         Task<List<Match>> GetMatches();
 
         Task<List<MyUser>> GetUsers();
+
+        Task<List<Doodle>> GetDoodle();
+
+        Task SaveDoodle(List<Doodle> doodle);
     }
 }

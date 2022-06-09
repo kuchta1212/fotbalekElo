@@ -1,2 +1,6 @@
 bin
 appsettings.Development.json
+.config
+Properties/*
+Elo-fotbalek.csproj.user
+Test/*

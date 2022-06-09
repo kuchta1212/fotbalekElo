@@ -5,3 +5,6 @@
 /.vs
 obj
 /Elo-fotbalek/appsettings.Development.json
+/Elo-fotbalek/bin
+/Elo-fotbalek/Properties/
+/Elo-Fotbalek-Test/bin/**

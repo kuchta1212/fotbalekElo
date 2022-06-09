@@ -18,5 +18,9 @@ namespace Elo_fotbalek.Configuration
         public string MatchesBlobName { get; set; }
 
         public string UsersBlobName { get; set; }
+
+        public string DoodleBlobName { get; set; }
+
+        public bool UseOffline { get; set; }
     }
 }

@@ -45,7 +45,16 @@ namespace Elo_fotbalek
 
             services.Configure<BlobStorageOptions>(Configuration.GetSection(BlobStorageOptions.BlobStorage));
 
-            services.AddSingleton<IBlobClient, BlobClient>();
+            var useOffline = Configuration.GetValue<bool>(BlobStorageOptions.BlobStorage+":UseOffline");
+            if (useOffline)
+            {
+                services.AddSingleton<IBlobClient, OfflineBlobClient>();
+            }
+            else
+            {
+                services.AddSingleton<IBlobClient, BlobClient>();
+            }
+
             services.AddTransient<IModelCreator, ModelCreator>();
             services.AddTransient<IEloCalulator, EloCounter.EloCalculator>();
             services.AddTransient<ITeamGenerator, TeamGenerator.TeamGenerator>();

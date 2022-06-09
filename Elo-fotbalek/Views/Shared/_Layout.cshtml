@@ -26,6 +26,9 @@
                 <li class="nav-item active">
                     <a class="nav-link" asp-controller="Home" asp-action="GenerateTeams">Doporuč sestavy</a>
                 </li>
+                <li class="nav-item active">
+                    <a class="nav-link" asp-controller="Doodle" asp-action="Index">Doodle</a>
+                </li>
             </ul>
         </div>
         
@@ -111,4 +114,120 @@
         chart.draw(data, options);
     }
 
+    function onDoodleClick(item){
+        const id = item.getAttribute("id").split('_')[0];
+        const src = item.getAttribute("src");
+        const value = item.getAttribute("value");
+
+        let currentValue;
+        const tableCell = document.getElementById(id+"_td");
+
+        const isSmall = item.getAttribute("src").includes("_small");
+        switch(value) {
+            case "Accept":
+                item.setAttribute("src", isSmall ? "images/icons/maybe_small.png" : "images/icons/maybe.png");
+                item.setAttribute("value", "Maybe");
+                if (tableCell.classList.value.includes("accept")){
+                    tableCell.classList.remove("accept");
+                }
+                tableCell.classList.add("maybe");
+                currentValue = "Maybe";
+                break;
+            case "Maybe":
+                item.setAttribute("src", isSmall ? "images/icons/refused_small.png" : "images/icons/refused.png");
+                item.setAttribute("value", "Refused");
+                if (tableCell.classList.value.includes("maybe")){
+                    tableCell.classList.remove("maybe");
+                }
+                tableCell.classList.add("refused");
+                currentValue = "Refused";
+                break;
+            case "Refused":
+                item.setAttribute("src", isSmall ? "images/icons/accept_small.png" : "images/icons/accept.png");
+                item.setAttribute("value", "Accept");
+                if (tableCell.classList.value.includes("refused")){
+                    tableCell.classList.remove("refused");
+                }
+                tableCell.classList.add("accept");
+                currentValue = "Accept";
+                break;
+            case "NoAnswer":
+                item.setAttribute("src", isSmall ? "images/icons/accept_small.png" :"images/icons/accept.png");
+                item.setAttribute("value", "Accept");
+                tableCell.classList.add("accept");
+                currentValue = "Accept";
+                break;
+        }
+
+        const buttonDiv = document.getElementById(id);
+        const originalValue = buttonDiv.getAttribute("data-id");
+        if(buttonDiv.style.display == 'block' && originalValue == currentValue) {
+            buttonDiv.style.display = 'none';
+        } else {
+            buttonDiv.style.display = 'block';
+        }
+    }
+
+    function onDoodleVoteButtonClick(item){
+        const fullId = item.getAttribute("id").split('_')[0];
+        const name = fullId.split('-')[0];
+        const date = fullId.split('-')[3];
+
+        const imgElement = document.getElementById(fullId + '_img');
+        const value = imgElement.getAttribute("value");
+
+        const originalValue = document.getElementById(fullId).getAttribute("data-id");
+
+        document.body.style.cursor = 'progress'
+        $.post('@Url.Action("Vote","Doodle")',{name:name, date: date, value: value }).then((result) => {
+            document.body.style.cursor = 'default'
+            const buttonDiv = document.getElementById(fullId);
+            buttonDiv.setAttribute("data-id", value);
+            buttonDiv.style.display = 'none';
+
+            switch(value) {
+            case "Accept":
+                const acceptHeader = document.getElementById("coming-header");
+                const aAalue = parseInt(acceptHeader.innerText);
+                acceptHeader.innerText = aAalue +1;
+                subtractFrom(originalValue);
+                break;
+            case "Maybe":
+                const maybeHeader = document.getElementById("maybe-header");
+                const mValue = parseInt(maybeHeader.innerText);
+                maybeHeader.innerText = mValue +1;
+                subtractFrom(originalValue);
+                break;
+            case "Refused":
+                const refusedHeader = document.getElementById("refused-header");
+                const rValue = parseInt(refusedHeader.innerText);
+                refusedHeader.innerText = rValue +1;
+                subtractFrom(originalValue);
+                break;
+            }
+        }, 
+        error => {
+            alert("Už je hodně přihlášených. Napiš Josefovi, nebo Kuchťovi, jestli má cenu chodit.")
+        });
+    }
+
+    function subtractFrom(originalValue) {
+        switch(originalValue) {
+            case "Accept":
+                const acceptHeader = document.getElementById("coming-header");
+                const aAalue = parseInt(acceptHeader.innerText);
+                acceptHeader.innerText = aAalue -1;
+                break;
+            case "Maybe":
+                const maybeHeader = document.getElementById("maybe-header");
+                const mValue = parseInt(maybeHeader.innerText);
+                maybeHeader.innerText = mValue -1;
+                break;
+            case "Refused":
+                const refusedHeader = document.getElementById("refused-header");
+                const rValue = parseInt(refusedHeader.innerText);
+                refusedHeader.innerText = rValue -1;
+                break;
+        }
+    }
 </script>

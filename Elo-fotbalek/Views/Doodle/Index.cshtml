@@ -1,0 +1,88 @@
+﻿@{
+    ViewData["Title"] = "Elo - Fotbálek - Doodle";
+}
+@using System.Text
+@using Elo_fotbalek.Utils
+@model DoodleModel
+
+
+
+<div class="card opacity-card">
+    <div class="card-body">
+        <h5 class="card-title text-success">Přihlášených: <span id="coming-header">@Model.Stats.Coming</span></h5>
+        <h6 class="card-subtitle mb-2 text-muted text-warning">Možná: <span id="maybe-header">@Model.Stats.Maybe</span></h6>
+        <h6 class="card-subtitle mb-2 text-muted text-danger">Odmítlo: <span id="refused-header">@Model.Stats.Refused</span></h6>
+        <div class="row">
+            <form asp-action="RemoveOldAndCreateNew" asp-controller="Doodle">
+                <input type="submit" class="btn btn-secondary btn-sm" value="Další kolo" />
+            </form>
+            <form asp-action="GenerateTeams" asp-controller="Doodle">
+                <input class="btn btn-primary btn-sm" type="submit" value="Vygeneruj týmy"/>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div class="col opacity-table">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Jméno</th>
+                @{var firstTh = true;}
+                @foreach (var date in Model.Doodle[0].GetSortedPlayersPoll().Keys)
+                {
+                    var className = firstTh ? "doodle-cell-current" : "";
+                    firstTh = false;
+                    <th class="@className">@Html.Raw(date.ToString("dd.MM"))</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var doodle in Model.Doodle)
+            {
+                <tr>
+                    <td>@Html.Raw(doodle.Player)</td>
+                    @{var first = true;}
+                    @foreach (var date in doodle.GetSortedPlayersPoll().Keys)
+                    {
+                        var src = "";
+                        var className = first ? "doodle-cell-current" : "doodle-cell";
+                        switch (doodle.PlayersPoll[date])
+                        {
+                            case DoodleValue.Accept:
+                                src = first ? "images/icons/accept.png" : "images/icons/accept_small.png";
+                                className = className + " accept"; 
+                                break;
+                            case DoodleValue.Refused:
+                                src = first ? "images/icons/refused.png" : "images/icons/refused_small.png";
+                                className = className + " refused";
+                                break;
+                            case DoodleValue.NoAnswer:
+                                src = first ? "images/icons/no_answer.png" : "images/icons/no_answer_small.png";
+                                break;
+                            case DoodleValue.Maybe:
+                                src = first ? "images/icons/maybe.png" : "images/icons/maybe_small.png";
+                                className = className + " maybe";
+                                break; 
+                        }
+
+                        first = false;
+                        var divId = doodle.Player + "-confirm-button-" + date.ToString("dd.MM"); 
+                        var imgId = divId + "_img"; 
+                        var buttonId = divId + "_button";
+                        var tableCellId = divId + "_td";
+                        <td id="@tableCellId" class="@className">
+                            <img id="@imgId" onclick="onDoodleClick(this)" src="@src" value="@doodle.PlayersPoll[date]" />
+                            <div id="@divId" data-id="@doodle.PlayersPoll[date]" style="display:none">
+                                <br />
+                                <br />
+                                <button id="@buttonId" data-id="@doodle.PlayersPoll[date]" onclick="onDoodleVoteButtonClick(this)" class="btn btn-secondary btn-sm" >Potvrdit</button>
+                            </div>
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

@@ -14,6 +14,31 @@ body {
     opacity: 1.0;
 }
 
+.doodle-cell-current {
+    border: 2px solid green;
+    justify-content: center;
+}
+
+.accept {
+    background-color: green;
+}
+
+.maybe {
+    background-color: yellow;
+}
+
+.refused {
+    background-color: red;
+}
+
+.doodle-cell:hover {
+    cursor: pointer;
+}
+
+.doodle-cell-current:hover {
+    cursor: pointer;
+}
+
 .opacity-table {
     background-color: rgba(245, 245, 245, 1);
     opacity: .8;

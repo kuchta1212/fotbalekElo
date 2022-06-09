@@ -131,6 +131,30 @@ namespace Elo_fotbalek.Storage
             }
         }
 
+        public async Task<List<Doodle>> GetDoodle()
+        {
+            try
+            {
+                var blobName = this.options.Value.DoodleBlobName;
+                var blob = await this.GetBlob(blobName);
+
+                var doodleJson = await blob.DownloadTextAsync();
+                return JsonConvert.DeserializeObject<List<Doodle>>(doodleJson);
+            }
+            catch (Exception)
+            {
+                return new List<Doodle>();
+            }
+        }
+
+        public async Task SaveDoodle(List<Doodle> doodle)
+        {
+            var blobName = this.options.Value.DoodleBlobName;
+            var blob = await this.GetBlob(blobName);
+
+            await blob.UploadTextAsync(JsonConvert.SerializeObject(doodle));
+        }
+
         private async Task<CloudBlockBlob> GetBlob(string blobName)
         {
             var containerName = this.options.Value.ContainerName;
