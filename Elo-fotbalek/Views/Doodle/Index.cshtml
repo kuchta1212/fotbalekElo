@@ -7,20 +7,42 @@
 
 
 
-<div class="card opacity-card">
-    <div class="card-body">
-        <h5 class="card-title text-success">Přihlášených: <span id="coming-header">@Model.Stats.Coming</span></h5>
-        <h6 class="card-subtitle mb-2 text-muted text-warning">Možná: <span id="maybe-header">@Model.Stats.Maybe</span></h6>
-        <h6 class="card-subtitle mb-2 text-muted text-danger">Odmítlo: <span id="refused-header">@Model.Stats.Refused</span></h6>
-        <div class="row">
-            <form asp-action="RemoveOldAndCreateNew" asp-controller="Doodle">
-                <input type="submit" class="btn btn-secondary btn-sm" value="Další kolo" />
-            </form>
-            <form asp-action="GenerateTeams" asp-controller="Doodle">
-                <input class="btn btn-primary btn-sm" type="submit" value="Vygeneruj týmy"/>
-            </form>
+<div class="row">
+    <div class="col">
+        <div class="card opacity-card">
+            <div class="card-body">
+                <h5 class="card-title text-success">Přihlášených: <span id="coming-header">@Model.Stats.Coming</span></h5>
+                <h6 class="card-subtitle mb-2 text-muted text-warning">Možná: <span id="maybe-header">@Model.Stats.Maybe</span></h6>
+                <h6 class="card-subtitle mb-2 text-muted text-danger">Odmítlo: <span id="refused-header">@Model.Stats.Refused</span></h6>
+                <br/>
+                <br/>
+                 <div class="col-lg-2">
+                    <form asp-action="RemoveOldAndCreateNew" asp-controller="Doodle">
+                        <input type="submit" class="btn btn-primary btn-lg" value="Další kolo" />
+                    </form>
+                 </div>
+            </div>
         </div>
     </div>
+    <div class="col">
+        <div class="card opacity-card">
+            <div class="card-body">
+                <h5 class="card-title">Generování týmů pro: @Model.Doodle[0].GetSortedPlayersPoll().Keys.First().ToString("dd.MM")</h5>
+                <form asp-action="GenerateTeams" asp-controller="Doodle" asp->
+                    <div class="row">
+                        <label class="control-label">Sezóna</label>
+                        <select name="season" id="season" class="form-control">
+                            <option value="Summer">Léto</option>
+                            <option value="Winter">Zima</option>
+                        </select>
+                        <br/>
+                        <br/>
+                        <input class="btn btn-primary btn-lg" type="submit" value="Vygeneruj týmy"/>
+                    </div>
+                </form>
+            </div>
+        </div> 
+    </div> 
 </div>
 
 

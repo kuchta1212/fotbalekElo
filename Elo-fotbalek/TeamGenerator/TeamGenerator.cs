@@ -13,10 +13,27 @@ namespace Elo_fotbalek.TeamGenerator
         private int amountOfPlayers;
         private int totalAmountOfPlayers;
         private Season season;
+        private IModelCreator modelCreator;
 
-        public List<GeneratorResult> GenerateTeams(List<Player> players, Season season)
+        public TeamGenerator(IModelCreator modelCreator)
         {
-            this.allPlayers = players;
+            this.modelCreator = modelCreator;
+        }
+
+        public Task<List<GeneratorResult>> GenerateTeams(List<string> playerIds, Season season)
+        {
+            return this.GenerateTeams(playerIds, new List<string>(), season);
+        }
+
+        public async Task<List<GeneratorResult>> GenerateTeams(List<string> playerIds, List<string> substitudeIds, Season season)
+        {
+            var dummyTeamPlayers = await this.modelCreator.CreateTeam(playerIds, season);
+            var dummyTeamSubstitudes = await this.modelCreator.CreateTeam(substitudeIds, season);
+
+            dummyTeamSubstitudes.Players.ForEach(s => s.Name += "-Náhradník");
+            dummyTeamPlayers.Players.AddRange(dummyTeamSubstitudes.Players);
+
+            this.allPlayers = dummyTeamPlayers.Players;
             this.totalAmountOfPlayers = this.allPlayers.Count;
             this.amountOfPlayers = this.allPlayers.Count / 2;
             this.season = season;

@@ -206,13 +206,7 @@ namespace Elo_fotbalek.Controllers
 
             var enumSeason = Enum.Parse<Season>(Season);
 
-            var dummyTeamPlayers = await this.modelCreator.CreateTeam(playerIds, enumSeason);
-            var dummyTeamSubstitudes = await this.modelCreator.CreateTeam(subsitudeIds, enumSeason);
-
-            dummyTeamSubstitudes.Players.ForEach(s => s.Name += "-Náhradník");
-            dummyTeamPlayers.Players.AddRange(dummyTeamSubstitudes.Players);
-
-            var generatorResults = this.teamGenerator.GenerateTeams(dummyTeamPlayers.Players, enumSeason);
+            var generatorResults = await this.teamGenerator.GenerateTeams(playerIds.ToList(), subsitudeIds.ToList(), enumSeason);
 
             ViewData["GeneratedResults"] = generatorResults;
             return View("ShowTeamsResult");

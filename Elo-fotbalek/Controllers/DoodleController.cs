@@ -2,6 +2,7 @@
 {
     using Elo_fotbalek.Models;
     using Elo_fotbalek.Storage;
+    using Elo_fotbalek.TeamGenerator;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using System;
@@ -14,10 +15,12 @@
     public class DoodleController : Controller
     {
         private readonly IBlobClient blobClient;
+        private readonly ITeamGenerator teamGenerator;
 
-        public DoodleController(IBlobClient blobClient)
+        public DoodleController(IBlobClient blobClient, ITeamGenerator teamGenerator)
         {
             this.blobClient = blobClient;
+            this.teamGenerator = teamGenerator;
         }
 
         public async Task<IActionResult> Index()
@@ -65,9 +68,20 @@
 
         [HttpPost]
         [Route("generate-teams")]
-        public IActionResult GenerateTeams()
+        public async Task<IActionResult> GenerateTeams(string season)
         {
-            throw new NotSupportedException();
+            var doodles = await this.blobClient.GetDoodle();
+            var players = await this.blobClient.GetPlayers();
+
+            var currentPlayersName = doodles.Where(d => d.PlayersPoll[d.GetSortedPlayersPoll().Keys.First()] == DoodleValue.Accept).Select(d => d.Player).ToList();
+            var currentPlayersIds = players.Where(p => currentPlayersName.Contains(p.Name)).Select(p => p.Id.ToString());
+
+            var enumSeason = Enum.Parse<Season>(season);
+
+            var generatorResults = await this.teamGenerator.GenerateTeams(currentPlayersIds.ToList(), enumSeason);
+
+            ViewData["GeneratedResults"] = generatorResults;
+            return View("ShowTeamsResult");
         }
 
         [HttpPost]
