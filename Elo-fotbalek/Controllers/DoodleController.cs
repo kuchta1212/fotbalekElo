@@ -85,13 +85,14 @@
         }
 
         [HttpPost]
+        [Authorize]
         [Route("new-poll")]
         public async Task<IActionResult> RemoveOldAndCreateNew()
         {
             var doodles = await this.blobClient.GetDoodle();
 
             var min = doodles[0].PlayersPoll.Keys.Min<DateTime>();
-            if (min > DateTime.Now.AddDays(1))
+            if (min > DateTime.UtcNow.AddDays(1))
             {
                 return RedirectToAction("Index");
             }
