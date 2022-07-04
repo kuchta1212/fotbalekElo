@@ -92,7 +92,7 @@
             var doodles = await this.blobClient.GetDoodle();
 
             var min = doodles[0].PlayersPoll.Keys.Min<DateTime>();
-            if (min > DateTime.UtcNow.AddDays(1))
+            if (min.AddDays(1) > DateTime.UtcNow)
             {
                 return RedirectToAction("Index");
             }
