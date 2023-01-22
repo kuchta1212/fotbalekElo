@@ -1,28 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
-using EloCalculator;
-using Elo_fotbalek.EloCounter;
-using Microsoft.AspNetCore.Mvc;
-using Elo_fotbalek.Models;
-using Elo_fotbalek.Storage;
-using Elo_fotbalek.TeamGenerator;
-using Elo_fotbalek.TrendCalculator;
-using Elo_fotbalek.Utils;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.Extensions.Configuration;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Auth;
-using Microsoft.WindowsAzure.Storage.Blob;
-using Newtonsoft.Json;
-using Remotion.Linq.Parsing.Structure.IntermediateModel;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-
-namespace Elo_fotbalek.Controllers
+﻿namespace Elo_fotbalek.Controllers
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using EloCalculator;
+    using Elo_fotbalek.EloCounter;
+    using Microsoft.AspNetCore.Mvc;
+    using Elo_fotbalek.Models;
+    using Elo_fotbalek.Storage;
+    using Elo_fotbalek.TeamGenerator;
+    using Elo_fotbalek.TrendCalculator;
+    using Elo_fotbalek.Utils;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Mvc.Rendering;
+    using Elo_fotbalek.Configuration;
+    using Microsoft.Extensions.Options;
+
     public class HomeController : Controller
     {
         private readonly IBlobClient blobClient;
@@ -30,14 +25,22 @@ namespace Elo_fotbalek.Controllers
         private readonly IEloCalulator eloCalulator;
         private readonly ITeamGenerator teamGenerator;
         private readonly ITrendCalculator trendCalculator;
+        private readonly IOptions<AppConfigurationOptions> appConfiguration;
 
-        public HomeController(IBlobClient blobClient, IModelCreator modelCreator, IEloCalulator eloCalulator, ITeamGenerator teamGenerator, ITrendCalculator trendCalculator)
+        public HomeController(
+            IBlobClient blobClient, 
+            IModelCreator modelCreator, 
+            IEloCalulator eloCalulator, 
+            ITeamGenerator teamGenerator, 
+            ITrendCalculator trendCalculator,
+            IOptions<AppConfigurationOptions> appConfiguration)
         {
             this.blobClient = blobClient;
             this.modelCreator = modelCreator;
             this.eloCalulator = eloCalulator;
             this.teamGenerator = teamGenerator;
             this.trendCalculator = trendCalculator;
+            this.appConfiguration = appConfiguration;
         }
 
 
@@ -83,14 +86,15 @@ namespace Elo_fotbalek.Controllers
             {
                 Matches = matches.OrderByDescending(m => m.Date),
                 Players = sortedPlayers,
-                NonRegulars = sortedNonRegularPlayers
+                NonRegulars = sortedNonRegularPlayers,
+                AppConfiguration = appConfiguration.Value
             };
 
             return View(screen);
         }
 
         [HttpGet]
-        [Authorize]
+        [Authorize(policy: "MyPolicy")]
         public async Task<IActionResult> AddMatch()
         {
             var players = await this.blobClient.GetPlayers();
@@ -99,13 +103,13 @@ namespace Elo_fotbalek.Controllers
             var selectedList = new SelectList(players.OrderBy(p => p.Name), "Id", "Name");
 
             ViewData["Players"] = selectedList;
-            return View("AddMatch");
+            return View("AddMatch", new Match() { AppConfiguration = this.appConfiguration.Value});
         }
 
         [HttpPost]
         public async Task<IActionResult> AddMatchAndCalculateElo(string WinnerAmount, string LooserAmount, string Weight, string season, string hero)
         {
-            var enumSeason = Enum.Parse<Season>(season);
+            var enumSeason = this.GetSeason(season);
 
             Request.Form.TryGetValue("winner", out var winners);
             Request.Form.TryGetValue("looser", out var loosers);
@@ -113,7 +117,7 @@ namespace Elo_fotbalek.Controllers
             var winnTeam = await this.modelCreator.CreateTeam(winners.Where(v => Guid.Parse(v) != Guid.Empty), enumSeason);
             var loosTeam = await this.modelCreator.CreateTeam(loosers.Where(v => Guid.Parse(v) != Guid.Empty), enumSeason);
 
-            var heroName = Guid.Empty.ToString() != hero
+            var heroName = !string.IsNullOrEmpty(hero) && Guid.Empty.ToString() != hero
                 ? (await this.blobClient.GetPlayers()).First(p => p.Id.Equals(Guid.Parse(hero))).Name
                 : string.Empty;
 
@@ -124,7 +128,7 @@ namespace Elo_fotbalek.Controllers
                 LooserAmount = int.Parse(LooserAmount),
                 Winner = winnTeam,
                 Looser = loosTeam,
-                Weight = Weight == "BigMatch" ? 30 : 10,
+                Weight = (Weight ?? "BigMatch") == "BigMatch" ? 30 : 10,
                 Season = enumSeason,
                 Hero = heroName
             };
@@ -141,10 +145,10 @@ namespace Elo_fotbalek.Controllers
         }
 
         [HttpGet]
-        [Authorize]
+        [Authorize(policy: "MyPolicy")]
         public IActionResult AddPlayer()
         {
-            return View("AddPlayer");
+            return View("AddPlayer", new Player() { AppConfiguration = this.appConfiguration.Value});
         }
 
         [HttpPost]
@@ -192,7 +196,7 @@ namespace Elo_fotbalek.Controllers
 
             ViewData["Players"] = playersList;
             ViewData["Substitutes"] = substitudeList;
-            return View("ShowTeams");
+            return View("ShowTeams", new Match() { AppConfiguration = this.appConfiguration.Value});
         }
 
         [HttpPost]
@@ -204,12 +208,12 @@ namespace Elo_fotbalek.Controllers
             var playerIds = players.Where(v => Guid.Parse(v) != Guid.Empty);
             var subsitudeIds = substitues.Where(v => Guid.Parse(v) != Guid.Empty);
 
-            var enumSeason = Enum.Parse<Season>(Season);
+            var enumSeason = this.GetSeason(Season);
 
             var generatorResults = await this.teamGenerator.GenerateTeams(playerIds.ToList(), subsitudeIds.ToList(), enumSeason);
 
             ViewData["GeneratedResults"] = generatorResults;
-            return View("ShowTeamsResult");
+            return View("ShowTeamsResult", new Match() { AppConfiguration = this.appConfiguration.Value });
         }
 
         [HttpGet]
@@ -244,7 +248,8 @@ namespace Elo_fotbalek.Controllers
                 MaxElo = maxElo,
                 MinElo = minElo,
                 PlayedMatches = matchCount,
-                Attandance = player.Percentage
+                Attandance = player.Percentage,
+                AppConfiguration = this.appConfiguration.Value
             };
 
             return View("PlayerStats", stats);
@@ -419,7 +424,12 @@ namespace Elo_fotbalek.Controllers
             await this.blobClient.UpdatePlayers(players);
         }
 
-
+        private Season GetSeason(string season)
+        {
+            return this.appConfiguration.Value.IsSeasoningSupported
+                ? Enum.Parse<Season>(season) 
+                : Season.Summer;
+        }
 
     }
 }

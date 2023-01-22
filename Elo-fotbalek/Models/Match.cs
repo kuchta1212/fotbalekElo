@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Elo_fotbalek.Models
 {
-    public class Match
+    public class Match : BaseModel
     {
         public Team Winner { get; set; }
 

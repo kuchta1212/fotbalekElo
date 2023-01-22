@@ -2,7 +2,10 @@
 for details on configuring this project to bundle and minify static web assets. */
 body {
     padding-bottom: 20px;
-    background-image: url('../images/fotbalek.jpg');
+    background-image: url('../images/fotbalek-timeline-2.jpg');
+    /*background-position: 0% 0%, 0% 14%, 0% 30%, 0% 46%;*/
+    background-size: 100%;
+    /*background-repeat: no-repeat;*/
 }
 
 .opacity-card {

@@ -1,11 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Elo_fotbalek.Models
+﻿namespace Elo_fotbalek.Models
 {
-    public class HomeScreenModel
+    using Elo_fotbalek.Configuration;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
+
+    public class HomeScreenModel : BaseModel
     {
         public IOrderedEnumerable<Player> Players { get; set; }
 

@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace Elo_fotbalek
 {
@@ -36,6 +37,15 @@ namespace Elo_fotbalek
                     options.LoginPath = "/Admin/Login";
                 });
 
+            services.AddAuthorization(options =>
+                options.AddPolicy("MyPolicy",
+                    policy =>
+                    {
+                        policy.AddAuthenticationSchemes(CookieAuthenticationDefaults.AuthenticationScheme);
+                        policy.RequireRole("Administrator");
+                    })
+                );
+
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
@@ -43,6 +53,7 @@ namespace Elo_fotbalek
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
+            services.Configure<AppConfigurationOptions>(Configuration.GetSection(AppConfigurationOptions.AppConfiguration));
             services.Configure<BlobStorageOptions>(Configuration.GetSection(BlobStorageOptions.BlobStorage));
 
             var useOffline = Configuration.GetValue<bool>(BlobStorageOptions.BlobStorage+":UseOffline");
@@ -60,7 +71,7 @@ namespace Elo_fotbalek
             services.AddTransient<ITeamGenerator, TeamGenerator.TeamGenerator>();
             services.AddTransient<ITrendCalculator, TrendCalculator.TrendCalculator>();
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddRazorPages();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -81,13 +92,15 @@ namespace Elo_fotbalek
             app.UseStaticFiles();
             app.UseCookiePolicy();
 
+            app.UseRouting();
+            app.UseAuthorization();
             app.UseAuthentication();
 
-            app.UseMvc(routes =>
+            app.UseEndpoints(endpoints =>
             {
-                routes.MapRoute(
+                endpoints.MapControllerRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
             });
         }
     }

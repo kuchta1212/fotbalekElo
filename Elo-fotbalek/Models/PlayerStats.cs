@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Elo_fotbalek.Models
 {
-    public class PlayerStats
+    public class PlayerStats : BaseModel
     {
         public Player Player { get; set; }
 

@@ -1,9 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <UserSecretsId>3cb53075-8c37-4427-b8e7-873e9feab3ad</UserSecretsId>
     <RootNamespace>Elo_fotbalek</RootNamespace>
+    <StartupObject>Elo_fotbalek.Program</StartupObject>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,7 +1,7 @@
 ﻿@model Elo_fotbalek.Models.Match
 
 @{
-    ViewData["Title"] = "AddMatch";
+    ViewData["Title"] = "Přidej zápas";
 }
 
 <h2>Vytvoř zápas</h2>
@@ -20,26 +20,49 @@
         </div>
     </div>
     <div class="row">
-        <div class="form-group col-md-3">
-            <label asp-for="Weight" class="control-label">Váha zápasu</label>
-            <select asp-for="Weight" class="form-control">
-                <option value="BigMatch">Velký zápas</option>
-                <option value="SmallMatch">Malý zápas</option>
-            </select>
-        </div>
-        <div class="form-group col-md-3">
-            <label asp-for="Season" class="control-label">Sezóna</label>
-            <select asp-for="Season" class="form-control">
-                <option value="Summer">Léto</option>
-                <option value="Winter">Zima</option>
-            </select>
-        </div>
-        <div class="form-group col-md-3">
-            <label asp-for="Hero" class="control-label">Jirka Luňák, kapitán a trenér:</label>
-            <select asp-for="Hero" class="form-control" asp-items=@(ViewData["Players"] as SelectList)></select>
-        </div>
+        @if(Model.AppConfiguration.IsSmallMatchesEnabled)
+        {
+            <div class="form-group col-md-3">
+                <label asp-for="Weight" class="control-label">Váha zápasu</label>
+                <select asp-for="Weight" class="form-control">
+                    <option value="BigMatch">Velký zápas</option>
+                    <option value="SmallMatch">Malý zápas</option>
+                </select>
+            </div>
+        }
+
+        @if (Model.AppConfiguration.IsSeasoningSupported)
+        {
+            <div class="form-group col-md-3">
+                <label asp-for="Season" class="control-label">Sezóna</label>
+                <select asp-for="Season" class="form-control">
+                    <option value="Summer">Léto</option>
+                    <option value="Winter">Zima</option>
+                </select>
+            </div>
+        }
+        @if(Model.AppConfiguration.IsJirkaLunakEnabled)
+        {
+            <div class="form-group col-md-3">
+                <label asp-for="Hero" class="control-label">Jirka Luňák, kapitán a trenér:</label>
+                <select asp-for="Hero" class="form-control" asp-items=@(ViewData["Players"] as SelectList)></select>
+            </div>
+        }
     </div>
-    <div class="row">
+    @for(var i = 0; i < Model.AppConfiguration.PlayerLimit/2; i++)
+    {
+        <div class="row">
+            <div class="form-group col-md-4">
+                <label for="winnersAmount" class="control-label">Vítěz</label>
+                <select name="winner" asp-items=@(ViewData["Players"] as SelectList)></select>
+            </div>
+            <div class="form-group col-md-4">
+                <label for="loosersAmount" class="control-label">Poražený</label>
+                <select name="looser" asp-items=@(ViewData["Players"] as SelectList)></select>
+            </div>
+        </div>
+    }
+   @* <div class="row">
         <div class="form-group col-md-4">
             <label for="winnersAmount" class="control-label">Vítěz</label>
             <select name="winner" asp-items=@(ViewData["Players"] as SelectList)></select>
@@ -108,7 +131,7 @@
             <label for="loosersAmount" class="control-label">Poražený</label>
             <select name="looser" asp-items=@(ViewData["Players"] as SelectList)></select>
         </div>
-    </div>
+    </div>*@
     <div class="form-group">
         <input type="submit" value="Vytvoř a vypočti Elo" class="btn btn-default" />
     </div>

@@ -9,6 +9,7 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Numerics;
     using System.Threading.Tasks;
 
     public class OfflineBlobClient : IBlobClient
@@ -22,14 +23,18 @@
             this.options = options;
         }
 
-        public Task AddMatch(Match match)
+        public async Task AddMatch(Match match)
         {
-            throw new NotImplementedException();
+            var matches = await this.GetMatches();
+            matches.Add(match);
+            File.WriteAllText(this.FolderPath + this.options.Value.MatchesBlobName, JsonConvert.SerializeObject(matches));
         }
 
-        public Task AddPlayer(Player player)
+        public async Task AddPlayer(Player player)
         {
-            throw new NotImplementedException();
+            var players = await this.GetPlayers();
+            players.Add(player);
+            File.WriteAllText(this.FolderPath + this.options.Value.PlayersBlobName, JsonConvert.SerializeObject(players));
         }
 
         public Task<List<Doodle>> GetDoodle()
@@ -40,7 +45,8 @@
 
         public Task<List<Match>> GetMatches()
         {
-            throw new NotImplementedException();
+            var matchesJson = File.ReadAllText(this.FolderPath + this.options.Value.MatchesBlobName);
+            return Task.FromResult(JsonConvert.DeserializeObject<List<Match>>(matchesJson));
         }
 
         public Task<List<Player>> GetPlayers()
@@ -51,7 +57,8 @@
 
         public Task<List<MyUser>> GetUsers()
         {
-            throw new NotImplementedException();
+            var playersJson = File.ReadAllText(this.FolderPath + this.options.Value.UsersBlobName);
+            return Task.FromResult(JsonConvert.DeserializeObject<List<MyUser>>(playersJson));
         }
 
         public Task RemoveMatch(Match match)
@@ -72,7 +79,8 @@
 
         public Task UpdatePlayers(List<Player> players)
         {
-            throw new NotImplementedException();
+            File.WriteAllText(this.FolderPath + this.options.Value.PlayersBlobName, JsonConvert.SerializeObject(players));
+            return Task.CompletedTask;
         }
     }
 }
