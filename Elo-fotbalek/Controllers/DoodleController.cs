@@ -150,15 +150,17 @@
             var playersName = players.Select(p => p.Name).ToList();
 
             var missingPlayers = playersName.Except(playersFromDoodle).ToList();
+            var removedPlayers = playersFromDoodle.Except(playersName).ToList();
 
-            var newDoodle = this.AddPlayersToDoodle(missingPlayers, doodles);
+            var newDoodle = this.AddAndRemovePlayersToDoodle(missingPlayers, removedPlayers, doodles);
+
 
             await this.blobClient.SaveDoodle(newDoodle);
 
             return newDoodle;
         }
 
-        private List<Doodle> AddPlayersToDoodle(List<string> missingPlayers, List<Doodle> doodles)
+        private List<Doodle> AddAndRemovePlayersToDoodle(List<string> missingPlayers, List<string> removedPlayers, List<Doodle> doodles)
         {
             foreach(var missingPlayer in missingPlayers)
             {
@@ -177,6 +179,15 @@
                 }
 
                 doodles.Add(newDoodle);
+            }
+
+            if (removedPlayers.Count > 0)
+            {
+                var doodlesToRemove = doodles.Where(d => removedPlayers.Contains(d.Player)).ToList();
+                foreach(var doodle in doodlesToRemove)
+                {
+                    doodles.Remove(doodle);
+                }
             }
 
             return doodles;

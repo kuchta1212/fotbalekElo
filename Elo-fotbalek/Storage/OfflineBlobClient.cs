@@ -66,9 +66,11 @@
             throw new NotImplementedException();
         }
 
-        public Task RemovePlayer(Player player)
+        public async Task RemovePlayer(Player player)
         {
-            throw new NotImplementedException();
+            var players = await this.GetPlayers();
+            players.Remove(player);
+            File.WriteAllText(this.FolderPath + this.options.Value.PlayersBlobName, JsonConvert.SerializeObject(players));
         }
 
         public Task SaveDoodle(List<Doodle> doodle)

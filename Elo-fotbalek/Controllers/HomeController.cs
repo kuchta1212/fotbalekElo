@@ -256,7 +256,7 @@
         }
 
         [HttpGet]
-        [Authorize]
+        [Authorize(policy: "MyPolicy")]
         public async Task<IActionResult> DeleteMatch(string date, string score)
         {
             var matches = await this.blobClient.GetMatches();
@@ -283,28 +283,11 @@
         }
 
         [HttpGet]
-        [Authorize]
+        [Authorize(policy: "MyPolicy")]
         public async Task<IActionResult> DeletePlayer(Guid playerId)
         {
-            var matches = await this.blobClient.GetMatches();
-            var players = await this.blobClient.GetPlayers();
-
-            var match = matches.First(m => m.Date.ToString() == date && m.Score == score);
-
-            foreach (var matchPlayer in match.Winner.Players)
-            {
-                players.Remove(players.First(x => x.Id == matchPlayer.Id));
-                players.Add(matchPlayer);
-            }
-
-            foreach (var matchPlayer in match.Looser.Players)
-            {
-                players.Remove(players.First(x => x.Id == matchPlayer.Id));
-                players.Add(matchPlayer);
-            }
-
-            await this.blobClient.UpdatePlayers(players);
-            await this.blobClient.RemoveMatch(match);
+            var player = (await this.blobClient.GetPlayers()).First(p => p.Id == playerId);
+            await this.blobClient.RemovePlayer(player);
 
             return RedirectToAction("Index");
         }

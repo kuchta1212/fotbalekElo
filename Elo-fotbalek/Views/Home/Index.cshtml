@@ -115,6 +115,9 @@
                                 <h7>@Html.DisplayFor(modelItem => player.Elos.WinterElo)</h7>
                             </td>
                         }
+                        <td class="text-right">
+                            <a href="Home/DeletePlayer?playerId=@player.Id" class="card-link"><small class="text-muted">Smazat</small></a>
+                        </td>
                     </tr>
                 }
             </tbody>
