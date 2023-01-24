@@ -82,12 +82,8 @@
             error: error
         });
 
-        //var backgroundImg = ["../images/fotbalek-2022.jpg",
-        //    "../images/fotbalek-2021.jpg",
-        //    "'../images/fotbalek.jpg'",
-        //    "'../images/fotbalek-saman.jpg'"
-        //]
 
+        document.body.style.backgroundImage = "url('" + '@Model.AppConfiguration.BackgroundImagesForJs'.split(";")[0] + "')";
         setInterval(changeImage, 30000);
         function changeImage() {
             var i = Math.floor((Math.random() * 3));

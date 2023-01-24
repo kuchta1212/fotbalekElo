@@ -1,5 +1,7 @@
 ﻿namespace Elo_fotbalek.Configuration
 {
+    using System.Linq;
+
     public class AppConfigurationOptions
     {
         public const string AppConfiguration = "AppConfiguration";
@@ -24,7 +26,9 @@
         { 
             get 
             {
-                return string.Join(";", this.BackgroundImages);
+                return this.BackgroundImages != null && this.BackgroundImages.Count() > 0
+                    ? string.Join(";", this.BackgroundImages)
+                    : string.Empty;
             } 
         }
     }
