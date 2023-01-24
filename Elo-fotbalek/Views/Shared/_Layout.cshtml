@@ -74,12 +74,28 @@
         var error = function(error) {
             console.log(error);
         };
+
         $.ajax({
             url: "Admin/IsLogedIn",
             type: "GET",
             success: success,
             error: error
         });
+
+        //var backgroundImg = ["../images/fotbalek-2022.jpg",
+        //    "../images/fotbalek-2021.jpg",
+        //    "'../images/fotbalek.jpg'",
+        //    "'../images/fotbalek-saman.jpg'"
+        //]
+
+        setInterval(changeImage, 30000);
+        function changeImage() {
+            var i = Math.floor((Math.random() * 3));
+            const backgroundImgStr = '@Model.AppConfiguration.BackgroundImagesForJs';
+            const backgroundImg = backgroundImgStr.split(";");
+            document.body.style.backgroundImage = "url('" + backgroundImg[i] + "')";
+
+        }
 
     });
 

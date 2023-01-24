@@ -282,6 +282,33 @@
             return RedirectToAction("Index");
         }
 
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> DeletePlayer(Guid playerId)
+        {
+            var matches = await this.blobClient.GetMatches();
+            var players = await this.blobClient.GetPlayers();
+
+            var match = matches.First(m => m.Date.ToString() == date && m.Score == score);
+
+            foreach (var matchPlayer in match.Winner.Players)
+            {
+                players.Remove(players.First(x => x.Id == matchPlayer.Id));
+                players.Add(matchPlayer);
+            }
+
+            foreach (var matchPlayer in match.Looser.Players)
+            {
+                players.Remove(players.First(x => x.Id == matchPlayer.Id));
+                players.Add(matchPlayer);
+            }
+
+            await this.blobClient.UpdatePlayers(players);
+            await this.blobClient.RemoveMatch(match);
+
+            return RedirectToAction("Index");
+        }
+
         private void AddEloStat(List<ChartModel> elos, DateTime dateTime, int elo, ref int minElo, ref int maxElo)
         {
             if (elo < minElo)

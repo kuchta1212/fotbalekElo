@@ -17,5 +17,15 @@
         public bool IsSmallMatchesEnabled { get; set; }
 
         public bool IsJirkaLunakEnabled { get; set; }
+
+        public string[] BackgroundImages { get; set; }
+
+        public string BackgroundImagesForJs 
+        { 
+            get 
+            {
+                return string.Join(";", this.BackgroundImages);
+            } 
+        }
     }
 }
