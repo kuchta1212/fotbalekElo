@@ -22,6 +22,8 @@
 
         public string[] BackgroundImages { get; set; }
 
+        public bool IsDoodleEnabled { get; set; }
+
         public string BackgroundImagesForJs 
         { 
             get 

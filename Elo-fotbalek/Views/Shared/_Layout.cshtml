@@ -12,7 +12,7 @@
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" asp-controller="Home" asp-action="Index">Elo @Model.AppConfiguration.AppName</a>
+        <a class="navbar-brand" asp-controller="Home" asp-action="Index">@Model.AppConfiguration.AppName</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -27,9 +27,12 @@
                 <li class="nav-item active">
                     <a class="nav-link" asp-controller="Home" asp-action="GenerateTeams">Doporuč sestavy</a>
                 </li>
-                <li class="nav-item active">
-                    <a class="nav-link" asp-controller="Doodle" asp-action="Index">Doodle</a>
-                </li>
+                @if (Model.AppConfiguration.IsDoodleEnabled)
+                {
+                    <li class="nav-item active">
+                        <a class="nav-link" asp-controller="Doodle" asp-action="Index">Doodle</a>
+                    </li>
+                }
             </ul>
         </div>
         

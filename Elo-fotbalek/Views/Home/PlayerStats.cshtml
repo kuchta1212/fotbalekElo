@@ -15,18 +15,21 @@
             <h5 class="card-title justify-content-center">@Model.Player.Elo</h5>
         </div>
     </div>
-    <div class="card" style="width: 13rem;">
-        <div class="card-header">Letní elo</div>
-        <div class="card-body">
-            <h5 class="card-title">@Model.Player.Elos.SummerElo</h5>
+    @if(Model.AppConfiguration.IsSeasoningSupported)
+    {
+        <div class="card" style="width: 13rem;">
+            <div class="card-header">Letní elo</div>
+            <div class="card-body">
+                <h5 class="card-title">@Model.Player.Elos.SummerElo</h5>
+            </div>
         </div>
-    </div>
-    <div class="card" style="width: 13rem;">
-        <div class="card-header">Zimní elo</div>
-        <div class="card-body">
-            <h5 class="card-title">@Model.Player.Elos.WinterElo</h5>
+        <div class="card" style="width: 13rem;">
+            <div class="card-header">Zimní elo</div>
+            <div class="card-body">
+                <h5 class="card-title">@Model.Player.Elos.WinterElo</h5>
+            </div>
         </div>
-    </div>
+    }
     <div class="card" style="width: 13rem;">
         <div class="card-header">Nejvyšší elo</div>
         <div class="card-body">
@@ -47,28 +50,48 @@
         <div class="card-header">Počet výher</div>
         <div class="card-body text-success">
             <h5 class="card-title">@((Model.Player.AmountOfWins?.BigMatches + Model.Player.AmountOfWins?.SmallMatches) ?? 0)</h5>
-            <h7 class="card-title">Velké zápasy: @(Model.Player.AmountOfWins?.BigMatches ?? 0)</h7>
-            <br />
-            <h7 class="card-title">Malé zápasy: @(Model.Player.AmountOfWins?.SmallMatches ?? 0)</h7>
+            @if(Model.AppConfiguration.IsSmallMatchesEnabled)
+            {
+                <h7 class="card-title">Velké zápasy: @(Model.Player.AmountOfWins?.BigMatches ?? 0)</h7>
+                <br />
+                <h7 class="card-title">Malé zápasy: @(Model.Player.AmountOfWins?.SmallMatches ?? 0)</h7>
+            }
+
         </div>
     </div>
     <div class="card" style="width: 13rem;">
         <div class="card-header">Počet proher</div>
         <div class="card-body text-danger">
             <h5 class="card-title">@((Model.Player.AmountOfLooses?.BigMatches + Model.Player.AmountOfLooses?.SmallMatches) ?? 0)</h5>
-            <h7 class="card-title">Velké zápasy: @(Model.Player.AmountOfLooses?.BigMatches ?? 0)</h7>
-            <br />
-            <h7 class="card-title">Malé zápasy: @(Model.Player.AmountOfLooses?.SmallMatches ?? 0)</h7>
+            @if (Model.AppConfiguration.IsSmallMatchesEnabled)
+            {
+                <h7 class="card-title">Velké zápasy: @(
+                Model.Player.AmountOfLooses?.BigMatches ?? 0
+                )</h7>
+                <br />
+                <h7 class="card-title">Malé zápasy: @(
+                Model.Player.AmountOfLooses?.SmallMatches ?? 0
+                )</h7>
+            }
 
         </div>
     </div>
     <div class="card" style="width: 13rem;">
         <div class="card-header">Počet remíz</div>
         <div class="card-body text-warning">
-            <h5 class="card-title">@((Model.Player.AmountOfTies?.BigMatches + Model.Player.AmountOfTies?.SmallMatches) ?? 0)</h5>
-            <h7 class="card-title">Velké zápasy: @(Model.Player.AmountOfTies?.BigMatches ?? 0)</h7>
-            <br />
-            <h7 class="card-title">Malé zápasy: @(Model.Player.AmountOfTies?.SmallMatches ?? 0)</h7>
+            @if (Model.AppConfiguration.IsSmallMatchesEnabled)
+            {
+                <h5 class="card-title">@(
+                 (Model.Player.AmountOfTies?.BigMatches + Model.Player.AmountOfTies?.SmallMatches) ?? 0
+                 )</h5>
+                <h7 class="card-title">Velké zápasy: @(
+                Model.Player.AmountOfTies?.BigMatches ?? 0
+                )</h7>
+                <br />
+                <h7 class="card-title">Malé zápasy: @(
+                Model.Player.AmountOfTies?.SmallMatches ?? 0
+                )</h7>
+            }
         </div>
     </div>
     <div class="card" style="width: 13rem;">

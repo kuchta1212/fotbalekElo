@@ -17,7 +17,9 @@ namespace Elo_fotbalek.Models
 
         public override string ToString()
         {
-            return BigMatches+SmallMatches + " (v:" + BigMatches + ", m:" + SmallMatches + ")";
+            return this.BigMatches == 0 || this.SmallMatches == 0
+                ? (BigMatches + SmallMatches).ToString()
+                : BigMatches + SmallMatches + " (v:" + BigMatches + ", m:" + SmallMatches + ")";
         }
 
         public int TotalAmount()
