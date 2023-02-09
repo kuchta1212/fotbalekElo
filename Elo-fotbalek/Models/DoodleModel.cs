@@ -5,7 +5,7 @@
     using System.Linq;
     using System.Threading.Tasks;
 
-    public class DoodleModel
+    public class DoodleModel : BaseModel
     {
         public List<Doodle> Doodle { get; set; }
 

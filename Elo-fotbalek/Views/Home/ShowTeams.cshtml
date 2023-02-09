@@ -1,7 +1,7 @@
 ﻿@model Elo_fotbalek.Models.Match
 
 @{
-    ViewData["Title"] = "GenerateTeams";
+    ViewData["Title"] = "Doporuč sestavy";
 }
 
 <h2>Zadej účastníky</h2>
@@ -9,20 +9,28 @@
 <h4>Účastníci</h4>
 <hr />
 <form asp-action="GenerateTeamsResult">
-    <div class="form-group col-md-5">
-        <label asp-for="Season" class="control-label">Sezóna</label>
-        <select asp-for="Season" class="form-control">
-            <option value="Summer">Léto</option>
-            <option value="Winter">Zima</option>
-        </select>
-    </div>
-    <div class="form-group col-md-5">
-        <label for="player" class="control-label">Hráč</label>
-        <select id="player-one" onchange="playerSelected(this)" name="player" asp-items=@(ViewData["Players"] as SelectList)></select>
-        <label id="substituted-label-one" for="substituted-one" style="visibility: hidden" class="control-label">Náhradník</label>
-        <select id="substituted-one" style="visibility: hidden" name="substitude" asp-items=@(ViewData["Substitutes"] as SelectList)></select>
-    </div>
-    <div class="form-group col-md-5">
+    @if (Model.AppConfiguration.IsSeasoningSupported)
+    {
+        <div class="form-group col-md-5">
+            <label asp-for="Season" class="control-label">Sezóna</label>
+            <select asp-for="Season" class="form-control">
+                <option value="Summer">Léto</option>
+                <option value="Winter">Zima</option>
+            </select>
+        
+        </div>
+    }
+    @for(var i = 0; i < Model.AppConfiguration.PlayerLimit; i++)
+    {
+        <div class="form-group col-md-5">
+            <label for="player" class="control-label">Hráč</label>
+            <select id="player-one" onchange="playerSelected(this)" name="player" asp-items=@(ViewData["Players"] as SelectList)></select>
+            <label id="substituted-label-one" for="substituted-one" style="visibility: hidden" class="control-label">Náhradník</label>
+            <select id="substituted-one" style="visibility: hidden" name="substitude" asp-items=@(ViewData["Substitutes"] as SelectList)></select>
+        </div>
+    }
+
+    @*<div class="form-group col-md-5">
         <label for="player" class="control-label">Hráč</label>
         <select id="player-two" onchange="playerSelected(this)" name="player" asp-items=@(ViewData["Players"] as SelectList)></select>
         <label id="substituted-label-two" for="substituted-one" style="visibility: hidden" class="control-label">Náhradník</label>
@@ -99,7 +107,7 @@
         <select id="player-fourteen" onchange="playerSelected(this)" name="player" asp-items=@(ViewData["Players"] as SelectList)></select>
         <label id="substituted-label-fourteen" for="substituted-one" style="visibility: hidden" class="control-label">Náhradník</label>
         <select id="substituted-fourteen" style="visibility: hidden" name="substitude" asp-items=@(ViewData["Substitutes"] as SelectList)></select>
-    </div>
+    </div>*@
     <div class="form-group">
         <input type="submit" value="Doporuč sestavy" class="btn btn-default" />
     </div>

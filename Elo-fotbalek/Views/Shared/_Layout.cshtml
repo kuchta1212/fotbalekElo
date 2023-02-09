@@ -1,9 +1,10 @@
-﻿<!DOCTYPE html>
+﻿@model BaseModel
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - EloFotbálek</title>
+    <title>@ViewData["Title"]</title>
 
     <link rel="stylesheet" href="~/css/site.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
@@ -11,7 +12,7 @@
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" asp-controller="Home" asp-action="Index">Elo fotbálek</a>
+        <a class="navbar-brand" asp-controller="Home" asp-action="Index">@Model.AppConfiguration.AppName</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -26,9 +27,12 @@
                 <li class="nav-item active">
                     <a class="nav-link" asp-controller="Home" asp-action="GenerateTeams">Doporuč sestavy</a>
                 </li>
-                <li class="nav-item active">
-                    <a class="nav-link" asp-controller="Doodle" asp-action="Index">Doodle</a>
-                </li>
+                @if (Model.AppConfiguration.IsDoodleEnabled)
+                {
+                    <li class="nav-item active">
+                        <a class="nav-link" asp-controller="Doodle" asp-action="Index">Doodle</a>
+                    </li>
+                }
             </ul>
         </div>
         
@@ -73,12 +77,24 @@
         var error = function(error) {
             console.log(error);
         };
+
         $.ajax({
             url: "Admin/IsLogedIn",
             type: "GET",
             success: success,
             error: error
         });
+
+
+        document.body.style.backgroundImage = "url('" + '@Model.AppConfiguration.BackgroundImagesForJs'.split(";")[0] + "')";
+        setInterval(changeImage, 30000);
+        function changeImage() {
+            var i = Math.floor((Math.random() * 3));
+            const backgroundImgStr = '@Model.AppConfiguration.BackgroundImagesForJs';
+            const backgroundImg = backgroundImgStr.split(";");
+            document.body.style.backgroundImage = "url('" + backgroundImg[i] + "')";
+
+        }
 
     });
 
@@ -207,7 +223,7 @@
             }
         }, 
         error => {
-            alert("Už je hodně přihlášených. Napiš Josefovi, nebo Kuchťovi, jestli má cenu chodit.")
+            alert("Kapacita naplněna")
         });
     }
 

@@ -1,10 +1,9 @@
-﻿@{
-    ViewData["Title"] = "Elo - Fotbálek";
-}
-@using System.Text
+﻿@using System.Text
 @using Elo_fotbalek.Utils
 @model HomeScreenModel
-
+@{
+    ViewData["Title"] = "Elo - " + Model.AppConfiguration.AppName;
+}
 
 
 <div class="row">
@@ -18,8 +17,11 @@
                     <th />
                     <th />
                     <th><a asp-action="Index" asp-route-sortOrder="default">Elo</a></th>
-                    <th><a asp-action="Index" asp-route-sortOrder="summer">Letní Elo</a></th>
-                    <th><a asp-action="Index" asp-route-sortOrder="winter">Zimní Elo</a></th>
+                    @if(Model.AppConfiguration.IsSeasoningSupported)
+                    {
+                        <th><a asp-action="Index" asp-route-sortOrder="summer">Letní Elo</a></th>
+                        <th><a asp-action="Index" asp-route-sortOrder="winter">Zimní Elo</a></th>
+                    }
                 </tr>
             </thead>
             <tbody>
@@ -48,17 +50,21 @@
                         <td>
                             <h5>@Html.DisplayFor(modelItem => player.Elo)</h5>
                         </td>
-                        <td>
-                            <h7>@Html.DisplayFor(modelItem => player.Elos.SummerElo)</h7>
-                        </td>
-                        <td>
-                            <h7>@Html.DisplayFor(modelItem => player.Elos.WinterElo)</h7>
-                        </td>
+                        @if(Model.AppConfiguration.IsSeasoningSupported)
+                        {
+                            <td>
+                                <h7>@Html.DisplayFor(modelItem => player.Elos.SummerElo)</h7>
+                            </td>
+                            <td>
+                                <h7>@Html.DisplayFor(modelItem => player.Elos.WinterElo)</h7>
+                            </td>
+                        }
+
                     </tr>
                 }
             </tbody>
         </table>
-        <h2 class="opacity-table-header">Lemry líný (méně než 30% zápasů)</h2>
+        <h2 class="opacity-table-header">@Model.AppConfiguration.NonRegularsTitle (méně než 30% zápasů)</h2>
         <table class="table">
             <thead>
                 <tr>
@@ -67,8 +73,11 @@
                     <th />
                     <th />
                     <th><a asp-action="Index" asp-route-sortOrder="default">Elo</a></th>
-                    <th><a asp-action="Index" asp-route-sortOrder="summer">Letní Elo</a></th>
-                    <th><a asp-action="Index" asp-route-sortOrder="winter">Zimní Elo</a></th>
+                    @if(Model.AppConfiguration.IsSeasoningSupported)
+                    {
+                        <th><a asp-action="Index" asp-route-sortOrder="summer">Letní Elo</a></th>
+                        <th><a asp-action="Index" asp-route-sortOrder="winter">Zimní Elo</a></th>
+                    }
                 </tr>
             </thead>
             <tbody>
@@ -97,11 +106,17 @@
                         <td>
                             <h5>@Html.DisplayFor(modelItem => player.Elo)</h5>
                         </td>
-                        <td>
-                            <h7>@Html.DisplayFor(modelItem => player.Elos.SummerElo)</h7>
-                        </td>
-                        <td>
-                            <h7>@Html.DisplayFor(modelItem => player.Elos.WinterElo)</h7>
+                        @if(Model.AppConfiguration.IsSeasoningSupported)
+                        {
+                            <td>
+                                <h7>@Html.DisplayFor(modelItem => player.Elos.SummerElo)</h7>
+                            </td>
+                            <td>
+                                <h7>@Html.DisplayFor(modelItem => player.Elos.WinterElo)</h7>
+                            </td>
+                        }
+                        <td class="text-right">
+                            <a href="Home/DeletePlayer?playerId=@player.Id" class="card-link"><small class="text-muted">Smazat</small></a>
                         </td>
                     </tr>
                 }
@@ -115,8 +130,14 @@
             <div class="card opacity-card" style="width: 40rem;">
                 <div class="card-body">
                     <h5 class="card-title">@match.Date.ToString("dd.MM yyyy")  @match.Score</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">Typ zápasu(Váha): @match.WeighInStr</h6>
-                    <h6 class="card-subtitle mb-2 text-muted">Sezóna: @match.Season.ToFriendlyString() </h6>
+                    @if (Model.AppConfiguration.IsSmallMatchesEnabled)
+                    {
+                        <h6 class="card-subtitle mb-2 text-muted">Typ zápasu(Váha): @match.WeighInStr</h6>
+                    }
+                    @if (Model.AppConfiguration.IsSeasoningSupported)
+                    {
+                        <h6 class="card-subtitle mb-2 text-muted">Sezóna: @match.Season.ToFriendlyString() </h6>
+                    }
                     <h6 class="card-subtitle mb-2 text-muted">Vítězové - Team Elo: @match.Winner.TeamElo</h6>
                     @{ var sb = new StringBuilder();}
                     @foreach (var p in match.Winner.Players)

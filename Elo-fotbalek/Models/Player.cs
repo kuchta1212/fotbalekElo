@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 
 namespace Elo_fotbalek.Models
 {
-    public class Player : IEquatable<Player>
+    public class Player : BaseModel, IEquatable<Player>
     {
         public Guid Id { get; set; }
 

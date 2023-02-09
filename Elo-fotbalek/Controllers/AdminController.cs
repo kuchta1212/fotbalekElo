@@ -1,36 +1,40 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Elo_fotbalek.EloCounter;
-using Elo_fotbalek.Models;
-using Elo_fotbalek.Storage;
-using Elo_fotbalek.TrendCalculator;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Mvc;
-
-namespace Elo_fotbalek.Controllers
+﻿namespace Elo_fotbalek.Controllers
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Security.Claims;
+    using System.Threading.Tasks;
+    using Elo_fotbalek.Configuration;
+    using Elo_fotbalek.EloCounter;
+    using Elo_fotbalek.Models;
+    using Elo_fotbalek.Storage;
+    using Elo_fotbalek.TrendCalculator;
+    using Microsoft.AspNetCore.Authentication;
+    using Microsoft.AspNetCore.Authentication.Cookies;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Options;
+
     public class AdminController : Controller
     {
         private readonly IBlobClient blobClient;
         private readonly IEloCalulator eloCalulator;
         private readonly ITrendCalculator trendCalculator;
+        private readonly IOptions<AppConfigurationOptions> appConfiguration;
 
 
-        public AdminController(IBlobClient blobClient, IEloCalulator eloCalulator, ITrendCalculator trendCalculator)
+        public AdminController(IBlobClient blobClient, IEloCalulator eloCalulator, ITrendCalculator trendCalculator, IOptions<AppConfigurationOptions> appConfiguration)
         {
             this.blobClient = blobClient;
             this.eloCalulator = eloCalulator;
             this.trendCalculator = trendCalculator;
+            this.appConfiguration = appConfiguration;
         }
 
         [HttpGet]
         public IActionResult Login()
         {
-            return View(new LoginModel());
+            return View(new LoginModel() { AppConfiguration = this.appConfiguration.Value});
         }
 
         [HttpPost]

@@ -1,10 +1,12 @@
 ﻿namespace Elo_fotbalek.Controllers
 {
+    using Elo_fotbalek.Configuration;
     using Elo_fotbalek.Models;
     using Elo_fotbalek.Storage;
     using Elo_fotbalek.TeamGenerator;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Options;
     using System;
     using System.Collections.Generic;
     using System.Globalization;
@@ -16,11 +18,13 @@
     {
         private readonly IBlobClient blobClient;
         private readonly ITeamGenerator teamGenerator;
+        private readonly IOptions<AppConfigurationOptions> appConfiguration;
 
-        public DoodleController(IBlobClient blobClient, ITeamGenerator teamGenerator)
+        public DoodleController(IBlobClient blobClient, ITeamGenerator teamGenerator, IOptions<AppConfigurationOptions> appConfiguration)
         {
             this.blobClient = blobClient;
             this.teamGenerator = teamGenerator;
+            this.appConfiguration = appConfiguration;
         }
 
         public async Task<IActionResult> Index()
@@ -30,7 +34,8 @@
             var model = new DoodleModel()
             {
                 Doodle = await this.CheckForNewPlayersAndUpdate(doodles),
-                Stats = this.CreateStats(doodles)
+                Stats = doodles.Count > 0 ? this.CreateStats(doodles) : new DoodleStats(),
+                AppConfiguration = this.appConfiguration.Value
             };
 
             return View(model);
@@ -48,7 +53,7 @@
             if (valueInEnum == DoodleValue.Accept)
             {
                 var amountOfAccepted = doodles.Count(d => d.PlayersPoll[dateTime] == DoodleValue.Accept);
-                if (amountOfAccepted >= 12)
+                if (amountOfAccepted >= this.appConfiguration.Value.PlayerLimit)
                 {
                     return BadRequest(); 
                 }
@@ -76,12 +81,12 @@
             var currentPlayersName = doodles.Where(d => d.PlayersPoll[d.GetSortedPlayersPoll().Keys.First()] == DoodleValue.Accept).Select(d => d.Player).ToList();
             var currentPlayersIds = players.Where(p => currentPlayersName.Contains(p.Name)).Select(p => p.Id.ToString());
 
-            var enumSeason = Enum.Parse<Season>(season);
+            var enumSeason = string.IsNullOrEmpty(season) ? Season.Summer : Enum.Parse<Season>(season);
 
             var generatorResults = await this.teamGenerator.GenerateTeams(currentPlayersIds.ToList(), enumSeason);
 
             ViewData["GeneratedResults"] = generatorResults;
-            return View("ShowTeamsResult");
+            return View("ShowTeamsResult", new BaseModel() { AppConfiguration = this.appConfiguration.Value});
         }
 
         [HttpPost]
@@ -145,15 +150,17 @@
             var playersName = players.Select(p => p.Name).ToList();
 
             var missingPlayers = playersName.Except(playersFromDoodle).ToList();
+            var removedPlayers = playersFromDoodle.Except(playersName).ToList();
 
-            var newDoodle = this.AddPlayersToDoodle(missingPlayers, doodles);
+            var newDoodle = this.AddAndRemovePlayersToDoodle(missingPlayers, removedPlayers, doodles);
+
 
             await this.blobClient.SaveDoodle(newDoodle);
 
             return newDoodle;
         }
 
-        private List<Doodle> AddPlayersToDoodle(List<string> missingPlayers, List<Doodle> doodles)
+        private List<Doodle> AddAndRemovePlayersToDoodle(List<string> missingPlayers, List<string> removedPlayers, List<Doodle> doodles)
         {
             foreach(var missingPlayer in missingPlayers)
             {
@@ -163,12 +170,24 @@
                     PlayersPoll = new Dictionary<DateTime, DoodleValue>()
                 };
 
-                foreach(var date in doodles[0].PlayersPoll.Keys)
+                if(doodles.Count > 0)
                 {
-                    newDoodle.PlayersPoll.Add(date, DoodleValue.NoAnswer);
+                    foreach (var date in doodles[0].PlayersPoll.Keys)
+                    {
+                        newDoodle.PlayersPoll.Add(date, DoodleValue.NoAnswer);
+                    }
                 }
 
                 doodles.Add(newDoodle);
+            }
+
+            if (removedPlayers.Count > 0)
+            {
+                var doodlesToRemove = doodles.Where(d => removedPlayers.Contains(d.Player)).ToList();
+                foreach(var doodle in doodlesToRemove)
+                {
+                    doodles.Remove(doodle);
+                }
             }
 
             return doodles;

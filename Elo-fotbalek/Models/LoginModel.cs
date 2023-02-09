@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Elo_fotbalek.Models
 {
-    public class LoginModel
+    public class LoginModel : BaseModel
     {
         [Required]
         [Display(Name = "Heslo")]

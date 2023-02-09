@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Elo_fotbalek.Models
 {
-    public class ChartModel
+    public class ChartModel : BaseModel
     {
         public DateTime DateTime { get; set; }
 

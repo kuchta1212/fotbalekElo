@@ -1,9 +1,9 @@
-﻿@{
-    ViewData["Title"] = "Elo - Fotbálek - Doodle";
-}
-@using System.Text
+﻿@using System.Text
 @using Elo_fotbalek.Utils
 @model DoodleModel
+@{
+    ViewData["Title"] = "Elo - Doodle";
+}
 
 
 
@@ -30,13 +30,16 @@
                 <h5 class="card-title">Generování týmů pro: @Model.Doodle[0].GetSortedPlayersPoll().Keys.First().ToString("dd.MM")</h5>
                 <form asp-action="GenerateTeams" asp-controller="Doodle" asp->
                     <div class="row">
-                        <label class="control-label">Sezóna</label>
-                        <select name="season" id="season" class="form-control">
-                            <option value="Summer">Léto</option>
-                            <option value="Winter">Zima</option>
-                        </select>
-                        <br/>
-                        <br/>
+                        @if(Model.AppConfiguration.IsSeasoningSupported)
+                        {
+                            <label class="control-label">Sezóna</label>
+                            <select name="season" id="season" class="form-control">
+                                <option value="Summer">Léto</option>
+                                <option value="Winter">Zima</option>
+                            </select>
+                            <br />
+                            <br />
+                        }
                         <input class="btn btn-primary btn-lg" type="submit" value="Vygeneruj týmy"/>
                     </div>
                 </form>
