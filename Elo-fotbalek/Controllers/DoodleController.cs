@@ -90,7 +90,7 @@
         }
 
         [HttpPost]
-        [Authorize]
+        [Authorize(policy: "MyPolicy")]
         [Route("new-poll")]
         public async Task<IActionResult> RemoveOldAndCreateNew()
         {
