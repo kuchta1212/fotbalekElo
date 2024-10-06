@@ -26,5 +26,13 @@ namespace Elo_fotbalek.Models
         public Season Season { get; set; }
 
         public string Hero { get; set; }
+
+        public List<Player> GetAllPlayers()
+        {
+            var list = new List<Player>();
+            list.AddRange(this.Winner.Players);
+            list.AddRange(this.Looser.Players);
+            return list;
+        }
     }
 }

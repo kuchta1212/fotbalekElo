@@ -84,5 +84,10 @@
             File.WriteAllText(this.FolderPath + this.options.Value.PlayersBlobName, JsonConvert.SerializeObject(players));
             return Task.CompletedTask;
         }
+
+        public Task<List<Match>> GetMatches(DateTime since)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

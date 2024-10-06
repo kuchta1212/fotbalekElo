@@ -18,5 +18,7 @@ namespace Elo_fotbalek.Models
         public int PlayedMatches { get; set; }
 
         public double Attandance { get; set; }
+
+        public double TotalAttendance { get; set; }
     }
 }

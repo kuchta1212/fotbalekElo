@@ -32,6 +32,9 @@ namespace Elo_fotbalek.Models
 
         public int Percentage { get; set; }
 
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public int TotalPercentage { get; set; }
+
         public override string ToString()
         {
             return this.Name + "(" + this.Elo +")";

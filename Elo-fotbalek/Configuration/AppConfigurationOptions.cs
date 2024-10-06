@@ -33,5 +33,7 @@
                     : string.Empty;
             } 
         }
+
+        public int AmountOfMonthsToBeCounted { get; set; }
     }
 }

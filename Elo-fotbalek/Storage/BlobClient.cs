@@ -115,6 +115,12 @@ namespace Elo_fotbalek.Storage
             }
         }
 
+        public async Task<List<Match>> GetMatches(DateTime since)
+        {
+            var matches = await this.GetMatches();
+            return matches.Where(m => m.Date >= since).ToList();
+        }
+
         public async Task<List<MyUser>> GetUsers()
         {
             try
