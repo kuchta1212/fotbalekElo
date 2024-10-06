@@ -299,14 +299,37 @@
 
 
         public async Task<IActionResult> IntroducePercentage()
-        { 
+        {
             var players = await this.blobClient.GetPlayers();
             var matches = await this.blobClient.GetMatches();
+
+            var countedMatches = matches.Where(m => m.Date >= DateTime.Now.AddMonths(-this.appConfiguration.Value.AmountOfMonthsToBeCounted));
+
+            var playersPercInSelectedPeriod = new Dictionary<string, int>();
+            foreach (var countedMatch in countedMatches)
+            {
+                foreach (var player in countedMatch.GetAllPlayers())
+                {
+                    if (playersPercInSelectedPeriod.ContainsKey(player.Id.ToString()))
+                    {
+                        playersPercInSelectedPeriod[player.Id.ToString()]++;
+                    }
+                    else
+                    {
+                        playersPercInSelectedPeriod.Add(player.Id.ToString(), 1);
+                    }
+                }
+            }
+
 
             foreach (var player in players)
             {
                 var totalAmountOfPlayedMatches = (player.AmountOfLooses?.TotalAmount() ?? 0) + (player.AmountOfWins?.TotalAmount() ?? 0);
-                player.Percentage = (int)(((double)totalAmountOfPlayedMatches / (double)matches.Count) * 100);
+                player.TotalPercentage = (int)(((double)totalAmountOfPlayedMatches / (double)matches.Count) * 100);
+                player.Percentage =
+                        playersPercInSelectedPeriod.ContainsKey(player.Id.ToString())
+                        ? (int)(((double)playersPercInSelectedPeriod[player.Id.ToString()] / (double)countedMatches.Count()) * 100)
+                        : 0;
             }
 
             await this.blobClient.UpdatePlayers(players);
