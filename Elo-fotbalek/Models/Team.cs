@@ -61,7 +61,9 @@ namespace Elo_fotbalek.Models
         public static int CalculateTeamElo(List<Player> players, Season season)
         {
             var weightElo = players.ToList().Sum(x => x.Percentage < 30
-                                            ? 1000
+                                            ? x.TotalPercentage < 30
+                                                ? 1000
+                                                : x.GetSeasonalElo(season)
                                             : x.Percentage < 50
                                                 ? AdjustElo(x.GetSeasonalElo(season))
                                                 : x.GetSeasonalElo(season));
