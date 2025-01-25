@@ -89,9 +89,9 @@
         document.body.style.backgroundImage = "url('" + '@Model.AppConfiguration.BackgroundImagesForJs'.split(";")[0] + "')";
         setInterval(changeImage, 30000);
         function changeImage() {
-            var i = Math.floor((Math.random() * 6));
-            const backgroundImgStr = '@Model.AppConfiguration.BackgroundImagesForJs';
             const backgroundImg = backgroundImgStr.split(";");
+            var i = Math.floor((Math.random() * backgroundImg.length));
+            const backgroundImgStr = '@Model.AppConfiguration.BackgroundImagesForJs';
             document.body.style.backgroundImage = "url('" + backgroundImg[i] + "')";
 
         }

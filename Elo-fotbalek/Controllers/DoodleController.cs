@@ -121,6 +121,11 @@
             var stats = new DoodleStats();
             foreach(var player in doodle)
             {
+                if (player.PlayersPoll.Count == 0)
+                {
+                    continue;
+                }
+
                 switch (player.PlayersPoll[player.GetSortedPlayersPoll().Keys.First()])
                 {
                     case DoodleValue.Accept:
