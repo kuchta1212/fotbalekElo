@@ -1,50 +1,51 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 using Elo_fotbalek.Account;
 using Elo_fotbalek.Configuration;
 using Elo_fotbalek.Models;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Blob;
 using Newtonsoft.Json;
+using AzureBlobClient = Azure.Storage.Blobs.BlobClient;
 
 namespace Elo_fotbalek.Storage
 {
     public class BlobClient : IBlobClient
     {
         private readonly IOptions<BlobStorageOptions> options;
-        private readonly CloudBlobClient cloudBlobClient;
+        private readonly BlobServiceClient blobServiceClient;
 
         public BlobClient(IOptions<BlobStorageOptions> options)
         {
             this.options = options;
             var connectionString = this.options.Value.ConnectionString;
-
-            var account = CloudStorageAccount.Parse(connectionString);
-            this.cloudBlobClient = account.CreateCloudBlobClient();
-            
+            this.blobServiceClient = new BlobServiceClient(connectionString);
         }
+
         public async Task AddPlayer(Player player)
         {
             var players = await this.GetPlayers();
 
             var blobName = this.options.Value.PlayersBlobName;
-            var blob = await this.GetBlob(blobName);
+            var blob = await this.GetBlobClient(blobName);
 
             players.Add(player);
 
-            await blob.UploadTextAsync(JsonConvert.SerializeObject(players));
+            var json = JsonConvert.SerializeObject(players);
+            await blob.UploadAsync(new BinaryData(json), overwrite: true);
         }
 
         public async Task UpdatePlayers(List<Player> players)
         {
             var blobName = this.options.Value.PlayersBlobName;
-            var blob = await this.GetBlob(blobName);
+            var blob = await this.GetBlobClient(blobName);
 
-            await blob.UploadTextAsync(JsonConvert.SerializeObject(players));
+            var json = JsonConvert.SerializeObject(players);
+            await blob.UploadAsync(new BinaryData(json), overwrite: true);
         }
 
         public async Task RemovePlayer(Player player)
@@ -52,11 +53,12 @@ namespace Elo_fotbalek.Storage
             var players = await this.GetPlayers();
 
             var blobName = this.options.Value.PlayersBlobName;
-            var blob = await this.GetBlob(blobName);
+            var blob = await this.GetBlobClient(blobName);
 
             players.Remove(player);
 
-            await blob.UploadTextAsync(JsonConvert.SerializeObject(players));
+            var json = JsonConvert.SerializeObject(players);
+            await blob.UploadAsync(new BinaryData(json), overwrite: true);
         }
 
         public async Task<List<Player>> GetPlayers()
@@ -64,10 +66,11 @@ namespace Elo_fotbalek.Storage
             try
             {
                 var blobName = this.options.Value.PlayersBlobName;
-                var blob = await this.GetBlob(blobName);
+                var blob = await this.GetBlobClient(blobName);
 
-                var playersJson = await blob.DownloadTextAsync();
-                return JsonConvert.DeserializeObject<List<Player>>(playersJson);
+                var response = await blob.DownloadContentAsync();
+                var playersJson = response.Value.Content.ToString();
+                return JsonConvert.DeserializeObject<List<Player>>(playersJson) ?? new List<Player>();
             }
             catch (Exception)
             {
@@ -80,11 +83,12 @@ namespace Elo_fotbalek.Storage
             var matches = await this.GetMatches();
 
             var blobName = this.options.Value.MatchesBlobName;
-            var blob = await this.GetBlob(blobName);
+            var blob = await this.GetBlobClient(blobName);
 
             matches.Add(match);
 
-            await blob.UploadTextAsync(JsonConvert.SerializeObject(matches));
+            var json = JsonConvert.SerializeObject(matches);
+            await blob.UploadAsync(new BinaryData(json), overwrite: true);
         }
 
         public async Task RemoveMatch(Match match)
@@ -92,11 +96,12 @@ namespace Elo_fotbalek.Storage
             var matches = await this.GetMatches();
 
             var blobName = this.options.Value.MatchesBlobName;
-            var blob = await this.GetBlob(blobName);
+            var blob = await this.GetBlobClient(blobName);
 
             matches.RemoveAll(m => m.Date == match.Date && m.Score == match.Score);
 
-            await blob.UploadTextAsync(JsonConvert.SerializeObject(matches));
+            var json = JsonConvert.SerializeObject(matches);
+            await blob.UploadAsync(new BinaryData(json), overwrite: true);
         }
 
         public async Task<List<Match>> GetMatches()
@@ -104,10 +109,11 @@ namespace Elo_fotbalek.Storage
             try
             {
                 var blobName = this.options.Value.MatchesBlobName;
-                var blob = await this.GetBlob(blobName);
+                var blob = await this.GetBlobClient(blobName);
 
-                var matchesJson = await blob.DownloadTextAsync();
-                return JsonConvert.DeserializeObject<List<Match>>(matchesJson);
+                var response = await blob.DownloadContentAsync();
+                var matchesJson = response.Value.Content.ToString();
+                return JsonConvert.DeserializeObject<List<Match>>(matchesJson) ?? new List<Match>();
             }
             catch (Exception)
             {
@@ -126,10 +132,11 @@ namespace Elo_fotbalek.Storage
             try
             {
                 var blobName = this.options.Value.UsersBlobName;
-                var blob = await this.GetBlob(blobName);
+                var blob = await this.GetBlobClient(blobName);
 
-                var usersJson = await blob.DownloadTextAsync();
-                return JsonConvert.DeserializeObject<List<MyUser>>(usersJson);
+                var response = await blob.DownloadContentAsync();
+                var usersJson = response.Value.Content.ToString();
+                return JsonConvert.DeserializeObject<List<MyUser>>(usersJson) ?? new List<MyUser>();
             }
             catch (Exception)
             {
@@ -142,10 +149,11 @@ namespace Elo_fotbalek.Storage
             try
             {
                 var blobName = this.options.Value.DoodleBlobName;
-                var blob = await this.GetBlob(blobName);
+                var blob = await this.GetBlobClient(blobName);
 
-                var doodleJson = await blob.DownloadTextAsync();
-                return JsonConvert.DeserializeObject<List<Doodle>>(doodleJson);
+                var response = await blob.DownloadContentAsync();
+                var doodleJson = response.Value.Content.ToString();
+                return JsonConvert.DeserializeObject<List<Doodle>>(doodleJson) ?? new List<Doodle>();
             }
             catch (Exception)
             {
@@ -156,23 +164,20 @@ namespace Elo_fotbalek.Storage
         public async Task SaveDoodle(List<Doodle> doodle)
         {
             var blobName = this.options.Value.DoodleBlobName;
-            var blob = await this.GetBlob(blobName);
+            var blob = await this.GetBlobClient(blobName);
 
-            await blob.UploadTextAsync(JsonConvert.SerializeObject(doodle));
+            var json = JsonConvert.SerializeObject(doodle);
+            await blob.UploadAsync(new BinaryData(json), overwrite: true);
         }
 
-        private async Task<CloudBlockBlob> GetBlob(string blobName)
+        private async Task<AzureBlobClient> GetBlobClient(string blobName)
         {
             var containerName = this.options.Value.ContainerName;
-            var blobContainer = this.cloudBlobClient.GetContainerReference(containerName);
-            await blobContainer.CreateIfNotExistsAsync();
+            var containerClient = this.blobServiceClient.GetBlobContainerClient(containerName);
+            
+            await containerClient.CreateIfNotExistsAsync(PublicAccessType.Blob);
 
-            await blobContainer.SetPermissionsAsync(new BlobContainerPermissions()
-            {
-                PublicAccess = BlobContainerPublicAccessType.Blob
-            });
-
-            return blobContainer.GetBlockBlobReference(blobName);
+            return containerClient.GetBlobClient(blobName);
         }
     }
 }
