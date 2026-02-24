@@ -10,9 +10,10 @@ import type {
   MatchesListResponse,
   MatchDetailResponse,
   MatchFilters,
-  DoodleListResponse,
+  DoodleUpcomingResponse,
   DoodleDetailResponse,
   UpdateAvailabilityRequest,
+  UpdateAvailabilityResponse,
   GenerateTeamsRequest,
   GenerateTeamsResponse,
   AddPlayerRequest,
@@ -44,10 +45,19 @@ export const matchesService = {
 
 export const doodleService = {
   upcoming: (count: number = 5) => 
-    get<DoodleListResponse>(`/api/doodle/upcoming${buildQueryString({ count })}`),
+    get<DoodleUpcomingResponse>(`/api/doodle/upcoming${buildQueryString({ count })}`),
   get: (date: string) => get<DoodleDetailResponse>(`/api/doodle/${date}`),
   updateAvailability: (date: string, request: UpdateAvailabilityRequest) =>
-    put<void>(`/api/doodle/${date}/availability`, request),
+    put<UpdateAvailabilityResponse>(`/api/doodle/${date}/availability`, request),
+  advancePoll: (auth: { username: string; password: string }) =>
+    post<{ success: boolean; message: string; removedDate: string; addedDate: string }>(
+      '/api/doodle/advance-poll',
+      {},
+      {
+        useBasicAuth: true,
+        ...auth,
+      } as FetchOptions
+    ),
 };
 
 export const teamsService = {

@@ -2,7 +2,7 @@
  * API Request/Response DTOs
  */
 
-import type { Season, Player, Match, GeneratorResult, Doodle, LeaderboardEntry, PlayerStats } from './domain';
+import type { Season, Player, Match, GeneratorResult, LeaderboardEntry, PlayerStats } from './domain';
 
 // API Response wrapper
 export interface ApiResponse<T> {
@@ -51,23 +51,45 @@ export interface MatchFilters {
 }
 
 // Doodle API
-export interface DoodleListResponse {
-  doodles: Doodle[];
-  upcomingDates: string[];
+export interface DoodlePlayerDto {
+  name: string;
+  status: 'Accept' | 'Maybe' | 'Refused' | 'NoAnswer';
+}
+
+export interface DoodleDateDto {
+  date: string; // yyyy-MM-dd
+  displayDate: string; // dd.MM
+  players: DoodlePlayerDto[];
+}
+
+export interface DoodleStatsDto {
+  coming: number;
+  maybe: number;
+  refused: number;
+}
+
+export interface DoodleUpcomingResponse {
+  dates: DoodleDateDto[];
+  stats: DoodleStatsDto;
+  playerLimit: number;
+  overLimitMessage: string;
+  isSeasoningSupported: boolean;
 }
 
 export interface DoodleDetailResponse {
-  doodle: Doodle;
-  stats: {
-    yesCount: number;
-    maybeCount: number;
-    noCount: number;
-  };
+  date: string;
+  displayDate: string;
+  players: DoodlePlayerDto[];
 }
 
 export interface UpdateAvailabilityRequest {
-  playerId: string;
-  status: 'Yes' | 'No' | 'Maybe';
+  playerName: string;
+  status: 'Accept' | 'Maybe' | 'Refused' | 'NoAnswer';
+}
+
+export interface UpdateAvailabilityResponse {
+  success: boolean;
+  stats: DoodleStatsDto;
 }
 
 // Team Generator API

@@ -13,7 +13,9 @@
     using System.Linq;
     using System.Threading.Tasks;
 
-    [Route("doodle")]
+    // Old MVC controller - replaced by DoodleApiController + React frontend
+    // Renamed to avoid route conflicts
+    [Route("legacy/doodle")]
     public class DoodleController : Controller
     {
         private readonly IBlobClient blobClient;
