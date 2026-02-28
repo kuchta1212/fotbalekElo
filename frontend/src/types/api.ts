@@ -2,7 +2,7 @@
  * API Request/Response DTOs
  */
 
-import type { Season, Player, Match, GeneratorResult, LeaderboardEntry, PlayerStats } from './domain';
+import type { Season, Player, Match, LeaderboardEntry, PlayerStats } from './domain';
 
 // API Response wrapper
 export interface ApiResponse<T> {
@@ -99,11 +99,51 @@ export interface GenerateTeamsRequest {
   playerIds?: string[]; // Optional: override doodle selection
 }
 
+// Teams Generator API
+export interface TeamPlayerDto {
+  id: string;
+  name: string;
+  elo: number;
+  overallElo: number;
+}
+
+export interface TeamDto {
+  teamElo: number;
+  players: TeamPlayerDto[];
+}
+
+export interface GeneratorResultDto {
+  teamOne: TeamDto;
+  teamTwo: TeamDto;
+  eloDiff: number;
+  season: string;
+}
+
+export interface GenerateTeamsRequestBody {
+  playerIds: string[];
+  substituteIds?: string[];
+  season: string;
+}
+
 export interface GenerateTeamsResponse {
-  results: GeneratorResult[];
-  season: Season;
+  results: GeneratorResultDto[];
+  count: number;
+  season: string;
+}
+
+export interface DoodlePlayerOptionDto {
+  id: string;
+  name: string;
+  elo: number;
+  summerElo: number;
+  winterElo: number;
+}
+
+export interface PlayersFromDoodleResponse {
   date: string;
-  totalOptions: number;
+  displayDate: string;
+  players: DoodlePlayerOptionDto[];
+  count: number;
 }
 
 // Admin API
@@ -113,15 +153,29 @@ export interface AddPlayerRequest {
 }
 
 export interface AddMatchRequest {
-  date: string; // ISO datetime string
-  season: Season;
-  isSmallMatch: boolean;
-  teamAPlayerIds: string[];
-  teamBPlayerIds: string[];
-  teamAScore: number;
-  teamBScore: number;
-  winner: 'A' | 'B';
-  jirkaLunakId?: string;
+  winnerPlayerIds: string[];
+  loserPlayerIds: string[];
+  winnerScore: number;
+  loserScore: number;
+  weight: 'BigMatch' | 'SmallMatch';
+  season: string;
+  heroId?: string;
+}
+
+export interface AddMatchResponse {
+  message: string;
+  score: string;
+  winnerEloChange: number;
+  loserEloChange: number;
+}
+
+export interface MatchPlayerOptionDto {
+  id: string;
+  name: string;
+}
+
+export interface MatchPlayersResponse {
+  players: MatchPlayerOptionDto[];
 }
 
 // Background Images API

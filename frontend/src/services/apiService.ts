@@ -5,21 +5,19 @@
 import { get, post, put, buildQueryString, type FetchOptions } from './api';
 import type {
   LeaderboardResponse,
-  PlayersListResponse,
   PlayerDetailResponse,
-  MatchesListResponse,
-  MatchDetailResponse,
-  MatchFilters,
+  PlayersListResponse,
   DoodleUpcomingResponse,
   DoodleDetailResponse,
   UpdateAvailabilityRequest,
   UpdateAvailabilityResponse,
-  GenerateTeamsRequest,
+  BackgroundImagesResponse,
+  AppConfigurationResponse,
   GenerateTeamsResponse,
   AddPlayerRequest,
   AddMatchRequest,
-  BackgroundImagesResponse,
-  AppConfigurationResponse,
+  AddMatchResponse,
+  MatchPlayersResponse,
 } from '@/types/api';
 import type { Season } from '@/types/domain';
 
@@ -36,11 +34,7 @@ export const playersService = {
 };
 
 export const matchesService = {
-  list: (filters?: MatchFilters) => {
-    const query = filters ? buildQueryString(filters as Record<string, unknown>) : '';
-    return get<MatchesListResponse>(`/api/matches${query}`);
-  },
-  get: (id: string) => get<MatchDetailResponse>(`/api/matches/${id}`),
+  getPlayersForMatch: () => get<MatchPlayersResponse>('/api/matches/players'),
 };
 
 export const doodleService = {
@@ -61,8 +55,8 @@ export const doodleService = {
 };
 
 export const teamsService = {
-  generate: (request: GenerateTeamsRequest) =>
-    post<GenerateTeamsResponse>('/api/teams/generate', request),
+  generate: (date: string, season: string) =>
+    get<GenerateTeamsResponse>(`/api/teams/generate${buildQueryString({ date, season })}`),
 };
 
 export const configService = {
@@ -80,7 +74,7 @@ export const adminService = {
     } as FetchOptions),
   
   addMatch: (request: AddMatchRequest, auth: { username: string; password: string }) =>
-    post<{ id: string }>('/api/admin/matches', request, {
+    post<AddMatchResponse>('/api/matches', request, {
       useBasicAuth: true,
       ...auth,
     } as FetchOptions),

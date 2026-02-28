@@ -223,12 +223,10 @@ const [adminPassword, setAdminPassword] = useState('');
 
       {/* 2. GENERATE TEAMS - Compact one-line layout */}
       <div className="bg-white/90 backdrop-blur-md rounded-lg p-4 shadow-lg">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div className="flex-1">
-            <h2 className="text-lg font-bold text-gray-900">Vygenerovat týmy pro {currentDateData.displayDate}</h2>
-          </div>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <h2 className="text-lg font-bold text-gray-900 min-w-0">Vygenerovat týmy pro {currentDateData.displayDate}</h2>
           
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2">
             {doodleData.isSeasoningSupported && (
               <div className="flex gap-2">
                 <button
@@ -257,7 +255,7 @@ const [adminPassword, setAdminPassword] = useState('');
             <button
               onClick={handleGenerateTeams}
               disabled={doodleData.stats.coming === 0}
-              className="px-6 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-bold rounded-lg transition-colors shadow-md whitespace-nowrap"
+              className="w-full sm:w-auto px-6 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-bold rounded-lg transition-colors shadow-md"
             >
               Vygenerovat týmy
             </button>
@@ -364,3 +362,4 @@ const [adminPassword, setAdminPassword] = useState('');
     </div>
   );
 }
+
