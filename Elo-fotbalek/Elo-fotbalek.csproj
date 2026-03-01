@@ -1,68 +1,34 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <UserSecretsId>3cb53075-8c37-4427-b8e7-873e9feab3ad</UserSecretsId>
     <RootNamespace>Elo_fotbalek</RootNamespace>
     <StartupObject>Elo_fotbalek.Program</StartupObject>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="wwwroot\images\icons\accept.png" />
-    <Content Remove="wwwroot\images\icons\no_answer.png" />
-    <Content Remove="wwwroot\images\icons\refused.png" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Remove="wwwroot\images\icons\down.png" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="wwwroot\images\icons\accept.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="wwwroot\images\icons\down.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="wwwroot\images\icons\no_answer.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="wwwroot\images\icons\refused.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="wwwroot\images\icons\up.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="bootstrap" Version="4.5.0" />
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.19.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.2.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="EloCalculatorNET" Version="1.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore" Version="2.1.7" />
-    <PackageReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.1.3" />
-    <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.1.2" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.1.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.1.14" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.1.14" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.1.14">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="2.1.1" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="2.1.1" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.10" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="WindowsAzure.Storage" Version="9.3.3" />
   </ItemGroup>
 
+  <!-- Include frontend files in Solution Explorer -->
   <ItemGroup>
-    <Content Update="wwwroot\css\site.css">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Content Include="..\frontend\package.json" Link="frontend\package.json" />
+    <Content Include="..\frontend\vite.config.ts" Link="frontend\vite.config.ts" />
+    <Content Include="..\frontend\tsconfig.json" Link="frontend\tsconfig.json" />
+    <Content Include="..\frontend\tailwind.config.js" Link="frontend\tailwind.config.js" />
+    <Content Include="..\frontend\README.md" Link="frontend\README.md" />
+    <Content Include="..\frontend\src\**\*.tsx" Link="frontend\src\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\frontend\src\**\*.ts" Link="frontend\src\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\frontend\src\**\*.css" Link="frontend\src\%(RecursiveDir)%(Filename)%(Extension)" />
+    <None Remove="..\frontend\node_modules\**" />
+    <None Remove="..\frontend\dist\**" />
   </ItemGroup>
 
 </Project>

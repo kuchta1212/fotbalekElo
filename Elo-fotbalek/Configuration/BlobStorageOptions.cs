@@ -9,17 +9,17 @@ namespace Elo_fotbalek.Configuration
     {
         public const string BlobStorage = "BlobStorage";
 
-        public string ConnectionString { get; set; }
+        public string ConnectionString { get; set; } = string.Empty;
 
-        public string ContainerName { get; set; }
+        public string ContainerName { get; set; } = string.Empty;
 
-        public string PlayersBlobName { get; set; }
+        public string PlayersBlobName { get; set; } = "players.json";
 
-        public string MatchesBlobName { get; set; }
+        public string MatchesBlobName { get; set; } = "matches.json";
 
-        public string UsersBlobName { get; set; }
+        public string UsersBlobName { get; set; } = "users.json";
 
-        public string DoodleBlobName { get; set; }
+        public string DoodleBlobName { get; set; } = "doodle.json";
 
         public bool UseOffline { get; set; }
     }
