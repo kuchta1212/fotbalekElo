@@ -67,11 +67,11 @@ export const configService = {
 // Admin endpoints (require Basic Auth)
 
 export const adminService = {
-  addPlayer: (request: AddPlayerRequest, auth: { username: string; password: string }) =>
-    post<{ id: string }>('/api/admin/players', request, {
-      useBasicAuth: true,
-      ...auth,
-    } as FetchOptions),
+addPlayer: (request: AddPlayerRequest, auth: { username: string; password: string }) =>
+  post<{ id: string; name: string; message: string }>('/api/players', request, {
+    useBasicAuth: true,
+    ...auth,
+  } as FetchOptions),
   
   addMatch: (request: AddMatchRequest, auth: { username: string; password: string }) =>
     post<AddMatchResponse>('/api/matches', request, {

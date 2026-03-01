@@ -250,7 +250,7 @@ namespace Elo_fotbalek.Controllers.Api
         public int LoserScore { get; set; }
         public string Weight { get; set; } = "BigMatch";
         public string Season { get; set; } = "Summer";
-        public string HeroId { get; set; }
+        public string? HeroId { get; set; }
     }
 
     public class MatchPlayerOptionDto

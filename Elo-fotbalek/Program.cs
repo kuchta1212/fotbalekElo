@@ -1,9 +1,12 @@
-﻿using Elo_fotbalek.Configuration;
+﻿using System.Text.Json;
+using Elo_fotbalek.Authentication;
+using Elo_fotbalek.Configuration;
 using Elo_fotbalek.EloCounter;
 using Elo_fotbalek.Models;
 using Elo_fotbalek.Storage;
 using Elo_fotbalek.TeamGenerator;
 using Elo_fotbalek.TrendCalculator;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace Elo_fotbalek
@@ -32,12 +35,24 @@ namespace Elo_fotbalek
                 .AddCookie(options =>
                 {
                     options.LoginPath = "/Admin/Login";
-                });
+                    options.Events.OnRedirectToLogin = context =>
+                    {
+                        // For API requests, return 401 instead of redirecting to login page
+                        if (context.Request.Path.StartsWithSegments("/api"))
+                        {
+                            context.Response.StatusCode = 401;
+                            return Task.CompletedTask;
+                        }
+                        context.Response.Redirect(context.RedirectUri);
+                        return Task.CompletedTask;
+                    };
+                })
+                .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuth", null);
 
             services.AddAuthorization(options =>
                 options.AddPolicy("MyPolicy", policy =>
                 {
-                    policy.AddAuthenticationSchemes(CookieAuthenticationDefaults.AuthenticationScheme);
+                    policy.AddAuthenticationSchemes(CookieAuthenticationDefaults.AuthenticationScheme, "BasicAuth");
                     policy.RequireRole("Administrator");
                 })
             );
@@ -64,7 +79,12 @@ namespace Elo_fotbalek
             services.AddTransient<ITrendCalculator, TrendCalculator.TrendCalculator>();
 
             // Add Controllers (for API and legacy admin routes)
-            services.AddControllers();
+            services.AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+                    options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+                });
 
             // CORS configuration from appsettings
             var allowedOrigins = configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? Array.Empty<string>();

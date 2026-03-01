@@ -1,5 +1,6 @@
 using Elo_fotbalek.Models;
 using Elo_fotbalek.Storage;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Elo_fotbalek.Controllers.Api
@@ -12,6 +13,58 @@ namespace Elo_fotbalek.Controllers.Api
         public PlayersApiController(IBlobClient blobClient)
         {
             this.blobClient = blobClient;
+        }
+
+        [HttpPost]
+        [Authorize(policy: "MyPolicy")]
+        public async Task<IActionResult> AddPlayer([FromBody] AddPlayerRequestDto request)
+        {
+            if (string.IsNullOrWhiteSpace(request?.Name))
+            {
+                return BadRequest("Jméno hrá?e je povinné");
+            }
+
+            try
+            {
+                var existingPlayers = await blobClient.GetPlayers();
+                if (existingPlayers.Any(p => p.Name.Equals(request.Name.Trim(), StringComparison.OrdinalIgnoreCase)))
+                {
+                    return BadRequest($"Hrá? '{request.Name.Trim()}' již existuje");
+                }
+
+                var player = new Player
+                {
+                    Id = Guid.NewGuid(),
+                    Name = request.Name.Trim(),
+                    Elo = 1000,
+                    Elos = new SeasonalElos
+                    {
+                        SummerElo = 1000,
+                        WinterElo = 1000
+                    },
+                    Trend = new TrendData
+                    {
+                        Data = new Dictionary<DateTime, int>(),
+                        Trend = Trend.STAY
+                    },
+                    AmountOfMissedGames = 0,
+                    Percentage = 0,
+                    TotalPercentage = 0,
+                };
+
+                await blobClient.AddPlayer(player);
+
+                return Ok(new
+                {
+                    id = player.Id.ToString(),
+                    name = player.Name,
+                    message = $"Hrá? '{player.Name}' úsp?šn? p?idán"
+                });
+            }
+            catch (Exception ex)
+            {
+                return ServerError($"Nepoda?ilo se p?idat hrá?e: {ex.Message}");
+            }
         }
 
         [HttpGet]
@@ -159,5 +212,10 @@ namespace Elo_fotbalek.Controllers.Api
                 return ServerError($"Failed to get player: {ex.Message}");
             }
         }
+    }
+
+    public class AddPlayerRequestDto
+    {
+        public string Name { get; set; }
     }
 }
