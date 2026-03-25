@@ -30,6 +30,8 @@ export function AddMatchPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [initialized, setInitialized] = useState(!prefilled);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showScoreConfirm, setShowScoreConfirm] = useState(false);
 
   // Ensure prefilled IDs are applied after players load
   useEffect(() => {
@@ -70,6 +72,25 @@ export function AddMatchPage() {
     },
   });
 
+  const deleteLastMatchMutation = useMutation({
+    mutationFn: () =>
+      adminService.deleteLastMatch({ username: 'admin', password }),
+    onSuccess: (response: any) => {
+      const data = response?.data || response;
+      alert(`Poslední zápas smazán! Skóre: ${data.deletedMatchScore}`);
+      setShowDeleteConfirm(false);
+      navigate('/');
+    },
+    onError: (err: any) => {
+      if (err.status === 401) {
+        setError('Neplatné heslo');
+      } else {
+        setError(err.data?.error || err.message || 'Nepodařilo se smazat zápas');
+      }
+      setShowDeleteConfirm(false);
+    },
+  });
+
   if (playersLoading) return <Loading message="Načítání hráčů..." />;
   if (playersError) return <ErrorDisplay error={playersError as Error} message="Nepodařilo se načíst hráče" />;
 
@@ -104,9 +125,25 @@ export function AddMatchPage() {
     }
   };
 
+  const submitMatch = () => {
+    const validWinners = winnerIds.filter(id => id !== EMPTY_ID);
+    const validLosers = loserIds.filter(id => id !== EMPTY_ID);
+
+    addMatchMutation.mutate({
+      winnerPlayerIds: validWinners,
+      loserPlayerIds: validLosers,
+      winnerScore,
+      loserScore,
+      weight,
+      season,
+      heroId: heroId || undefined,
+    });
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setShowScoreConfirm(false);
 
     const validWinners = winnerIds.filter(id => id !== EMPTY_ID);
     const validLosers = loserIds.filter(id => id !== EMPTY_ID);
@@ -124,15 +161,12 @@ export function AddMatchPage() {
       return;
     }
 
-    addMatchMutation.mutate({
-      winnerPlayerIds: validWinners,
-      loserPlayerIds: validLosers,
-      winnerScore,
-      loserScore,
-      weight,
-      season,
-      heroId: heroId || undefined,
-    });
+    if (winnerScore === 0 && loserScore === 0) {
+      setShowScoreConfirm(true);
+      return;
+    }
+
+    submitMatch();
   };
 
   const renderPlayerSlots = (
@@ -309,6 +343,30 @@ export function AddMatchPage() {
             </div>
           )}
 
+          {/* Score confirmation */}
+          {showScoreConfirm && (
+            <div className="bg-yellow-100 border border-yellow-400 text-yellow-800 px-4 py-3 rounded-lg flex flex-col sm:flex-row sm:items-center gap-3">
+              <span className="text-sm font-medium">Skóre je 0:0 — opravdu chcete odeslat?</span>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  onClick={() => { setShowScoreConfirm(false); submitMatch(); }}
+                  disabled={addMatchMutation.isPending}
+                  className="bg-green-600 hover:bg-green-700 text-sm px-3 py-1"
+                >
+                  {addMatchMutation.isPending ? 'Ukládám...' : 'Ano, odeslat'}
+                </Button>
+                <Button
+                  type="button"
+                  onClick={() => setShowScoreConfirm(false)}
+                  className="bg-gray-500 hover:bg-gray-600 text-sm px-3 py-1"
+                >
+                  Zrušit
+                </Button>
+              </div>
+            </div>
+          )}
+
           {/* Submit */}
           <Button
             type="submit"
@@ -318,6 +376,46 @@ export function AddMatchPage() {
             {addMatchMutation.isPending ? 'Ukládám...' : 'Vytvoř a vypočti ELO'}
           </Button>
         </form>
+      </div>
+      <div className="bg-white/90 backdrop-blur-md rounded-lg p-4 sm:p-6 shadow-lg border border-red-200">
+        <h2 className="text-xl font-bold text-red-700 mb-2">Smazat poslední zápas</h2>
+        <p className="text-sm text-gray-600 mb-4">
+          Smaže poslední přidaný zápas a vrátí všechny změny ELO, výher/proher a trendů.
+        </p>
+        {!showDeleteConfirm ? (
+          <Button
+            type="button"
+            onClick={() => {
+              if (!password) {
+                setError('Zadejte admin heslo');
+                return;
+              }
+              setShowDeleteConfirm(true);
+            }}
+            className="bg-red-600 hover:bg-red-700"
+          >
+            Smazat poslední zápas
+          </Button>
+        ) : (
+          <div className="flex items-center gap-3">
+            <span className="text-sm font-medium text-red-700">Opravdu smazat?</span>
+            <Button
+              type="button"
+              onClick={() => deleteLastMatchMutation.mutate()}
+              disabled={deleteLastMatchMutation.isPending}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              {deleteLastMatchMutation.isPending ? 'Mažu...' : 'Ano, smazat'}
+            </Button>
+            <Button
+              type="button"
+              onClick={() => setShowDeleteConfirm(false)}
+              className="bg-gray-500 hover:bg-gray-600"
+            >
+              Zrušit
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );
