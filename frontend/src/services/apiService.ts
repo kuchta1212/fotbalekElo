@@ -2,7 +2,7 @@
  * API service methods for all endpoints
  */
 
-import { get, post, put, buildQueryString, type FetchOptions } from './api';
+import { get, post, put, del, buildQueryString, type FetchOptions } from './api';
 import type {
   LeaderboardResponse,
   PlayerDetailResponse,
@@ -17,6 +17,7 @@ import type {
   AddPlayerRequest,
   AddMatchRequest,
   AddMatchResponse,
+  DeleteLastMatchResponse,
   MatchPlayersResponse,
 } from '@/types/api';
 import type { Season } from '@/types/domain';
@@ -75,6 +76,12 @@ addPlayer: (request: AddPlayerRequest, auth: { username: string; password: strin
   
   addMatch: (request: AddMatchRequest, auth: { username: string; password: string }) =>
     post<AddMatchResponse>('/api/matches', request, {
+      useBasicAuth: true,
+      ...auth,
+    } as FetchOptions),
+
+  deleteLastMatch: (auth: { username: string; password: string }) =>
+    del<DeleteLastMatchResponse>('/api/matches/last', {
       useBasicAuth: true,
       ...auth,
     } as FetchOptions),

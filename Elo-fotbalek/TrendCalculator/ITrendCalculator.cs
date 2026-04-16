@@ -11,5 +11,7 @@ namespace Elo_fotbalek.TrendCalculator
         TrendData CalculateTrend(TrendData data, DateTime matchDate, int value);
 
         TrendData RemoveLatest(TrendData data);
+
+        TrendData RecalculateTrend(TrendData data);
     }
 }

@@ -40,6 +40,12 @@ namespace Elo_fotbalek.TrendCalculator
             return trendData;
         }
 
+        public TrendData RecalculateTrend(TrendData trendData)
+        {
+            trendData.Trend = this.ReCalculate(trendData.Data);
+            return trendData;
+        }
+
         private Trend ReCalculate(Dictionary<DateTime, int> data)
         {
             var score = data.Sum(x => x.Value);

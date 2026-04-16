@@ -137,6 +137,123 @@ namespace Elo_fotbalek.Controllers.Api
             }
         }
 
+        [HttpDelete("last")]
+        [Authorize(policy: "MyPolicy")]
+        public async Task<IActionResult> DeleteLastMatch()
+        {
+            try
+            {
+                var matches = await this.blobClient.GetMatches();
+                if (matches == null || matches.Count == 0)
+                {
+                    return BadRequest("No matches to delete");
+                }
+
+                var lastMatch = matches.OrderByDescending(m => m.Date).First();
+                var eloResult = this.eloCalculator.CalculateFifaElo(lastMatch);
+
+                await this.ReversePlayersElo(eloResult, lastMatch);
+                await this.ReverseNonCommersPunishment(lastMatch);
+                await this.blobClient.RemoveMatch(lastMatch);
+                await this.RecalculatePercentage();
+
+                return Ok(new
+                {
+                    message = "Last match deleted successfully",
+                    deletedMatchDate = lastMatch.Date.ToString("o"),
+                    deletedMatchScore = lastMatch.Score
+                });
+            }
+            catch (Exception ex)
+            {
+                return ServerError($"Failed to delete last match: {ex.Message}");
+            }
+        }
+
+        private async Task ReversePlayersElo(FifaEloResult eloResult, Match match)
+        {
+            var players = await this.blobClient.GetPlayers();
+
+            foreach (var player in match.Winner.Players)
+            {
+                var current = players.First(np => np.Id == player.Id);
+                current.UpdateElo(-(int)eloResult.WinnerPointChange, match.Season);
+                current.Elo = Util.CountGeneralElo(current.Elos);
+
+                if (match.WinnerAmount == match.LooserAmount)
+                {
+                    current.AmountOfTies ??= new MatchCounter();
+                    if (match.Weight == 30) current.AmountOfTies.BigMatches--;
+                    else current.AmountOfTies.SmallMatches--;
+                }
+                else
+                {
+                    current.AmountOfWins ??= new MatchCounter();
+                    if (match.Weight == 30) current.AmountOfWins.BigMatches--;
+                    else current.AmountOfWins.SmallMatches--;
+                }
+
+                this.RemoveTrendEntry(current, match.Date);
+                this.trendCalculator.RecalculateTrend(current.Trend);
+            }
+
+            foreach (var player in match.Looser.Players)
+            {
+                var current = players.First(np => np.Id == player.Id);
+                current.UpdateElo(-(int)eloResult.LooserPointChange, match.Season);
+                current.Elo = Util.CountGeneralElo(current.Elos);
+
+                if (match.WinnerAmount == match.LooserAmount)
+                {
+                    current.AmountOfTies ??= new MatchCounter();
+                    if (match.Weight == 30) current.AmountOfTies.BigMatches--;
+                    else current.AmountOfTies.SmallMatches--;
+                }
+                else
+                {
+                    current.AmountOfLooses ??= new MatchCounter();
+                    if (match.Weight == 30) current.AmountOfLooses.BigMatches--;
+                    else current.AmountOfLooses.SmallMatches--;
+                }
+
+                this.RemoveTrendEntry(current, match.Date);
+                this.trendCalculator.RecalculateTrend(current.Trend);
+            }
+
+            await this.blobClient.UpdatePlayers(players);
+        }
+
+        private async Task ReverseNonCommersPunishment(Match match)
+        {
+            var players = await this.blobClient.GetPlayers();
+            var todaysPlayers = match.Looser.Players.Union(match.Winner.Players);
+
+            var nonCommers = players.Except(todaysPlayers);
+            foreach (var nonCommer in nonCommers)
+            {
+                nonCommer.AmountOfMissedGames = Math.Max(0, nonCommer.AmountOfMissedGames - 1);
+                this.trendCalculator.RecalculateTrend(nonCommer.Trend);
+            }
+
+            await this.blobClient.UpdatePlayers(players);
+        }
+
+        private void RemoveTrendEntry(Player player, DateTime matchDate)
+        {
+            if (player.Trend?.Data == null || player.Trend.Data.Count == 0) return;
+
+            // Find the trend entry matching the match date (within 10 min window for collision offsets)
+            var matchingKey = player.Trend.Data.Keys
+                .Where(k => Math.Abs((k - matchDate).TotalMinutes) <= 10)
+                .OrderBy(k => Math.Abs((k - matchDate).TotalMinutes))
+                .FirstOrDefault();
+
+            if (matchingKey != default)
+            {
+                player.Trend.Data.Remove(matchingKey);
+            }
+        }
+
         private async Task UpdatePlayersElo(FifaEloResult eloResult, Match match)
         {
             var players = await this.blobClient.GetPlayers();

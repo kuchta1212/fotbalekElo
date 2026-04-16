@@ -169,6 +169,12 @@ export interface AddMatchResponse {
   loserEloChange: number;
 }
 
+export interface DeleteLastMatchResponse {
+  message: string;
+  deletedMatchDate: string;
+  deletedMatchScore: string;
+}
+
 export interface MatchPlayerOptionDto {
   id: string;
   name: string;
