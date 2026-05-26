@@ -62,11 +62,6 @@ namespace Elo_fotbalek.Controllers.Api
                 return BadRequest("Not enough accepted players to generate teams (minimum 2)");
             }
 
-            if (acceptedPlayerNames.Count % 2 != 0)
-            {
-                return BadRequest($"Need even number of players, currently {acceptedPlayerNames.Count} accepted");
-            }
-
             // Resolve player IDs
             var playerIds = players
                 .Where(p => acceptedPlayerNames.Contains(p.Name))
