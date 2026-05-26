@@ -38,6 +38,92 @@ namespace Elo_fotbalek.Controllers.Api
             this.appConfiguration = appConfiguration;
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetMatches([FromQuery] int? year, [FromQuery] int? month)
+        {
+            try
+            {
+                var allMatches = await this.blobClient.GetMatches();
+                if (allMatches == null || allMatches.Count == 0)
+                {
+                    return Ok(new
+                    {
+                        matches = new List<object>(),
+                        year = year ?? DateTime.Now.Year,
+                        month = month ?? DateTime.Now.Month,
+                        hasMore = false
+                    });
+                }
+
+                var ordered = allMatches.OrderByDescending(m => m.Date).ToList();
+
+                int targetYear;
+                int targetMonth;
+
+                if (year.HasValue && month.HasValue)
+                {
+                    targetYear = year.Value;
+                    targetMonth = month.Value;
+                }
+                else
+                {
+                    // Default to the most recent month that has matches
+                    targetYear = ordered.First().Date.Year;
+                    targetMonth = ordered.First().Date.Month;
+                }
+
+                var monthMatches = ordered
+                    .Where(m => m.Date.Year == targetYear && m.Date.Month == targetMonth)
+                    .ToList();
+
+                var hasMore = ordered.Any(m =>
+                    m.Date.Year < targetYear ||
+                    (m.Date.Year == targetYear && m.Date.Month < targetMonth));
+
+                var matchDtos = monthMatches.Select(m => new
+                {
+                    id = $"{m.Date:yyyy-MM-dd}_{m.Score}",
+                    date = m.Date,
+                    score = m.Score,
+                    season = m.Season.ToString(),
+                    isSmallMatch = m.Weight == 10,
+                    winner = new
+                    {
+                        teamElo = m.Winner.TeamElo,
+                        players = m.Winner.Players.Select(wp => new
+                        {
+                            id = wp.Id.ToString(),
+                            name = wp.Name,
+                            elo = wp.Elo
+                        }).ToList()
+                    },
+                    loser = new
+                    {
+                        teamElo = m.Looser.TeamElo,
+                        players = m.Looser.Players.Select(lp => new
+                        {
+                            id = lp.Id.ToString(),
+                            name = lp.Name,
+                            elo = lp.Elo
+                        }).ToList()
+                    },
+                    jirkaLunak = !string.IsNullOrEmpty(m.Hero) ? m.Hero : null
+                }).ToList();
+
+                return Ok(new
+                {
+                    matches = matchDtos,
+                    year = targetYear,
+                    month = targetMonth,
+                    hasMore
+                });
+            }
+            catch (Exception ex)
+            {
+                return ServerError($"Failed to get matches: {ex.Message}");
+            }
+        }
+
         [HttpGet("players")]
         public async Task<IActionResult> GetPlayersForMatch()
         {

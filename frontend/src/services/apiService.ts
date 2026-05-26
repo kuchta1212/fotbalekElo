@@ -7,6 +7,7 @@ import type {
   LeaderboardResponse,
   PlayerDetailResponse,
   PlayersListResponse,
+  MatchesListResponse,
   DoodleUpcomingResponse,
   DoodleDetailResponse,
   UpdateAvailabilityRequest,
@@ -35,6 +36,12 @@ export const playersService = {
 };
 
 export const matchesService = {
+  list: (year?: number, month?: number) => {
+    const params: Record<string, string> = {};
+    if (year !== undefined) params.year = String(year);
+    if (month !== undefined) params.month = String(month);
+    return get<MatchesListResponse>(`/api/matches${buildQueryString(params)}`);
+  },
   getPlayersForMatch: () => get<MatchPlayersResponse>('/api/matches/players'),
 };
 
