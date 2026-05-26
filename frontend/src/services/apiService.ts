@@ -2,11 +2,12 @@
  * API service methods for all endpoints
  */
 
-import { get, post, put, buildQueryString, type FetchOptions } from './api';
+import { get, post, put, del, buildQueryString, type FetchOptions } from './api';
 import type {
   LeaderboardResponse,
   PlayerDetailResponse,
   PlayersListResponse,
+  MatchesListResponse,
   DoodleUpcomingResponse,
   DoodleDetailResponse,
   UpdateAvailabilityRequest,
@@ -17,6 +18,7 @@ import type {
   AddPlayerRequest,
   AddMatchRequest,
   AddMatchResponse,
+  DeleteLastMatchResponse,
   MatchPlayersResponse,
 } from '@/types/api';
 import type { Season } from '@/types/domain';
@@ -34,6 +36,12 @@ export const playersService = {
 };
 
 export const matchesService = {
+  list: (year?: number, month?: number) => {
+    const params: Record<string, string> = {};
+    if (year !== undefined) params.year = String(year);
+    if (month !== undefined) params.month = String(month);
+    return get<MatchesListResponse>(`/api/matches${buildQueryString(params)}`);
+  },
   getPlayersForMatch: () => get<MatchPlayersResponse>('/api/matches/players'),
 };
 
@@ -75,6 +83,12 @@ addPlayer: (request: AddPlayerRequest, auth: { username: string; password: strin
   
   addMatch: (request: AddMatchRequest, auth: { username: string; password: string }) =>
     post<AddMatchResponse>('/api/matches', request, {
+      useBasicAuth: true,
+      ...auth,
+    } as FetchOptions),
+
+  deleteLastMatch: (auth: { username: string; password: string }) =>
+    del<DeleteLastMatchResponse>('/api/matches/last', {
       useBasicAuth: true,
       ...auth,
     } as FetchOptions),
