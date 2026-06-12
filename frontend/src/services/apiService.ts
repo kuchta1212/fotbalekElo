@@ -2,7 +2,7 @@
  * API service methods for all endpoints
  */
 
-import { get, post, put, buildQueryString, type FetchOptions } from './api';
+import { get, post, put, del, buildQueryString, type FetchOptions } from './api';
 import type {
   LeaderboardResponse,
   PlayerDetailResponse,
@@ -18,6 +18,8 @@ import type {
   AddMatchRequest,
   AddMatchResponse,
   MatchPlayersResponse,
+  CalculateBillingRequest,
+  CalculateBillingResponse,
 } from '@/types/api';
 import type { Season } from '@/types/domain';
 
@@ -75,6 +77,20 @@ addPlayer: (request: AddPlayerRequest, auth: { username: string; password: strin
   
   addMatch: (request: AddMatchRequest, auth: { username: string; password: string }) =>
     post<AddMatchResponse>('/api/matches', request, {
+      useBasicAuth: true,
+      ...auth,
+    } as FetchOptions),
+
+  deleteLastMatch: (auth: { username: string; password: string }) =>
+    del<{ deletedMatchScore: string; message: string }>('/api/matches/last', {
+      useBasicAuth: true,
+      ...auth,
+    } as FetchOptions),
+};
+
+export const billingService = {
+  calculate: (request: CalculateBillingRequest, auth: { username: string; password: string }) =>
+    post<CalculateBillingResponse>('/api/billing/calculate', request, {
       useBasicAuth: true,
       ...auth,
     } as FetchOptions),

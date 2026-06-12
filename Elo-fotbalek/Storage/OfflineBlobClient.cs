@@ -85,9 +85,10 @@
             return Task.CompletedTask;
         }
 
-        public Task<List<Match>> GetMatches(DateTime since)
+        public async Task<List<Match>> GetMatches(DateTime since)
         {
-            throw new NotImplementedException();
+            var matches = await this.GetMatches();
+            return matches.Where(m => m.Date >= since).ToList();
         }
     }
 }
