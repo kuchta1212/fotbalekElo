@@ -34,6 +34,7 @@ export function Navigation() {
   // Navigation links - removed Matches as a route
   const navLinks = [
     ...(config?.isDoodleEnabled ? [{ path: '/doodle', label: 'Doodle' }] : []),
+    { path: '/vyuctovani', label: 'Vyúčtování' },
   ];
 
   return (

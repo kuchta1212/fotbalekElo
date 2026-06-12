@@ -20,6 +20,8 @@ import type {
   MatchPlayersResponse,
   CalculateBillingRequest,
   CalculateBillingResponse,
+  FinanceReport,
+  SaveBillingReportRequest,
 } from '@/types/api';
 import type { Season } from '@/types/domain';
 
@@ -91,6 +93,20 @@ addPlayer: (request: AddPlayerRequest, auth: { username: string; password: strin
 export const billingService = {
   calculate: (request: CalculateBillingRequest, auth: { username: string; password: string }) =>
     post<CalculateBillingResponse>('/api/billing/calculate', request, {
+      useBasicAuth: true,
+      ...auth,
+    } as FetchOptions),
+
+  getReport: () => get<FinanceReport>('/api/billing/report'),
+
+  saveReport: (request: SaveBillingReportRequest, auth: { username: string; password: string }) =>
+    post<FinanceReport>('/api/billing/report', request, {
+      useBasicAuth: true,
+      ...auth,
+    } as FetchOptions),
+
+  settlePlayer: (playerId: string, auth: { username: string; password: string }) =>
+    del<FinanceReport>(`/api/billing/report/players/${playerId}`, {
       useBasicAuth: true,
       ...auth,
     } as FetchOptions),

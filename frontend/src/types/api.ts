@@ -209,6 +209,40 @@ export interface CalculateBillingResponse {
   rows: BillingRow[];
 }
 
+export interface SaveBillingReportRow {
+  playerId: string;
+  playerName: string;
+  amountOwed: number;
+}
+
+export interface SaveBillingReportRequest {
+  fromYear: number;
+  fromMonth: number;
+  toYear: number;
+  toMonth: number;
+  rows: SaveBillingReportRow[];
+}
+
+export interface FinanceReportPeriod {
+  id: string;
+  fromYear: number;
+  fromMonth: number;
+  toYear: number;
+  toMonth: number;
+}
+
+export interface FinanceReportEntry {
+  playerId: string;
+  playerName: string;
+  total: number;
+  amountsPerPeriod: Record<string, number>;
+}
+
+export interface FinanceReport {
+  periods: FinanceReportPeriod[];
+  entries: FinanceReportEntry[];
+}
+
 // App Configuration API
 export interface AppConfigurationResponse {
   appName: string;

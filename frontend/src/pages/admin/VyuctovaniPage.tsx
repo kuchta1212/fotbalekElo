@@ -3,7 +3,7 @@ import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { billingService } from '@/services/apiService';
 import { Button } from '@/components/ui/Button';
-import type { CalculateBillingRequest, CalculateBillingResponse } from '@/types/api';
+import type { CalculateBillingRequest, CalculateBillingResponse, SaveBillingReportRequest } from '@/types/api';
 
 const CZECH_MONTHS = [
   'leden', 'únor', 'březen', 'duben', 'květen', 'červen',
@@ -28,6 +28,8 @@ export function VyuctovaniPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [result, setResult] = useState<CalculateBillingResponse | null>(null);
+  const [resultPeriod, setResultPeriod] = useState<{ fromYear: number; fromMonth: number; toYear: number; toMonth: number } | null>(null);
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saved'>('idle');
 
   const years = useMemo(() => {
     const arr: number[] = [];
@@ -42,13 +44,22 @@ export function VyuctovaniPage() {
   const calculateMutation = useMutation({
     mutationFn: (request: CalculateBillingRequest) =>
       billingService.calculate(request, { username: 'admin', password }),
-    onSuccess: (response: any) => {
+    onSuccess: (response: any, request) => {
       const data: CalculateBillingResponse = response?.data || response;
       setResult(data);
+      setResultPeriod({
+        fromYear: request.fromYear,
+        fromMonth: request.fromMonth,
+        toYear: request.toYear,
+        toMonth: request.toMonth,
+      });
+      setSaveStatus('idle');
       setError('');
     },
     onError: (err: any) => {
       setResult(null);
+      setResultPeriod(null);
+      setSaveStatus('idle');
       if (err.status === 401) {
         setError('Neplatné heslo');
       } else {
@@ -56,6 +67,38 @@ export function VyuctovaniPage() {
       }
     },
   });
+
+  const saveMutation = useMutation({
+    mutationFn: (request: SaveBillingReportRequest) =>
+      billingService.saveReport(request, { username: 'admin', password }),
+    onSuccess: () => {
+      setSaveStatus('saved');
+      setError('');
+    },
+    onError: (err: any) => {
+      setSaveStatus('idle');
+      if (err.status === 401) {
+        setError('Neplatné heslo');
+      } else {
+        setError(err.data?.error || err.message || 'Uložení selhalo');
+      }
+    },
+  });
+
+  const handleSave = () => {
+    if (!result || !resultPeriod) return;
+    saveMutation.mutate({
+      fromYear: resultPeriod.fromYear,
+      fromMonth: resultPeriod.fromMonth,
+      toYear: resultPeriod.toYear,
+      toMonth: resultPeriod.toMonth,
+      rows: result.rows.map(r => ({
+        playerId: r.playerId,
+        playerName: r.playerName,
+        amountOwed: r.amountOwed,
+      })),
+    });
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -238,6 +281,22 @@ export function VyuctovaniPage() {
             <div className="mt-4 text-xs text-gray-600">
               <span className="font-medium">Dny zápasů ({result.matchDays.length}):</span>{' '}
               {result.matchDays.map(d => new Date(d).toLocaleDateString('cs-CZ')).join(', ')}
+            </div>
+          )}
+
+          {result.rows.length > 0 && (
+            <div className="mt-6 flex items-center gap-3">
+              <Button
+                type="button"
+                onClick={handleSave}
+                disabled={saveMutation.isPending || saveStatus === 'saved'}
+                className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400"
+              >
+                {saveMutation.isPending ? 'Ukládám...' : saveStatus === 'saved' ? 'Uloženo ✓' : 'Uložit do přehledu'}
+              </Button>
+              {saveStatus === 'saved' && (
+                <span className="text-sm text-green-700">Uloženo do přehledu dlužníků.</span>
+              )}
             </div>
           )}
         </div>

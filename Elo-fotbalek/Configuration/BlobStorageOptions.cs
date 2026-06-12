@@ -21,6 +21,8 @@ namespace Elo_fotbalek.Configuration
 
         public string DoodleBlobName { get; set; } = "doodle.json";
 
+        public string FinanceReportBlobName { get; set; } = "finance-report";
+
         public bool UseOffline { get; set; }
     }
 }

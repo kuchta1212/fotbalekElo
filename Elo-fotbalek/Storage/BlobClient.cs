@@ -170,6 +170,32 @@ namespace Elo_fotbalek.Storage
             await blob.UploadAsync(new BinaryData(json), overwrite: true);
         }
 
+        public async Task<FinanceReport> GetFinanceReport()
+        {
+            try
+            {
+                var blobName = this.options.Value.FinanceReportBlobName;
+                var blob = await this.GetBlobClient(blobName);
+
+                var response = await blob.DownloadContentAsync();
+                var json = response.Value.Content.ToString();
+                return JsonConvert.DeserializeObject<FinanceReport>(json) ?? new FinanceReport();
+            }
+            catch (Exception)
+            {
+                return new FinanceReport();
+            }
+        }
+
+        public async Task SaveFinanceReport(FinanceReport report)
+        {
+            var blobName = this.options.Value.FinanceReportBlobName;
+            var blob = await this.GetBlobClient(blobName);
+
+            var json = JsonConvert.SerializeObject(report);
+            await blob.UploadAsync(new BinaryData(json), overwrite: true);
+        }
+
         private async Task<AzureBlobClient> GetBlobClient(string blobName)
         {
             var containerName = this.options.Value.ContainerName;
