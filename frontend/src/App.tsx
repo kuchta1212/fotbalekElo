@@ -9,6 +9,8 @@ import { MatchesPage } from './pages/MatchesPage';
 import { MatchDetailPage } from './pages/MatchDetailPage';
 import { AddPlayerPage } from './pages/admin/AddPlayerPage';
 import { AddMatchPage } from './pages/admin/AddMatchPage';
+import { VyuctovaniPage } from './pages/admin/VyuctovaniPage';
+import { VyuctovaniReportPage } from './pages/VyuctovaniReportPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 
 function App() {
@@ -24,10 +26,12 @@ function App() {
           <Route path="/players/:id" element={<PlayerDetailPage />} />
           <Route path="/matches" element={<MatchesPage />} />
           <Route path="/matches/:id" element={<MatchDetailPage />} />
-          
+          <Route path="/vyuctovani" element={<VyuctovaniReportPage />} />
+
           {/* Admin routes */}
           <Route path="/admin/add-player" element={<AddPlayerPage />} />
           <Route path="/admin/add-match" element={<AddMatchPage />} />
+          <Route path="/admin/vyuctovani" element={<VyuctovaniPage />} />
           
           {/* 404 */}
           <Route path="*" element={<NotFoundPage />} />

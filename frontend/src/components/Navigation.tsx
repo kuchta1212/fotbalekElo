@@ -34,6 +34,7 @@ export function Navigation() {
   // Navigation links - removed Matches as a route
   const navLinks = [
     ...(config?.isDoodleEnabled ? [{ path: '/doodle', label: 'Doodle' }] : []),
+    { path: '/vyuctovani', label: 'Vyúčtování' },
   ];
 
   return (
@@ -103,6 +104,13 @@ export function Navigation() {
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >
                     Přidat hráče
+                  </Link>
+                  <Link
+                    to="/admin/vyuctovani"
+                    onClick={() => setIsAdminOpen(false)}
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    Vyúčtování
                   </Link>
                 </div>
               )}
@@ -200,6 +208,16 @@ export function Navigation() {
                       className="block px-4 py-2 rounded-md text-sm text-gray-700 hover:bg-gray-100"
                     >
                       Přidat hráče
+                    </Link>
+                    <Link
+                      to="/admin/vyuctovani"
+                      onClick={() => {
+                        setIsMenuOpen(false);
+                        setIsAdminOpen(false);
+                      }}
+                      className="block px-4 py-2 rounded-md text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      Vyúčtování
                     </Link>
                   </div>
                 )}

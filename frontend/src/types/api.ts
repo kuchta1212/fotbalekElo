@@ -198,6 +198,65 @@ export interface BackgroundImagesResponse {
   rotationInterval: number; // seconds
 }
 
+// Billing API
+export interface CalculateBillingRequest {
+  fromYear: number;
+  fromMonth: number;
+  toYear: number;
+  toMonth: number;
+  totalAmount: number;
+}
+
+export interface BillingRow {
+  playerId: string;
+  playerName: string;
+  appearances: number;
+  amountOwed: number;
+}
+
+export interface CalculateBillingResponse {
+  pricePerGame: number;
+  totalAppearances: number;
+  totalAmount: number;
+  collectedTotal: number;
+  matchDays: string[];
+  rows: BillingRow[];
+}
+
+export interface SaveBillingReportRow {
+  playerId: string;
+  playerName: string;
+  amountOwed: number;
+}
+
+export interface SaveBillingReportRequest {
+  fromYear: number;
+  fromMonth: number;
+  toYear: number;
+  toMonth: number;
+  rows: SaveBillingReportRow[];
+}
+
+export interface FinanceReportPeriod {
+  id: string;
+  fromYear: number;
+  fromMonth: number;
+  toYear: number;
+  toMonth: number;
+}
+
+export interface FinanceReportEntry {
+  playerId: string;
+  playerName: string;
+  total: number;
+  amountsPerPeriod: Record<string, number>;
+}
+
+export interface FinanceReport {
+  periods: FinanceReportPeriod[];
+  entries: FinanceReportEntry[];
+}
+
 // App Configuration API
 export interface AppConfigurationResponse {
   appName: string;

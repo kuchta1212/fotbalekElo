@@ -85,9 +85,27 @@
             return Task.CompletedTask;
         }
 
-        public Task<List<Match>> GetMatches(DateTime since)
+        public async Task<List<Match>> GetMatches(DateTime since)
         {
-            throw new NotImplementedException();
+            var matches = await this.GetMatches();
+            return matches.Where(m => m.Date >= since).ToList();
+        }
+
+        public Task<FinanceReport> GetFinanceReport()
+        {
+            var path = this.FolderPath + this.options.Value.FinanceReportBlobName;
+            if (!File.Exists(path))
+            {
+                return Task.FromResult(new FinanceReport());
+            }
+            var json = File.ReadAllText(path);
+            return Task.FromResult(JsonConvert.DeserializeObject<FinanceReport>(json) ?? new FinanceReport());
+        }
+
+        public Task SaveFinanceReport(FinanceReport report)
+        {
+            File.WriteAllText(this.FolderPath + this.options.Value.FinanceReportBlobName, JsonConvert.SerializeObject(report));
+            return Task.CompletedTask;
         }
     }
 }
