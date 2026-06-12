@@ -2,7 +2,7 @@
  * API Request/Response DTOs
  */
 
-import type { Season, Player, Match, LeaderboardEntry, PlayerStats } from './domain';
+import type { Season, Player, LeaderboardEntry, PlayerStats } from './domain';
 
 // API Response wrapper
 export interface ApiResponse<T> {
@@ -29,25 +29,33 @@ export interface PlayerDetailResponse {
 }
 
 // Matches API
+export interface MatchTeamPlayerDto {
+  id: string;
+  name: string;
+  elo: number;
+}
+
+export interface MatchTeamDto {
+  teamElo: number;
+  players: MatchTeamPlayerDto[];
+}
+
+export interface MatchDto {
+  id: string;
+  date: string;
+  score: string;
+  season: string;
+  isSmallMatch: boolean;
+  winner: MatchTeamDto;
+  loser: MatchTeamDto;
+  jirkaLunak: string | null;
+}
+
 export interface MatchesListResponse {
-  matches: Match[];
-  total: number;
-}
-
-export interface MatchDetailResponse {
-  match: Match;
-  teamAPlayers: Player[];
-  teamBPlayers: Player[];
-  jirkaLunakPlayer?: Player;
-}
-
-export interface MatchFilters {
-  season?: Season;
-  dateFrom?: string;
-  dateTo?: string;
-  isSmallMatch?: boolean;
-  skip?: number;
-  take?: number;
+  matches: MatchDto[];
+  year: number;
+  month: number;
+  hasMore: boolean;
 }
 
 // Doodle API
@@ -167,6 +175,12 @@ export interface AddMatchResponse {
   score: string;
   winnerEloChange: number;
   loserEloChange: number;
+}
+
+export interface DeleteLastMatchResponse {
+  message: string;
+  deletedMatchDate: string;
+  deletedMatchScore: string;
 }
 
 export interface MatchPlayerOptionDto {

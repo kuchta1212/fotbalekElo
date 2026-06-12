@@ -7,6 +7,7 @@ import type {
   LeaderboardResponse,
   PlayerDetailResponse,
   PlayersListResponse,
+  MatchesListResponse,
   DoodleUpcomingResponse,
   DoodleDetailResponse,
   UpdateAvailabilityRequest,
@@ -17,6 +18,7 @@ import type {
   AddPlayerRequest,
   AddMatchRequest,
   AddMatchResponse,
+  DeleteLastMatchResponse,
   MatchPlayersResponse,
   CalculateBillingRequest,
   CalculateBillingResponse,
@@ -38,6 +40,12 @@ export const playersService = {
 };
 
 export const matchesService = {
+  list: (year?: number, month?: number) => {
+    const params: Record<string, string> = {};
+    if (year !== undefined) params.year = String(year);
+    if (month !== undefined) params.month = String(month);
+    return get<MatchesListResponse>(`/api/matches${buildQueryString(params)}`);
+  },
   getPlayersForMatch: () => get<MatchPlayersResponse>('/api/matches/players'),
 };
 
@@ -84,7 +92,7 @@ addPlayer: (request: AddPlayerRequest, auth: { username: string; password: strin
     } as FetchOptions),
 
   deleteLastMatch: (auth: { username: string; password: string }) =>
-    del<{ deletedMatchScore: string; message: string }>('/api/matches/last', {
+    del<DeleteLastMatchResponse>('/api/matches/last', {
       useBasicAuth: true,
       ...auth,
     } as FetchOptions),
