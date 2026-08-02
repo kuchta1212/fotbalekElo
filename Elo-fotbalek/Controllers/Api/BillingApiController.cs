@@ -61,6 +61,16 @@ namespace Elo_fotbalek.Controllers.Api
                 var matches = await this.blobClient.GetMatches(since);
                 var matchesInRange = matches.Where(m => m.Date <= until).ToList();
 
+                // Attendance over the last configured window (AmountOfMonthsToBeCounted,
+                // currently 6 months), recalculated after every match and stored on the
+                // player record. Used to decide whether a single-appearance player is billed.
+                var allPlayers = await this.blobClient.GetPlayers();
+                var attendanceByPlayerId = new Dictionary<Guid, int>();
+                foreach (var p in allPlayers)
+                {
+                    attendanceByPlayerId[p.Id] = p.Percentage;
+                }
+
                 // Map: PlayerId -> (Player, set of distinct match dates)
                 var perPlayer = new Dictionary<Guid, (Player Player, HashSet<DateTime> Days)>();
                 foreach (var match in matchesInRange)
@@ -77,8 +87,15 @@ namespace Elo_fotbalek.Controllers.Api
                     }
                 }
 
+                // Players present on 2+ distinct days are always billed. A player present
+                // on only a single day is billed only if their stored last-6-month
+                // attendance is above 10%; otherwise they are treated as a one-off guest
+                // and left off the report.
+                const int OneOffAttendanceThresholdPercent = 10;
                 var included = perPlayer.Values
-                    .Where(e => e.Days.Count >= 1)
+                    .Where(e => e.Days.Count >= 2
+                        || (attendanceByPlayerId.TryGetValue(e.Player.Id, out var attendance)
+                            && attendance > OneOffAttendanceThresholdPercent))
                     .Select(e => (e.Player, Appearances: e.Days.Count))
                     .ToList();
 
