@@ -191,7 +191,7 @@ namespace Elo_fotbalek.Controllers.Api
 
                 var match = new Match
                 {
-                    Date = DateTime.Now,
+                    Date = request.Date ?? DateTime.Now,
                     WinnerAmount = request.WinnerScore,
                     LooserAmount = request.LoserScore,
                     Winner = winnerTeam,
@@ -454,6 +454,7 @@ namespace Elo_fotbalek.Controllers.Api
         public string Weight { get; set; } = "BigMatch";
         public string Season { get; set; } = "Summer";
         public string? HeroId { get; set; }
+        public DateTime? Date { get; set; }
     }
 
     public class MatchPlayerOptionDto

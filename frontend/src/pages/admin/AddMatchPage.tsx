@@ -9,6 +9,11 @@ import type { MatchPlayerOptionDto, AddMatchRequest } from '@/types/api';
 
 const EMPTY_ID = '00000000-0000-0000-0000-000000000000';
 
+function todayLocalDate(): string {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
 interface PrefilledState {
   teamOneIds?: string[];
   teamTwoIds?: string[];
@@ -25,6 +30,7 @@ export function AddMatchPage() {
   const [weight, setWeight] = useState<'BigMatch' | 'SmallMatch'>('BigMatch');
   const [season, setSeason] = useState(prefilled?.season || 'Summer');
   const [heroId, setHeroId] = useState('');
+  const [matchDate, setMatchDate] = useState<string>(todayLocalDate);
   const [winnerIds, setWinnerIds] = useState<string[]>(prefilled?.teamOneIds ?? [EMPTY_ID]);
   const [loserIds, setLoserIds] = useState<string[]>(prefilled?.teamTwoIds ?? [EMPTY_ID]);
   const [password, setPassword] = useState('');
@@ -137,6 +143,7 @@ export function AddMatchPage() {
       weight,
       season,
       heroId: heroId || undefined,
+      date: matchDate || undefined,
     });
   };
 
@@ -224,6 +231,17 @@ export function AddMatchPage() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Match date */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Datum zápasu</label>
+            <input
+              type="date"
+              value={matchDate}
+              onChange={e => setMatchDate(e.target.value)}
+              className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-white text-gray-900"
+            />
+          </div>
+
           {/* Score */}
           <div className="grid grid-cols-2 gap-4">
             <div>

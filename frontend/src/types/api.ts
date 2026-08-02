@@ -168,6 +168,7 @@ export interface AddMatchRequest {
   weight: 'BigMatch' | 'SmallMatch';
   season: string;
   heroId?: string;
+  date?: string;
 }
 
 export interface AddMatchResponse {
